@@ -12,7 +12,7 @@ ACornerFloor::ACornerFloor()
 
 	TurnZone = CreateDefaultSubobject<UBoxComponent>(TEXT("TurnZone"));
 	TurnZone->SetupAttachment(SceneComponent);
-	TurnZone->SetBoxExtent(FVector(210.f, 210.f, 10.f));
+	TurnZone->SetBoxExtent(FVector(150.f, 150.f, 10.f));
 	TurnZone->SetRelativeLocation(FVector(200.f, 200.f, 0.f));
 
 	TurnZone->SetGenerateOverlapEvents(true);
@@ -33,7 +33,7 @@ void ACornerFloor::OnPlayerTurnOverlap(UPrimitiveComponent* OverlappedComp, AAct
 }
 
 void ACornerFloor::OnWallHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
-	FVector NormalImpulse, const FHitResult& Hit)
+                             FVector NormalImpulse, const FHitResult& Hit)
 {
 	ARunCharacter* RunCharacter = Cast<ARunCharacter>(OtherActor);
 	if (RunCharacter != nullptr)

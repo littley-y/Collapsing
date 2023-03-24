@@ -21,7 +21,7 @@ public:
 	ARunPlayerController(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
 	void Move(const FInputActionValue& Value);
-	void Turn(const FInputActionValue& Value);
+	void SetDesiredRotation(const FInputActionValue& Value);
 
 	void Jump(const FInputActionValue& Value);
 	void StopJump(const FInputActionValue& Value);
@@ -31,6 +31,9 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Charactor")
 	class ARunCharacter* RunCharacter;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rotation")
+	FRotator DesiredRotation;
 
 	virtual void Tick(float DeltaSeconds) override;
 

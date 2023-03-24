@@ -2,7 +2,6 @@
 
 
 #include "RunPlayerController.h"
-
 #include "RunCharacter.h"
 #include "Collapsing/Data/InputDataAsset.h"
 #include "GameFramework/Character.h"
@@ -25,7 +24,7 @@ void ARunPlayerController::SetupInputComponent()
 		PlayerEnhancedInput->BindAction(InputActions->InputMove, ETriggerEvent::Triggered, this,
 		                                &ARunPlayerController::Move);
 		PlayerEnhancedInput->BindAction(InputActions->InputTurn, ETriggerEvent::Started, this,
-		                                &ARunPlayerController::Turn);
+		                                &ARunPlayerController::SetDesiredRotation);
 
 		PlayerEnhancedInput->BindAction(InputActions->InputJump, ETriggerEvent::Triggered, this,
 		                                &ARunPlayerController::Jump);
@@ -38,7 +37,6 @@ void ARunPlayerController::SetupInputComponent()
 		                                &ARunPlayerController::ResetView);
 
 	}
-
 }
 
 void ARunPlayerController::Move(const FInputActionValue& Value)
@@ -56,15 +54,14 @@ void ARunPlayerController::Move(const FInputActionValue& Value)
 	}
 }
 
-void ARunPlayerController::Turn(const FInputActionValue& Value)
+void ARunPlayerController::SetDesiredRotation(const FInputActionValue& Value)
 {
-	const float TurnAxisFloat = Value.Get<float>();
-
-	if (RunCharacter != nullptr && RunCharacter->bCanTurn == true)
+	if (RunCharacter != nullptr)
 	{
-		FRotator ControllerRotation = GetControlRotation();
-		ControllerRotation.Yaw += TurnAxisFloat * 90;
-		SetControlRotation(ControllerRotation);
+		const float TurnAxisFloat = Value.Get<float>();
+
+		DesiredRotation = GetControlRotation();
+		DesiredRotation.Yaw += TurnAxisFloat * 90;
 		RunCharacter->bCanTurn = false;
 	}
 }
@@ -96,11 +93,15 @@ void ARunPlayerController::Tick(float DeltaSeconds)
 
 	if (RunCharacter != nullptr && RunCharacter->bIsDead == false)
 	{
-		FRotator ForwardRot = this->GetControlRotation();
-		ForwardRot.Roll = 0.f;
-		ForwardRot.Pitch = 0.f;
+		const FRotator ControlRot = this->GetControlRotation();
 
-		GetCharacter()->AddMovementInput(ForwardRot.Vector());	
+		GetCharacter()->AddMovementInput(ControlRot.Vector());
+
+		// 컨트롤러를 매 tick마다 90도 혹은 -90도로 보간하여 회전시킵니다.
+		if (RunCharacter->bCanTurn == true && ControlRot != DesiredRotation)
+		{
+			SetControlRotation(FMath::RInterpTo(ControlRot, DesiredRotation, DeltaSeconds, 10.f));
+		}
 	}
 
 }

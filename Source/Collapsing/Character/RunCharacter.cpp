@@ -28,10 +28,14 @@ ARunCharacter::ARunCharacter()
 
 	// Create a camera arm
 	CameraArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraArm"));
-	CameraArm->TargetArmLength = 350.f;
-	CameraArm->SocketOffset = FVector(0.f, 0.f, 100.f);
-	CameraArm->bUsePawnControlRotation = true;
 	CameraArm->SetupAttachment(GetRootComponent());
+	CameraArm->TargetArmLength = 600.f;
+	CameraArm->SocketOffset = FVector(0.f, 0.f, 200.f);
+	CameraArm->SetRelativeRotation(FRotator(-20.f, 0.f, 0.f));
+
+	CameraArm->bUsePawnControlRotation = true;
+	CameraArm->bEnableCameraLag = true;
+	CameraArm->CameraLagSpeed = 3.f;
 
 	// Create default camera
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
@@ -53,6 +57,7 @@ void ARunCharacter::BeginPlay()
 void ARunCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
 }
 
 void ARunCharacter::Death()
@@ -61,7 +66,7 @@ void ARunCharacter::Death()
 	{
 		const FVector Location = GetActorLocation();
 
-		UWorld* World = GetWorld();
+		const UWorld* World = GetWorld();
 		if (World != nullptr)
 		{
 			bIsDead = true;

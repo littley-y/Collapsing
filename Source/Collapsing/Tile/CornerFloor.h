@@ -15,7 +15,6 @@ class COLLAPSING_API ACornerFloor : public ABasicFloor
 	GENERATED_BODY()
 
 public:
-	ACornerFloor();
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category= "TriggerBox")
 	class UBoxComponent* TurnZone;
@@ -27,6 +26,8 @@ public:
 	UFUNCTION()
 	void OnWallHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
 	               FVector NormalImpulse, const FHitResult& Hit);
+
+	ACornerFloor();
 
 protected:
 	virtual void SetMeshLocation() const override final;

@@ -2,13 +2,14 @@
 
 
 #include "BasicFloor.h"
+#include "Collapsing/Character/RunCharacter.h"
 #include "Engine/StaticMeshSocket.h"
 
 // Sets default values
 ABasicFloor::ABasicFloor()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 
 	SceneComponent = CreateDefaultSubobject<USceneComponent>(TEXT("Scene"));
 	RootComponent = SceneComponent;
@@ -18,14 +19,14 @@ ABasicFloor::ABasicFloor()
 
 	LeftWallMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("LeftWallMesh"));
 	LeftWallMesh->SetupAttachment(FloorMesh);
-	LeftWallMesh->SetCollisionProfileName(TEXT("BlockAll"));
+	LeftWallMesh->SetCollisionProfileName("BlockAll");
 
 	RightWallMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("RightWallMesh"));
 	RightWallMesh->SetupAttachment(FloorMesh);
-	RightWallMesh->SetCollisionProfileName(TEXT("BlockAll"));
+	RightWallMesh->SetCollisionProfileName("BlockAll");
 
 	SetBasicMash();
-	ABasicFloor::SetMeshLocation();
+    ABasicFloor::SetMeshLocation();
 }
 
 void ABasicFloor::SetBasicMash() const
@@ -66,8 +67,8 @@ void ABasicFloor::SetMeshLocation() const
 void ABasicFloor::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
+
 
 // Called every frame
 void ABasicFloor::Tick(float DeltaTime)

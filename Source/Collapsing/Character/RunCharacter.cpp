@@ -6,6 +6,7 @@
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 ARunCharacter::ARunCharacter()
@@ -14,7 +15,6 @@ ARunCharacter::ARunCharacter()
 	PrimaryActorTick.bCanEverTick = true;
 	bUseControllerRotationYaw = false;
 
-	bIsDead = false;
 	bCanTurn = false;
 
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.f);
@@ -22,7 +22,7 @@ ARunCharacter::ARunCharacter()
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	GetCharacterMovement()->RotationRate = FRotator(0.f, 300.f,0.f);
 
-	GetCharacterMovement()->JumpZVelocity = 300.f;
+	GetCharacterMovement()->JumpZVelocity = 500.f;
 	GetCharacterMovement()->AirControl = 0.2f;
 	GetCharacterMovement()->MaxWalkSpeed = 600.f;
 
@@ -47,12 +47,50 @@ ARunCharacter::ARunCharacter()
 void ARunCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 // Called every frame
 void ARunCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+}
+
+void ARunCharacter::Death()
+{
+	if (bIsDead == false)
+	{
+		const FVector Location = GetActorLocation();
+
+		UWorld* World = GetWorld();
+		if (World != nullptr)
+		{
+			bIsDead = true;
+			GetController()->DisableInput(nullptr);
+
+			if (DeathParticleSystem != nullptr)
+			{
+				UGameplayStatics::SpawnEmitterAtLocation(World, DeathParticleSystem, Location);
+			}
+			if (DeathSound != nullptr)
+			{
+				UGameplayStatics::PlaySoundAtLocation(World, DeathSound, Location);
+			}
+			GetMesh()->SetVisibility(false);
+
+			World->GetTimerManager().SetTimer(RestartTimerHandle, this, &ARunCharacter::OnDeath, 1.f);
+		}
+	}
+}
+
+void ARunCharacter::OnDeath()
+{
+	bIsDead = false;
+
+	if (RestartTimerHandle.IsValid())
+	{
+		GetWorldTimerManager().ClearTimer(RestartTimerHandle);
+	}
+
+	UKismetSystemLibrary::ExecuteConsoleCommand(GetWorld(), TEXT("RestartLevel"));
 }
 

@@ -43,8 +43,7 @@ void ARunPlayerController::SetupInputComponent()
 
 void ARunPlayerController::Move(const FInputActionValue& Value)
 {
-	ARunCharacter* RunCharacter = Cast<ARunCharacter>(GetCharacter());
-	if (RunCharacter != nullptr && RunCharacter->bCanTurn == false)
+	if (RunCharacter != nullptr)
 	{
 		const FVector2D MovementVector = Value.Get<FVector2D>();
 
@@ -59,8 +58,15 @@ void ARunPlayerController::Move(const FInputActionValue& Value)
 
 void ARunPlayerController::Turn(const FInputActionValue& Value)
 {
-	ARunCharacter* RunCharacter = Cast<ARunCharacter>(GetCharacter());
-	float Amount = Value.Get<float>();
+	const float TurnAxisFloat = Value.Get<float>();
+
+	if (RunCharacter != nullptr && RunCharacter->bCanTurn == true)
+	{
+		FRotator ControllerRotation = GetControlRotation();
+		ControllerRotation.Yaw += TurnAxisFloat * 90;
+		SetControlRotation(ControllerRotation);
+		RunCharacter->bCanTurn = false;
+	}
 }
 
 void ARunPlayerController::Jump(const FInputActionValue& Value)
@@ -88,8 +94,6 @@ void ARunPlayerController::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 
-	ARunCharacter* RunCharacter = Cast<ARunCharacter>(GetCharacter());
-
 	if (RunCharacter != nullptr && RunCharacter->bIsDead == false)
 	{
 		FRotator ForwardRot = this->GetControlRotation();
@@ -99,4 +103,11 @@ void ARunPlayerController::Tick(float DeltaSeconds)
 		GetCharacter()->AddMovementInput(ForwardRot.Vector());	
 	}
 
+}
+
+void ARunPlayerController::BeginPlay()
+{
+	Super::BeginPlay();
+
+	RunCharacter = Cast<ARunCharacter>(GetCharacter());
 }

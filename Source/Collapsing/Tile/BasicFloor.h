@@ -35,6 +35,7 @@ protected:
 	virtual void BeginPlay() override;
 
 	virtual void SetMeshLocation() const;
+
 	void SetBasicMash() const;
 };
 

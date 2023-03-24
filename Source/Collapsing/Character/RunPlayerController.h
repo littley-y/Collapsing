@@ -29,7 +29,12 @@ public:
 	void ChangeView(const FInputActionValue& Value);
 	void ResetView(const FInputActionValue& Value);
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Charactor")
+	class ARunCharacter* RunCharacter;
+
 	virtual void Tick(float DeltaSeconds) override;
+
+	virtual void BeginPlay() override;
 
 protected:
 	virtual void SetupInputComponent() override;

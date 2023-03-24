@@ -15,19 +15,30 @@ ACornerFloor::ACornerFloor()
 	TurnZone->SetBoxExtent(FVector(210.f, 210.f, 10.f));
 	TurnZone->SetRelativeLocation(FVector(200.f, 200.f, 0.f));
 
-	TurnZone->SetCollisionProfileName(TEXT("OverlapOnlyPawn"));
-
 	TurnZone->SetGenerateOverlapEvents(true);
-	TurnZone->OnComponentBeginOverlap.AddDynamic(this, &ACornerFloor::OnOverlapBegin);
+	TurnZone->OnComponentBeginOverlap.AddDynamic(this, &ACornerFloor::OnPlayerTurnOverlap);
+
+	LeftWallMesh->OnComponentHit.AddDynamic(this, &ACornerFloor::OnWallHit);
+	RightWallMesh->OnComponentHit.AddDynamic(this, &ACornerFloor::OnWallHit);
 }
 
-void ACornerFloor::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
+void ACornerFloor::OnPlayerTurnOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	ARunCharacter* RunCharacter = Cast<ARunCharacter>(OtherActor);
 	if (RunCharacter != nullptr)
 	{
 		RunCharacter->bCanTurn = true;
+	}
+}
+
+void ACornerFloor::OnWallHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
+	FVector NormalImpulse, const FHitResult& Hit)
+{
+	ARunCharacter* RunCharacter = Cast<ARunCharacter>(OtherActor);
+	if (RunCharacter != nullptr)
+	{
+		RunCharacter->Death();
 	}
 }
 

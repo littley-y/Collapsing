@@ -26,18 +26,32 @@ public:
 	// Sets default values for this character's properties
 	ARunCharacter();
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Value", meta = (AllowPrivateAccess = "true"))
-	bool bIsDead;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Asseets")
+	UParticleSystem* DeathParticleSystem;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Asseets")
+	USoundBase* DeathSound;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Value", meta = (AllowPrivateAccess = "true"))
 	bool bCanTurn;
+
+	UFUNCTION(BlueprintCallable)
+	void Death();
+
+	UPROPERTY()
+	bool bIsDead = false;
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	UFUNCTION()
+	void OnDeath();
+
+	UPROPERTY()
+	FTimerHandle RestartTimerHandle;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-
 };

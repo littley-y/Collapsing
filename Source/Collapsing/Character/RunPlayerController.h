@@ -21,6 +21,7 @@ public:
 	ARunPlayerController(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
 	void Move(const FInputActionValue& Value);
+
 	void SetDesiredRotation(const FInputActionValue& Value);
 
 	void Jump(const FInputActionValue& Value);
@@ -42,9 +43,9 @@ public:
 protected:
 	virtual void SetupInputComponent() override;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Enhanced Input")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "EnhancedInput")
 	class UInputMappingContext* InputMapping;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Enhanced Input")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "EnhancedInput")
 	class UInputDataAsset* InputActions;
 };											  

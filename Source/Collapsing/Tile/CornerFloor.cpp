@@ -18,27 +18,15 @@ ACornerFloor::ACornerFloor()
 	TurnZone->SetGenerateOverlapEvents(true);
 	TurnZone->OnComponentBeginOverlap.AddDynamic(this, &ACornerFloor::OnPlayerTurnOverlap);
 
-	LeftWallMesh->OnComponentHit.AddDynamic(this, &ACornerFloor::OnWallHit);
-	RightWallMesh->OnComponentHit.AddDynamic(this, &ACornerFloor::OnWallHit);
 }
 
 void ACornerFloor::OnPlayerTurnOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	ARunCharacter* RunCharacter = Cast<ARunCharacter>(OtherActor);
-	if (RunCharacter != nullptr)
+	if (RunCharacter != nullptr && OtherComp)
 	{
 		RunCharacter->bCanTurn = true;
-	}
-}
-
-void ACornerFloor::OnWallHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
-                             FVector NormalImpulse, const FHitResult& Hit)
-{
-	ARunCharacter* RunCharacter = Cast<ARunCharacter>(OtherActor);
-	if (RunCharacter != nullptr)
-	{
-		RunCharacter->Death();
 	}
 }
 

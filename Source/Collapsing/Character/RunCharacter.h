@@ -32,11 +32,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Asseets")
 	USoundBase* DeathSound;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Value", meta = (AllowPrivateAccess = "true"))
-	bool bCanTurn;
-
 	UFUNCTION(BlueprintCallable)
 	void Death();
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Value")
+	bool bCanTurn = false;
 
 	UPROPERTY()
 	bool bIsDead = false;

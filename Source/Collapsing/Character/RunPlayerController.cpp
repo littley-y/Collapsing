@@ -26,7 +26,7 @@ void ARunPlayerController::SetupInputComponent()
 		PlayerEnhancedInput->BindAction(InputActions->InputTurn, ETriggerEvent::Started, this,
 		                                &ARunPlayerController::SetDesiredRotation);
 
-		PlayerEnhancedInput->BindAction(InputActions->InputJump, ETriggerEvent::Triggered, this,
+		PlayerEnhancedInput->BindAction(InputActions->InputJump, ETriggerEvent::Started, this,
 		                                &ARunPlayerController::Jump);
 		PlayerEnhancedInput->BindAction(InputActions->InputJump, ETriggerEvent::Completed, this,
 		                                &ARunPlayerController::StopJump);
@@ -56,26 +56,26 @@ void ARunPlayerController::Move(const FInputActionValue& Value)
 
 void ARunPlayerController::SetDesiredRotation(const FInputActionValue& Value)
 {
-	if (RunCharacter != nullptr)
+	if (RunCharacter != nullptr && RunCharacter->bCanTurn == true)
 	{
 		const float TurnAxisFloat = Value.Get<float>();
 
 		DesiredRotation = GetControlRotation();
 		DesiredRotation.Yaw += TurnAxisFloat * 90;
-		RunCharacter->bCanTurn = false;
+		UE_LOG(LogTemp, Warning, TEXT("Set DesiredRotation : %s"), *DesiredRotation.ToString());
 	}
 }
 
 void ARunPlayerController::Jump(const FInputActionValue& Value)
 {
 	GetCharacter()->Jump();
-	UE_LOG(LogTemp, Warning, TEXT("점프키 눌림"));
+	UE_LOG(LogTemp, Warning, TEXT("Jump Start"));
 }
 
 void ARunPlayerController::StopJump(const FInputActionValue& Value)
 {
 	GetCharacter()->StopJumping();
-	UE_LOG(LogTemp, Warning, TEXT("점프키 떼짐"));
+	UE_LOG(LogTemp, Warning, TEXT("Jump End"));
 
 }
 
@@ -93,14 +93,21 @@ void ARunPlayerController::Tick(float DeltaSeconds)
 
 	if (RunCharacter != nullptr && RunCharacter->bIsDead == false)
 	{
-		const FRotator ControlRot = this->GetControlRotation();
-
+		const FRotator ControlRot = GetControlRotation();
 		GetCharacter()->AddMovementInput(ControlRot.Vector());
 
-		// 컨트롤러를 매 tick마다 90도 혹은 -90도로 보간하여 회전시킵니다.
-		if (RunCharacter->bCanTurn == true && ControlRot != DesiredRotation)
+		// 회전 보간 및 입력 막기.
+		if (RunCharacter->bCanTurn == true && !ControlRot.Equals(DesiredRotation, 0.1f))
 		{
-			SetControlRotation(FMath::RInterpTo(ControlRot, DesiredRotation, DeltaSeconds, 10.f));
+			DisableInput(this);
+			const FRotator InterpolatedRot = FMath::RInterpTo(ControlRot, DesiredRotation, DeltaSeconds, 15.f);
+			SetControlRotation(InterpolatedRot);
+			if (InterpolatedRot.Equals(DesiredRotation, 0.1f))
+			{
+				EnableInput(this);
+				RunCharacter->bCanTurn = false;
+				UE_LOG(LogTemp, Warning, TEXT("Rotation finished"));
+			}
 		}
 	}
 

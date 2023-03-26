@@ -30,17 +30,18 @@ ARunCharacter::ARunCharacter()
 	CameraArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraArm"));
 	CameraArm->SetupAttachment(GetRootComponent());
 	CameraArm->TargetArmLength = 600.f;
-	CameraArm->SocketOffset = FVector(0.f, 0.f, 200.f);
-	CameraArm->SetRelativeRotation(FRotator(-20.f, 0.f, 0.f));
+	CameraArm->SocketOffset = FVector(-400.f, 0.f, 900.f);
 
+	CameraArm->bDoCollisionTest = false;
 	CameraArm->bUsePawnControlRotation = true;
-	CameraArm->bEnableCameraLag = true;
-	CameraArm->CameraLagSpeed = 3.f;
+	//CameraArm->bEnableCameraLag = true;
+	//CameraArm->CameraLagSpeed = 3.f;
 
 	// Create default camera
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	Camera->bUsePawnControlRotation = false;
 	Camera->SetupAttachment(CameraArm, USpringArmComponent::SocketName);
+	Camera->SetRelativeRotation(FRotator(-40.f, 0.f, 0.f));
 
 	SecondCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("Second Camera"));
 	SecondCamera->SetupAttachment(GetMesh(), TEXT("head"));

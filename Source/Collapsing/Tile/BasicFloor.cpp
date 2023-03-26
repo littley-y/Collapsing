@@ -2,6 +2,9 @@
 
 
 #include "BasicFloor.h"
+
+#include <string>
+
 #include "Collapsing/Character/RunCharacter.h"
 #include "Engine/StaticMeshSocket.h"
 
@@ -27,6 +30,9 @@ ABasicFloor::ABasicFloor()
 
 	SetBasicMash();
     ABasicFloor::SetMeshLocation();
+
+	LeftWallMesh->OnComponentHit.AddDynamic(this, &ABasicFloor::OnWallHit);
+	RightWallMesh->OnComponentHit.AddDynamic(this, &ABasicFloor::OnWallHit);
 }
 
 void ABasicFloor::SetBasicMash() const
@@ -78,3 +84,16 @@ void ABasicFloor::Tick(float DeltaTime)
 }
 
 
+void ABasicFloor::OnWallHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
+                             FVector NormalImpulse, const FHitResult& Hit)
+{
+	ARunCharacter* RunCharacter = Cast<ARunCharacter>(OtherActor);
+	if (RunCharacter != nullptr)
+	{
+		const float Dot = FVector::DotProduct(Hit.Normal, RunCharacter->GetActorForwardVector());
+		if (Dot > 0.99f && Dot < 1.01f)
+		{
+			RunCharacter->Death();
+		}
+	}
+}

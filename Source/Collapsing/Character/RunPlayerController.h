@@ -16,6 +16,15 @@ UCLASS()
 class COLLAPSING_API ARunPlayerController : public APlayerController
 {
 	GENERATED_BODY()
+	
+	FRotator DesiredRotation;
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Charactor", meta = (AllowPrivateAccess = "true"))
+	class ARunCharacter* RunCharacter;
+
+	void MoveForward(const FRotator& ControlRot);
+
+	void TurnCorner(const FRotator& ControlRot);
 
 public:
 	ARunPlayerController(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
@@ -30,18 +39,12 @@ public:
 	void ChangeView(const FInputActionValue& Value);
 	void ResetView(const FInputActionValue& Value);
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Charactor")
-	class ARunCharacter* RunCharacter;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rotation")
-	FRotator DesiredRotation;
+protected:
+	virtual void SetupInputComponent() override;
 
 	virtual void Tick(float DeltaSeconds) override;
 
 	virtual void BeginPlay() override;
-
-protected:
-	virtual void SetupInputComponent() override;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "EnhancedInput")
 	class UInputMappingContext* InputMapping;

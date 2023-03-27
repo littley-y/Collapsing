@@ -11,11 +11,7 @@
 // Sets default values
 ARunCharacter::ARunCharacter()
 {
- 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
 	bUseControllerRotationYaw = false;
-
-	bCanTurn = false;
 
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.f);
 
@@ -34,8 +30,10 @@ ARunCharacter::ARunCharacter()
 
 	CameraArm->bDoCollisionTest = false;
 	CameraArm->bUsePawnControlRotation = true;
-	//CameraArm->bEnableCameraLag = true;
-	//CameraArm->CameraLagSpeed = 3.f;
+	CameraArm->bEnableCameraLag = true;
+	CameraArm->bEnableCameraRotationLag = true;
+	CameraArm->CameraLagSpeed = 8.f;
+	CameraArm->CameraRotationLagSpeed = 8.f;
 
 	// Create default camera
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));

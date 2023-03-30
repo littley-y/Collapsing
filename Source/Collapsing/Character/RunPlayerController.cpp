@@ -1,14 +1,16 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "RunPlayerController.h"
 #include "RunCharacter.h"
 #include "Collapsing/Data/InputDataAsset.h"
 #include "GameFramework/Character.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 ARunPlayerController::ARunPlayerController(const FObjectInitializer& ObjectInitializer)
 {
 	PrimaryActorTick.bCanEverTick = true;
+	DesiredRotation = AController::GetControlRotation();
 }
 
 void ARunPlayerController::SetupInputComponent()
@@ -24,6 +26,8 @@ void ARunPlayerController::SetupInputComponent()
 	{
 		PlayerEnhancedInput->BindAction(InputActions->InputMove, ETriggerEvent::Triggered, this,
 		                                &ARunPlayerController::Move);
+		PlayerEnhancedInput->BindAction(InputActions->InputSpeed, ETriggerEvent::Started, this,
+		                                &ARunPlayerController::ChangeSpeed);
 		PlayerEnhancedInput->BindAction(InputActions->InputTurn, ETriggerEvent::Started, this,
 		                                &ARunPlayerController::SetDesiredRotation);
 
@@ -54,12 +58,14 @@ void ARunPlayerController::Move(const FInputActionValue& Value)
 
 void ARunPlayerController::SetDesiredRotation(const FInputActionValue& Value)
 {
-	if (RunCharacter->bCanTurn == false) return;
+	if (RunCharacter->bCanTurn == true)
+	{
+		const float TurnAxisFloat = Value.Get<float>();
 
-	const float TurnAxisFloat = Value.Get<float>();
-	DesiredRotation = GetControlRotation();
-	DesiredRotation.Yaw += TurnAxisFloat * 90;
-	UE_LOG(LogTemp, Warning, TEXT("Set DesiredRotation : %s"), *DesiredRotation.ToString());
+		DesiredRotation = GetControlRotation();
+		DesiredRotation.Yaw += TurnAxisFloat * 90;
+		UE_LOG(LogTemp, Warning, TEXT("Set DesiredRotation : %s"), *DesiredRotation.ToString());
+	}
 }
 
 void ARunPlayerController::Jump(const FInputActionValue& Value)
@@ -73,6 +79,17 @@ void ARunPlayerController::StopJump(const FInputActionValue& Value)
 	RunCharacter->StopJumping();
 	UE_LOG(LogTemp, Warning, TEXT("Jump End"));
 
+}
+
+void ARunPlayerController::ChangeSpeed(const FInputActionValue& Value)
+{
+	if (RunCharacter->bCanChangeSpeed == true)
+	{
+		const float TargetSpeed = Value.Get<float>() * 200.f;
+		RunCharacter->GetCharacterMovement()->MaxWalkSpeed += TargetSpeed;
+		UE_LOG(LogTemp, Warning, TEXT("í˜„ìž¬ ì†ë„ %f"), RunCharacter->GetCharacterMovement()->MaxWalkSpeed)
+		RunCharacter->bCanChangeSpeed = false;
+	}
 }
 
 void ARunPlayerController::ChangeView(const FInputActionValue& Value)
@@ -91,10 +108,7 @@ void ARunPlayerController::Tick(float DeltaSeconds)
 	{
 		const FRotator ControlRot = GetControlRotation();
 		MoveForward(ControlRot);
-		if (RunCharacter->bCanTurn == true && !ControlRot.Equals(DesiredRotation, 0.1f))
-		{
-			TurnCorner(ControlRot);
-		}
+		TurnCorner(ControlRot);
 	}
 }
 
@@ -103,16 +117,24 @@ void ARunPlayerController::MoveForward(const FRotator& ControlRot)
 	RunCharacter->AddMovementInput(ControlRot.Vector());
 }
 
-void ARunPlayerController::TurnCorner(const FRotator& ControlRot) // È¸Àü º¸°£ ¹× ÀÔ·Â ¸·±â.
+void ARunPlayerController::TurnCorner(const FRotator& ControlRot) // íšŒì „ ë³´ê°„ ë° ìž…ë ¥ ë§‰ê¸°.
 {
-	DisableInput(this);
-	const FRotator InterpolatedRot = FMath::RInterpTo(ControlRot, DesiredRotation, GetWorld()->GetDeltaSeconds(), 15.f);
-	SetControlRotation(InterpolatedRot);
-	if (InterpolatedRot.Equals(DesiredRotation, 0.1f))
+	static bool bIsTurning = false;
+
+	if (RunCharacter->bCanTurn == true && !DesiredRotation.Equals(ControlRot, 0.1f))
 	{
-		EnableInput(this);
+		bIsTurning = true;
 		RunCharacter->bCanTurn = false;
-		UE_LOG(LogTemp, Warning, TEXT("Rotation finished"));
+	}
+	if (bIsTurning == true)
+	{
+		const FRotator InterpolatedRot = FMath::RInterpTo(ControlRot, DesiredRotation, GetWorld()->GetDeltaSeconds(), 15.f);
+		SetControlRotation(InterpolatedRot);
+		if (DesiredRotation.Equals(InterpolatedRot, 0.1f))
+		{
+			bIsTurning = false;
+			UE_LOG(LogTemp, Warning, TEXT("Rotation finished"));
+		}
 	}
 }
 

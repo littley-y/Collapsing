@@ -17,15 +17,18 @@ class COLLAPSING_API UInputDataAsset : public UDataAsset
 
 public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	UInputAction* InputMove;
+	TObjectPtr<UInputAction> InputMove;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	UInputAction* InputTurn;
+	TObjectPtr<UInputAction> InputSpeed;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	UInputAction* InputJump;
+	TObjectPtr<UInputAction> InputTurn;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	UInputAction* InputChangeView;
+	TObjectPtr<UInputAction> InputJump;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TObjectPtr<UInputAction> InputChangeView;
 
 };

@@ -15,17 +15,18 @@ class COLLAPSING_API ACornerFloor : public ABasicFloor
 	GENERATED_BODY()
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "TriggerBox", meta = (AllowPrivateAccess = "true"))
-	class UBoxComponent* TurnZone;
+	TObjectPtr<class UBoxComponent> TurnZone;
 
 public:
-
 	ACornerFloor();
 
 	UFUNCTION()
 	void OnPlayerTurnOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
-	                    int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	                         int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	UFUNCTION()
+	void OnPlayerEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	                        UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
 
-protected:
-	virtual void SetMeshLocation() const override final;
 };

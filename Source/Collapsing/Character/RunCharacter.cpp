@@ -19,7 +19,7 @@ ARunCharacter::ARunCharacter()
 	GetCharacterMovement()->RotationRate = FRotator(0.f, 300.f,0.f);
 
 	GetCharacterMovement()->JumpZVelocity = 500.f;
-	GetCharacterMovement()->AirControl = 0.2f;
+	GetCharacterMovement()->AirControl = 0.1f;
 	GetCharacterMovement()->MaxWalkSpeed = 600.f;
 
 	// Create a camera arm
@@ -57,6 +57,11 @@ void ARunCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	const float Speed = FVector::DotProduct(GetVelocity(), GetActorRotation().Vector());
+	if (FMath::IsNearlyEqual(Speed, 0.f, 0.1f))
+	{
+		Death();
+	}
 }
 
 void ARunCharacter::Death()

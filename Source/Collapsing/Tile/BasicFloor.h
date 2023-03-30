@@ -13,16 +13,13 @@ class COLLAPSING_API ABasicFloor : public AActor
 	
 public:	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components")
-	USceneComponent* SceneComponent;
+	TObjectPtr<USceneComponent> SceneComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components")
-	UStaticMeshComponent* FloorMesh;
+	TObjectPtr<UStaticMeshComponent> FloorMesh;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components")
-	UStaticMeshComponent* LeftWallMesh;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components")
-	UStaticMeshComponent* RightWallMesh;
+	TArray<UStaticMeshComponent*> WallArray;
 
 	// Sets default values for this actor's properties
 	ABasicFloor();
@@ -38,8 +35,8 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	virtual void SetMeshLocation() const;
+	void CreateWall(UStaticMeshComponent* Obj) const;
 
-	void SetBasicMash() const;
+	void CreateFloor(UStaticMeshComponent* Obj) const;
 };
 

@@ -8,8 +8,6 @@
 
 ACornerFloor::ACornerFloor()
 {
-	ACornerFloor::SetMeshLocation();
-
 	TurnZone = CreateDefaultSubobject<UBoxComponent>(TEXT("TurnZone"));
 	TurnZone->SetupAttachment(SceneComponent);
 	TurnZone->SetBoxExtent(FVector(150.f, 150.f, 10.f));
@@ -17,6 +15,7 @@ ACornerFloor::ACornerFloor()
 
 	TurnZone->SetGenerateOverlapEvents(true);
 	TurnZone->OnComponentBeginOverlap.AddDynamic(this, &ACornerFloor::OnPlayerTurnOverlap);
+	TurnZone->OnComponentEndOverlap.AddDynamic(this, &ACornerFloor::OnPlayerEndOverlap);
 
 }
 
@@ -30,10 +29,12 @@ void ACornerFloor::OnPlayerTurnOverlap(UPrimitiveComponent* OverlappedComp, AAct
 	}
 }
 
-void ACornerFloor::SetMeshLocation() const
+void ACornerFloor::OnPlayerEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	FloorMesh->SetRelativeLocation(FVector(0.f, 0.f, 0.f));
-	LeftWallMesh->SetRelativeLocation(FVector(0.f, 0.f, -20.f));
-	RightWallMesh->SetRelativeLocation(FVector(400.f, 0.f, -20.f));
-	RightWallMesh->SetRelativeRotation(FRotator(0.f, 90.f, 0.f));
+	ARunCharacter* RunCharacter = Cast<ARunCharacter>(OtherActor);
+	if (RunCharacter != nullptr && OtherComp)
+	{
+		RunCharacter->bCanTurn = false;
+	}
 }

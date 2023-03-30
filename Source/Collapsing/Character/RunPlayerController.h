@@ -20,7 +20,7 @@ class COLLAPSING_API ARunPlayerController : public APlayerController
 	FRotator DesiredRotation;
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Charactor", meta = (AllowPrivateAccess = "true"))
-	class ARunCharacter* RunCharacter;
+	TObjectPtr<class ARunCharacter> RunCharacter;
 
 	void MoveForward(const FRotator& ControlRot);
 
@@ -35,6 +35,8 @@ public:
 
 	void Jump(const FInputActionValue& Value);
 	void StopJump(const FInputActionValue& Value);
+
+	void ChangeSpeed(const FInputActionValue& Value);
 
 	void ChangeView(const FInputActionValue& Value);
 	void ResetView(const FInputActionValue& Value);

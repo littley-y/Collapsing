@@ -35,11 +35,11 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void Death();
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Value")
 	bool bCanTurn = false;
 
-	UPROPERTY()
 	bool bIsDead = false;
+
+	bool bCanChangeSpeed = false;
 
 protected:
 	// Called when the game starts or when spawned

@@ -25,7 +25,7 @@ public:
 	APawn* Pawn;
 
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category="MoveMent")
-	UPawnMovementComponent* MovementComponent;
+	TObjectPtr<UPawnMovementComponent> MovementComponent;
 
 	virtual void NativeInitializeAnimation() override;
 

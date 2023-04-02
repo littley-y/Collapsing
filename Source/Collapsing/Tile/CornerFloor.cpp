@@ -8,7 +8,13 @@
 
 ACornerFloor::ACornerFloor()
 {
+	//WallArray[1]->SetRelativeRotation();
 	TurnZone = CreateDefaultSubobject<UBoxComponent>(TEXT("TurnZone"));
+	SetTurnZone();
+}
+
+void ACornerFloor::SetTurnZone() const
+{
 	TurnZone->SetupAttachment(SceneComponent);
 	TurnZone->SetBoxExtent(FVector(150.f, 150.f, 10.f));
 	TurnZone->SetRelativeLocation(FVector(200.f, 200.f, 0.f));
@@ -16,7 +22,6 @@ ACornerFloor::ACornerFloor()
 	TurnZone->SetGenerateOverlapEvents(true);
 	TurnZone->OnComponentBeginOverlap.AddDynamic(this, &ACornerFloor::OnPlayerTurnOverlap);
 	TurnZone->OnComponentEndOverlap.AddDynamic(this, &ACornerFloor::OnPlayerEndOverlap);
-
 }
 
 void ACornerFloor::OnPlayerTurnOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,

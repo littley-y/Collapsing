@@ -11,19 +11,21 @@ class COLLAPSING_API ARunCharacter final : public ACharacter
 {
 	GENERATED_BODY()
 
-	// Basic CameraArm AllowPrivateAccess 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	class USpringArmComponent* CameraArm;
 
-	// Basic Camera
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* Camera;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	UCameraComponent* SecondCamera;
 
+	void SetCameraAndArm() const;
+
+	void SetMovement() const;
+
 public:
-	// Sets default values for this character's properties
+	
 	ARunCharacter();
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Asseets")
@@ -42,7 +44,6 @@ public:
 	bool bCanChangeSpeed = false;
 
 protected:
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 	UFUNCTION()
@@ -52,6 +53,5 @@ protected:
 	FTimerHandle RestartTimerHandle;
 
 public:	
-	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 };

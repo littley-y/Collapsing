@@ -28,5 +28,7 @@ public:
 	void OnPlayerEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	                        UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
+protected:
+	void SetTurnZone() const;
 
 };

@@ -1,6 +1,5 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "RunCharacter.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
@@ -14,16 +13,27 @@ ARunCharacter::ARunCharacter()
 	bUseControllerRotationYaw = false;
 
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.f);
+	SetMovement();
 
+	CameraArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraArm"));
+	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
+	SecondCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("Second Camera"));
+
+	SetCameraAndArm();
+}
+
+void ARunCharacter::SetMovement() const
+{
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	GetCharacterMovement()->RotationRate = FRotator(0.f, 300.f,0.f);
 
 	GetCharacterMovement()->JumpZVelocity = 500.f;
 	GetCharacterMovement()->AirControl = 0.1f;
 	GetCharacterMovement()->MaxWalkSpeed = 600.f;
+}
 
-	// Create a camera arm
-	CameraArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraArm"));
+void ARunCharacter::SetCameraAndArm() const
+{
 	CameraArm->SetupAttachment(GetRootComponent());
 	CameraArm->TargetArmLength = 600.f;
 	CameraArm->SocketOffset = FVector(-400.f, 0.f, 900.f);
@@ -35,15 +45,11 @@ ARunCharacter::ARunCharacter()
 	CameraArm->CameraLagSpeed = 8.f;
 	CameraArm->CameraRotationLagSpeed = 8.f;
 
-	// Create default camera
-	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	Camera->bUsePawnControlRotation = false;
 	Camera->SetupAttachment(CameraArm, USpringArmComponent::SocketName);
 	Camera->SetRelativeRotation(FRotator(-40.f, 0.f, 0.f));
 
-	SecondCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("Second Camera"));
 	SecondCamera->SetupAttachment(GetMesh(), TEXT("head"));
-
 }
 
 // Called when the game starts or when spawned

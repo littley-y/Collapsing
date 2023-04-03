@@ -2,8 +2,12 @@
 
 
 #include "BasicFloor.h"
+
+#include "Collapsing/CollapsingGameModeBase.h"
 #include "Collapsing/Character/RunCharacter.h"
+#include "Components/BoxComponent.h"
 #include "Engine/StaticMeshSocket.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 ABasicFloor::ABasicFloor()
@@ -15,6 +19,7 @@ ABasicFloor::ABasicFloor()
 
 	CreateFloor();
 	CreateWallArray();
+	CreateGenerateTileZone();
 }
 
 // Called when the game starts or when spawned
@@ -82,6 +87,18 @@ void ABasicFloor::CreateFloor()
 	}
 }
 
+void ABasicFloor::CreateGenerateTileZone()
+{
+	GenerateTileZone = CreateDefaultSubobject<UBoxComponent>(TEXT("GenerateTileZone"));
+	GenerateTileZone->SetupAttachment(SceneComponent);
+	GenerateTileZone->SetBoxExtent(FVector(200.f, 200.f, 30.f));
+	GenerateTileZone->SetRelativeLocation(FVector(400.f, 200.f, 200.f));
+	GenerateTileZone->SetRelativeRotation(FRotator(90.f, 0.f, 0.f));
+
+	GenerateTileZone->SetGenerateOverlapEvents(true);
+	GenerateTileZone->OnComponentBeginOverlap.AddDynamic(this, &ABasicFloor::OnGenerateBoxBeginOverlap);
+}
+
 // Called every frame
 void ABasicFloor::Tick(float DeltaTime)
 {
@@ -99,6 +116,20 @@ void ABasicFloor::OnWallHit(UPrimitiveComponent* HitComponent, AActor* OtherActo
 		if (FMath::IsNearlyEqual(Dot, 1.f, 0.1f))
 		{
 			RunCharacter->Death();
+		}
+	}
+}
+
+void ABasicFloor::OnGenerateBoxBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	const ARunCharacter* RunCharacter = Cast<ARunCharacter>(OtherActor);
+	if (RunCharacter != nullptr && OtherComp)
+	{
+		ACollapsingGameModeBase* RunGameMode = Cast<ACollapsingGameModeBase>(UGameplayStatics::GetGameMode(GetWorld()));
+		if (RunGameMode != nullptr)
+		{
+			RunGameMode->AddFloorTile();
 		}
 	}
 }

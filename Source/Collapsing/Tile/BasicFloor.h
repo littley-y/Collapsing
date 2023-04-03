@@ -29,8 +29,15 @@ public:
 	void OnWallHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
 	               FVector NormalImpulse, const FHitResult& Hit);
 
+	UFUNCTION()
+	void OnGenerateBoxBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
+	                               UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
+	                               const FHitResult& SweepResult);
 
 protected:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	TObjectPtr<class UBoxComponent> GenerateTileZone;
+
 	virtual void BeginPlay() override;
 
 	void CreateWallArray();
@@ -38,5 +45,7 @@ protected:
 	void CreateWall(UStaticMeshComponent*& Wall, const int32& Ix);
 
 	void CreateFloor();
+
+	void CreateGenerateTileZone();
 };
 

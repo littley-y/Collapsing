@@ -8,13 +8,12 @@
 
 ACornerFloor::ACornerFloor()
 {
-	//WallArray[1]->SetRelativeRotation();
-	TurnZone = CreateDefaultSubobject<UBoxComponent>(TEXT("TurnZone"));
 	SetTurnZone();
 }
 
-void ACornerFloor::SetTurnZone() const
+void ACornerFloor::SetTurnZone()
 {
+	TurnZone = CreateDefaultSubobject<UBoxComponent>(TEXT("TurnZone"));
 	TurnZone->SetupAttachment(SceneComponent);
 	TurnZone->SetBoxExtent(FVector(150.f, 150.f, 10.f));
 	TurnZone->SetRelativeLocation(FVector(200.f, 200.f, 0.f));

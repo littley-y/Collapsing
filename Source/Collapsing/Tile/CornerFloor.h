@@ -15,7 +15,7 @@ class COLLAPSING_API ACornerFloor : public ABasicFloor
 	GENERATED_BODY()
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "TriggerBox", meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<class UBoxComponent> TurnZone;
+	TObjectPtr<UBoxComponent> TurnZone;
 
 public:
 	ACornerFloor();
@@ -29,6 +29,6 @@ public:
 	                        UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
 protected:
-	void SetTurnZone() const;
+	void SetTurnZone();
 
 };

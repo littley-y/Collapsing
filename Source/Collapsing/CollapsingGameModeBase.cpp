@@ -5,21 +5,50 @@
 #include "Kismet/GameplayStatics.h"
 
 
+void FTileGeneratorTransform::MoveVector(const float InValue)
+{
+	const float CurrentDegrees = FMath::FindDeltaAngleDegrees(Rotator.Yaw, 0.f);
+	if (FMath::IsNearlyEqual(CurrentDegrees, 0.f))
+	{
+		Vector.X += InValue;
+	}
+	else if (FMath::IsNearlyEqual(CurrentDegrees, -90.f))
+	{
+		Vector.Y += InValue;
+	}
+	else if (FMath::IsNearlyEqual(FMath::Abs(CurrentDegrees), 180.f))
+	{
+		Vector.X -= InValue;
+	}
+	else if (FMath::IsNearlyEqual(CurrentDegrees, 90.f))
+	{
+		Vector.Y -= InValue;
+	}
+}
+
 ACollapsingGameModeBase::ACollapsingGameModeBase()
 {
 	AddBPFloor(TEXT("/Game/Collapsing/Blueprints/BP_BasicFloor"));
 	AddBPFloor(TEXT("/Game/Collapsing/Blueprints/BP_LeftCornerFloor"));
 	AddBPFloor(TEXT("/Game/Collapsing/Blueprints/BP_RightCornerFloor"));
+
+	BasicMapString = "";
+	CurrentMapIndex = 0;
+	GeneratedFloorArray.SetNum(MaxTileNum + 1);
 }
 
 void ACollapsingGameModeBase::AddBPFloor(const FString BPPath)
 {
 	ConstructorHelpers::FClassFinder<AActor> BPFloor(*BPPath);
-	if (BPFloor.Succeeded())
+	const int32 Position = BPPath.Find(TEXT("/"), ESearchCase::IgnoreCase, ESearchDir::FromEnd);
+	if (BPFloor.Succeeded())	
 	{
-		FloorArray.Emplace(BPFloor.Class);
-		const int32 Position = BPPath.Find(TEXT("/"), ESearchCase::IgnoreCase, ESearchDir::FromEnd);
+		BPFloorArray.Emplace(BPFloor.Class);
 		UE_LOG(LogTemp, Warning, TEXT("%s Loaded"), *BPPath.RightChop(Position + 1));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("%s Load Failed"), *BPPath.RightChop(Position + 1));
 	}
 }
 
@@ -32,35 +61,52 @@ void ACollapsingGameModeBase::BeginPlay()
 
 void ACollapsingGameModeBase::GenerateMaps()
 {
-	FString BasicMap;
-	FFileHelper::LoadFileToString(BasicMap, *(FPaths::ProjectDir() + "TextMaps/test.txt"));
-	check(!BasicMap.IsEmpty())
-	UE_LOG(LogTemp, Warning, TEXT("Map Loaded : %s"), *BasicMap);
-	AddFloorTile(BasicMap);
+	FFileHelper::LoadFileToString(BasicMapString, *(FPaths::ProjectDir() + "TextMaps/test.txt"));
+	check(!BasicMapString.IsEmpty())
+	UE_LOG(LogTemp, Warning, TEXT("Map Loaded : %s"), *BasicMapString);
+	for (int32 It = 0; It != 5; ++It)
+	{
+		AddFloorTile();
+	}
 }
 
-void ACollapsingGameModeBase::AddFloorTile(FString MapName)
+void ACollapsingGameModeBase::AddFloorTile()
 {
-	FVector ConstructVec(0.f, 0.f, 0.f);
-	FRotator ConstructRot(0.f, 0.f, 0.f);
+	const TCHAR& MapChar = BasicMapString[CurrentMapIndex];
+	const int32 ArrayIndex = CurrentMapIndex % MaxTileNum;
+	UE_LOG(LogTemp, Warning, TEXT("Current Val : %c"), MapChar)
 
-	for (const auto& It : MapName)
+	if (CurrentMapIndex >= MaxTileNum)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Current Val : %c"), It)
-		if (It == 'B')
-		{
-			GetWorld()->SpawnActor<AActor>(FloorArray[Basic], ConstructVec, ConstructRot);
-			ConstructVec.X += 400.f;
-		}
-		else if (It == 'L')
-		{
-			GetWorld()->SpawnActor<AActor>(FloorArray[LeftCorner], ConstructVec, ConstructRot);
-			ConstructVec.Y -= 400.f;
-		}
-		else if (It == 'R')
-		{
-			GetWorld()->SpawnActor<AActor>(FloorArray[RightCorner], ConstructVec, ConstructRot);
-			ConstructVec.Y += 400.f;
-		}
+		GeneratedFloorArray[ArrayIndex]->Destroy();
+	}
+
+	if (MapChar == 'B')
+	{
+		GeneratedFloorArray[ArrayIndex] = GetWorld()->SpawnActor<AActor>(
+			BPFloorArray[Basic], TileGenTrans.Vector, TileGenTrans.Rotator);
+		TileGenTrans.MoveVector(400.f);
+	}
+	else if (MapChar == 'L')
+	{
+		GeneratedFloorArray[ArrayIndex] = GetWorld()->SpawnActor<AActor>(
+			BPFloorArray[LeftCorner], TileGenTrans.Vector, TileGenTrans.Rotator);
+		TileGenTrans.Rotator.Yaw -= 90.f;
+	}
+	else if (MapChar == 'R')
+	{
+		GeneratedFloorArray[ArrayIndex] = GetWorld()->SpawnActor<AActor>(
+			BPFloorArray[RightCorner], TileGenTrans.Vector, TileGenTrans.Rotator);
+		TileGenTrans.MoveVector(400.f);
+		TileGenTrans.Rotator.Yaw += 90.f;
+		TileGenTrans.MoveVector(400.f);
+	}
+	UE_LOG(LogTemp, Warning, TEXT("Floor Gen Location : %s"), *TileGenTrans.Vector.ToString())
+	UE_LOG(LogTemp, Warning, TEXT("Floor Gen Yaw : %f"), TileGenTrans.Rotator.Yaw)
+
+	CurrentMapIndex++;
+	if (CurrentMapIndex == BasicMapString.Len())
+	{
+		CurrentMapIndex = 0;
 	}
 }

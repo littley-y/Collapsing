@@ -61,7 +61,7 @@ void ACollapsingGameModeBase::BeginPlay()
 
 void ACollapsingGameModeBase::GenerateMaps()
 {
-	FFileHelper::LoadFileToString(BasicMapString, *(FPaths::ProjectDir() + "TextMaps/test.txt"));
+	FFileHelper::LoadFileToString(BasicMapString, *(FPaths::ProjectDir() + "TextMaps/test1.txt"));
 	check(!BasicMapString.IsEmpty())
 	UE_LOG(LogTemp, Warning, TEXT("Map Loaded : %s"), *BasicMapString);
 	for (int32 It = 0; It != 5; ++It)
@@ -72,7 +72,7 @@ void ACollapsingGameModeBase::GenerateMaps()
 
 void ACollapsingGameModeBase::AddFloorTile()
 {
-	const TCHAR& MapChar = BasicMapString[CurrentMapIndex];
+	const TCHAR& MapChar = BasicMapString[CurrentMapIndex % BasicMapString.Len()];
 	const int32 ArrayIndex = CurrentMapIndex % MaxTileNum;
 	UE_LOG(LogTemp, Warning, TEXT("Current Val : %c"), MapChar)
 
@@ -103,10 +103,5 @@ void ACollapsingGameModeBase::AddFloorTile()
 	}
 	UE_LOG(LogTemp, Warning, TEXT("Floor Gen Location : %s"), *TileGenTrans.Vector.ToString())
 	UE_LOG(LogTemp, Warning, TEXT("Floor Gen Yaw : %f"), TileGenTrans.Rotator.Yaw)
-
 	CurrentMapIndex++;
-	if (CurrentMapIndex == BasicMapString.Len())
-	{
-		CurrentMapIndex = 0;
-	}
 }

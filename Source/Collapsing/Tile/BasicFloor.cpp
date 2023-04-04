@@ -1,15 +1,12 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "BasicFloor.h"
-
 #include "Collapsing/CollapsingGameModeBase.h"
 #include "Collapsing/Character/RunCharacter.h"
 #include "Components/BoxComponent.h"
 #include "Engine/StaticMeshSocket.h"
 #include "Kismet/GameplayStatics.h"
 
-// Sets default values
 ABasicFloor::ABasicFloor()
 {
 	PrimaryActorTick.bCanEverTick = false;
@@ -18,36 +15,37 @@ ABasicFloor::ABasicFloor()
 	RootComponent = SceneComponent;
 
 	CreateFloor();
-	CreateWallArray();
-	CreateGenerateTileZone();
+
+	SetWallArray();
+
+	SetGenerateTileZone();
 }
 
-// Called when the game starts or when spawned
 void ABasicFloor::BeginPlay()
 {
 	Super::BeginPlay();
 }
 
-void ABasicFloor::CreateWallArray()
+void ABasicFloor::SetWallArray()
 {
 	WallArray.SetNum(2);
 	for (int32 Ix = 0; Ix != WallArray.Num(); ++Ix)
 	{
-		CreateWall(WallArray[Ix], Ix);
+		FString MeshName(TEXT("WallMesh"));
+		MeshName += FString::FromInt(Ix);
+
+		WallArray[Ix] = CreateDefaultSubobject<UStaticMeshComponent>(*MeshName);
+		SetWall(WallArray[Ix]);
+
 		if (Ix == 1)
 		{
 			WallArray[Ix]->SetRelativeLocation(FVector(0.f, 400.f, -20.f));
 		}
 	}
-	LoadObject<UClass>(nullptr, TEXT("BP_LeftCornerFloor"));
 }
 
-void ABasicFloor::CreateWall(UStaticMeshComponent*& Wall, const int32& Ix)
+void ABasicFloor::SetWall(UStaticMeshComponent* Wall) const
 {
-	FString MeshName(TEXT("WallMesh"));
-	MeshName += FString::FromInt(Ix);
-	Wall = CreateDefaultSubobject<UStaticMeshComponent>(*MeshName);
-
 	Wall->SetupAttachment(FloorMesh);
 	Wall->SetCollisionProfileName("BlockAll");
 	Wall->SetRelativeLocation(FVector(0.f, 0.f, -20.f));
@@ -60,7 +58,6 @@ void ABasicFloor::CreateWall(UStaticMeshComponent*& Wall, const int32& Ix)
 
 	static ConstructorHelpers::FObjectFinder<UMaterial> WoodMaterialAsset(
 		TEXT("/Game/_GameAssets/Meshes/Materials/M_Wood_Floor_Walnut_Polished"));
-
 	if (WoodMaterialAsset.Succeeded())
 	{
 		Wall->SetMaterial(0, WoodMaterialAsset.Object);
@@ -87,7 +84,7 @@ void ABasicFloor::CreateFloor()
 	}
 }
 
-void ABasicFloor::CreateGenerateTileZone()
+void ABasicFloor::SetGenerateTileZone()
 {
 	GenerateTileZone = CreateDefaultSubobject<UBoxComponent>(TEXT("GenerateTileZone"));
 	GenerateTileZone->SetupAttachment(SceneComponent);
@@ -99,7 +96,6 @@ void ABasicFloor::CreateGenerateTileZone()
 	GenerateTileZone->OnComponentBeginOverlap.AddDynamic(this, &ABasicFloor::OnGenerateBoxBeginOverlap);
 }
 
-// Called every frame
 void ABasicFloor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -113,7 +109,7 @@ void ABasicFloor::OnWallHit(UPrimitiveComponent* HitComponent, AActor* OtherActo
 	if (RunCharacter != nullptr)
 	{
 		const float Dot = FVector::DotProduct(Hit.Normal, RunCharacter->GetActorForwardVector());
-		if (FMath::IsNearlyEqual(Dot, 1.f, 0.1f))
+		if (FMath::IsNearlyEqual(Dot, 1.f, 1.f))
 		{
 			RunCharacter->Death();
 		}

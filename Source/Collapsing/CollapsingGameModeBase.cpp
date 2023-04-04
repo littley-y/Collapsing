@@ -1,9 +1,7 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
-
 #include "CollapsingGameModeBase.h"
 #include "Kismet/GameplayStatics.h"
-
 
 void FTileGeneratorTransform::MoveVector(const float InValue)
 {
@@ -31,6 +29,7 @@ ACollapsingGameModeBase::ACollapsingGameModeBase()
 	AddBPFloor(TEXT("/Game/Collapsing/Blueprints/BP_BasicFloor"));
 	AddBPFloor(TEXT("/Game/Collapsing/Blueprints/BP_LeftCornerFloor"));
 	AddBPFloor(TEXT("/Game/Collapsing/Blueprints/BP_RightCornerFloor"));
+	AddBPFloor(TEXT("/Game/Collapsing/Blueprints/BP_SpeedFloor"));
 
 	BasicMapString = "";
 	CurrentMapIndex = 0;
@@ -41,7 +40,7 @@ void ACollapsingGameModeBase::AddBPFloor(const FString BPPath)
 {
 	ConstructorHelpers::FClassFinder<AActor> BPFloor(*BPPath);
 	const int32 Position = BPPath.Find(TEXT("/"), ESearchCase::IgnoreCase, ESearchDir::FromEnd);
-	if (BPFloor.Succeeded())	
+	if (BPFloor.Succeeded())
 	{
 		BPFloorArray.Emplace(BPFloor.Class);
 		UE_LOG(LogTemp, Warning, TEXT("%s Loaded"), *BPPath.RightChop(Position + 1));
@@ -61,13 +60,14 @@ void ACollapsingGameModeBase::BeginPlay()
 
 void ACollapsingGameModeBase::GenerateMaps()
 {
-	FFileHelper::LoadFileToString(BasicMapString, *(FPaths::ProjectDir() + "TextMaps/test1.txt"));
+	FFileHelper::LoadFileToString(BasicMapString, *(FPaths::ProjectDir() + "TextMaps/test.txt"));
 	check(!BasicMapString.IsEmpty())
 	UE_LOG(LogTemp, Warning, TEXT("Map Loaded : %s"), *BasicMapString);
 	for (int32 It = 0; It != 5; ++It)
 	{
 		AddFloorTile();
 	}
+	UE_LOG(LogTemp, Warning, TEXT("sadsadsasa"))
 }
 
 void ACollapsingGameModeBase::AddFloorTile()
@@ -81,10 +81,10 @@ void ACollapsingGameModeBase::AddFloorTile()
 		GeneratedFloorArray[ArrayIndex]->Destroy();
 	}
 
-	if (MapChar == 'B')
+	if (MapChar == 'B' || MapChar == 'S')
 	{
 		GeneratedFloorArray[ArrayIndex] = GetWorld()->SpawnActor<AActor>(
-			BPFloorArray[Basic], TileGenTrans.Vector, TileGenTrans.Rotator);
+			BPFloorArray[MapChar == 'B' ? Basic : Speed], TileGenTrans.Vector, TileGenTrans.Rotator);
 		TileGenTrans.MoveVector(400.f);
 	}
 	else if (MapChar == 'L')

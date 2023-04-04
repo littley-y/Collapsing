@@ -6,9 +6,6 @@
 #include "BasicFloor.h"
 #include "CornerFloor.generated.h"
 
-/**
- * 
- */
 UCLASS()
 class COLLAPSING_API ACornerFloor : public ABasicFloor
 {

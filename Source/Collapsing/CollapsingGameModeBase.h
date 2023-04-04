@@ -6,16 +6,13 @@
 #include "GameFramework/GameModeBase.h"
 #include "CollapsingGameModeBase.generated.h"
 
-/**
- * 
- */
-
 UENUM()
 enum EFloorType
 {
 	Basic = 0,
 	LeftCorner,
-	RightCorner
+	RightCorner,
+	Speed
 };
 
 USTRUCT()
@@ -36,13 +33,6 @@ class COLLAPSING_API ACollapsingGameModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
 
-	FString BasicMapString;
-
-	FTileGeneratorTransform TileGenTrans;
-
-	int32 CurrentMapIndex;
-
-	static constexpr uint16 MaxTileNum = 10;
 public:
 	ACollapsingGameModeBase();
 
@@ -53,6 +43,15 @@ public:
 
 	UFUNCTION()
 	void AddFloorTile();
+
+private:
+	FString BasicMapString;
+
+	FTileGeneratorTransform TileGenTrans;
+
+	int32 CurrentMapIndex;
+	
+	static constexpr uint16 MaxTileNum = 10;
 
 protected:
 	virtual void BeginPlay() override;

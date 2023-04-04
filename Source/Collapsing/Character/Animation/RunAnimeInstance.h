@@ -6,29 +6,27 @@
 #include "Animation/AnimInstance.h"
 #include "RunAnimeInstance.generated.h"
 
-/**
- * 
- */
 UCLASS()
 class COLLAPSING_API URunAnimeInstance : public UAnimInstance
 {
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category="Movement")
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Value")
 	float Speed;
-
-	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category="MoveMent")
+	
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Value")
 	bool bIsInAir;
 
-	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category="MoveMent")
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Pawn")
 	APawn* Pawn;
-
-	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category="MoveMent")
-	TObjectPtr<UPawnMovementComponent> MovementComponent;
 
 	virtual void NativeInitializeAnimation() override;
 
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
+
+private:
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Character", meta = (AllowPrivateAccess))
+	TObjectPtr<class ARunCharacter> RunCharacter;
 
 };

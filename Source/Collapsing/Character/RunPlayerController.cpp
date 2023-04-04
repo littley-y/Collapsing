@@ -25,11 +25,11 @@ void ARunPlayerController::SetupInputComponent()
 	if (UEnhancedInputComponent* PlayerEnhancedInput = CastChecked<UEnhancedInputComponent>(InputComponent))
 	{
 		PlayerEnhancedInput->BindAction(InputActions->InputMove, ETriggerEvent::Triggered, this,
-		                                &ARunPlayerController::Move);
+										&ARunPlayerController::MoveWithoutTurn);
 		PlayerEnhancedInput->BindAction(InputActions->InputSpeed, ETriggerEvent::Started, this,
 		                                &ARunPlayerController::ChangeSpeed);
 		PlayerEnhancedInput->BindAction(InputActions->InputTurn, ETriggerEvent::Started, this,
-		                                &ARunPlayerController::SetDesiredRotation);
+		                                &ARunPlayerController::ReadyToTurn);
 
 		PlayerEnhancedInput->BindAction(InputActions->InputJump, ETriggerEvent::Started, this,
 		                                &ARunPlayerController::Jump);
@@ -40,23 +40,21 @@ void ARunPlayerController::SetupInputComponent()
 		                                &ARunPlayerController::ChangeView);
 		PlayerEnhancedInput->BindAction(InputActions->InputChangeView, ETriggerEvent::Completed, this,
 		                                &ARunPlayerController::ResetView);
-
 	}
 }
 
-void ARunPlayerController::Move(const FInputActionValue& Value)
+void ARunPlayerController::MoveWithoutTurn(const FInputActionValue& Value)
 {
 	const FVector2D MovementVector = Value.Get<FVector2D>();
 
-	const FRotator Rotation = GetControlRotation();
-	const FRotator YawRotation(0.f, Rotation.Yaw, 0.f);
+	const FRotator YawRotation(0.f, GetControlRotation().Yaw, 0.f);
 
 	const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 
 	RunCharacter->AddMovementInput(RightDirection, MovementVector.X);
 }
 
-void ARunPlayerController::SetDesiredRotation(const FInputActionValue& Value)
+void ARunPlayerController::ReadyToTurn(const FInputActionValue& Value)
 {
 	if (RunCharacter->bCanTurn == true)
 	{
@@ -78,7 +76,6 @@ void ARunPlayerController::StopJump(const FInputActionValue& Value)
 {
 	RunCharacter->StopJumping();
 	UE_LOG(LogTemp, Warning, TEXT("Jump End"));
-
 }
 
 void ARunPlayerController::ChangeSpeed(const FInputActionValue& Value)
@@ -119,7 +116,7 @@ void ARunPlayerController::MoveForward(const FRotator& ControlRot)
 
 void ARunPlayerController::TurnCorner(const FRotator& ControlRot) // 회전 보간 및 입력 막기.
 {
-	static bool bIsTurning = false;
+	static bool bIsTurning;
 
 	if (RunCharacter->bCanTurn == true && !DesiredRotation.Equals(ControlRot, 0.1f))
 	{
@@ -128,7 +125,8 @@ void ARunPlayerController::TurnCorner(const FRotator& ControlRot) // 회전 보�
 	}
 	if (bIsTurning == true)
 	{
-		const FRotator InterpolatedRot = FMath::RInterpTo(ControlRot, DesiredRotation, GetWorld()->GetDeltaSeconds(), 15.f);
+		const FRotator InterpolatedRot = FMath::RInterpTo(ControlRot, DesiredRotation, GetWorld()->GetDeltaSeconds(),
+		                                                  15.f);
 		SetControlRotation(InterpolatedRot);
 		if (DesiredRotation.Equals(InterpolatedRot, 0.1f))
 		{

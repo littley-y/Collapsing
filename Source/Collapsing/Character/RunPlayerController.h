@@ -8,10 +8,6 @@
 #include "GameFramework/PlayerController.h"
 #include "RunPlayerController.generated.h"
 
-/**
- * 
- */
-
 UCLASS()
 class COLLAPSING_API ARunPlayerController : public APlayerController
 {
@@ -19,7 +15,7 @@ class COLLAPSING_API ARunPlayerController : public APlayerController
 	
 	FRotator DesiredRotation;
 
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Charactor", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Pawn", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class ARunCharacter> RunCharacter;
 
 	void MoveForward(const FRotator& ControlRot);
@@ -29,9 +25,9 @@ class COLLAPSING_API ARunPlayerController : public APlayerController
 public:
 	ARunPlayerController(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
-	void Move(const FInputActionValue& Value);
+	void MoveWithoutTurn(const FInputActionValue& Value);
 
-	void SetDesiredRotation(const FInputActionValue& Value);
+	void ReadyToTurn(const FInputActionValue& Value);
 
 	void Jump(const FInputActionValue& Value);
 	void StopJump(const FInputActionValue& Value);
@@ -48,9 +44,9 @@ protected:
 
 	virtual void BeginPlay() override;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "EnhancedInput")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input")
 	class UInputMappingContext* InputMapping;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "EnhancedInput")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input")
 	class UInputDataAsset* InputActions;
 };											  

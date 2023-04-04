@@ -11,6 +11,27 @@ class COLLAPSING_API ARunCharacter final : public ACharacter
 {
 	GENERATED_BODY()
 
+public:
+	bool bCanTurn = false;
+
+	bool bIsDead = false;
+
+	bool bCanChangeSpeed = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Asseets")
+	UParticleSystem* DeathParticleSystem;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Asseets")
+	USoundBase* DeathSound;
+
+	ARunCharacter();
+
+	virtual void Tick(float DeltaTime) override;
+
+	UFUNCTION(BlueprintCallable)
+	void Death();
+
+private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	class USpringArmComponent* CameraArm;
 
@@ -22,36 +43,14 @@ class COLLAPSING_API ARunCharacter final : public ACharacter
 
 	void SetCameraAndArm() const;
 
-	void SetMovement() const;
-
-public:
-	
-	ARunCharacter();
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Asseets")
-	UParticleSystem* DeathParticleSystem;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Asseets")
-	USoundBase* DeathSound;
-
-	UFUNCTION(BlueprintCallable)
-	void Death();
-
-	bool bCanTurn = false;
-
-	bool bIsDead = false;
-
-	bool bCanChangeSpeed = false;
+	void SetMovement() const;	
 
 protected:
+	UPROPERTY()
+	FTimerHandle RestartTimerHandle;
+
 	virtual void BeginPlay() override;
 
 	UFUNCTION()
 	void OnDeath();
-
-	UPROPERTY()
-	FTimerHandle RestartTimerHandle;
-
-public:	
-	virtual void Tick(float DeltaTime) override;
 };

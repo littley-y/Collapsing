@@ -6,9 +6,6 @@
 #include "BasicFloor.h"
 #include "StairDownFloor.generated.h"
 
-/**
- * 
- */
 UCLASS()
 class COLLAPSING_API AStairDownFloor : public ABasicFloor
 {
@@ -19,6 +16,6 @@ public:
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	TArray<UStaticMeshComponent*> StairArray;
+	TArray<TObjectPtr<UStaticMeshComponent>> StairArray;
 
 };

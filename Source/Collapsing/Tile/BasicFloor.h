@@ -19,7 +19,7 @@ public:
 	TObjectPtr<UStaticMeshComponent> FloorMesh;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components")
-	TArray<UStaticMeshComponent*> WallArray;
+	TArray<TObjectPtr<UStaticMeshComponent>> WallArray;
 
 	ABasicFloor();
 
@@ -40,12 +40,12 @@ protected:
 
 	virtual void BeginPlay() override;
 
-	void CreateWallArray();
+	void SetWallArray();
 
-	void CreateWall(UStaticMeshComponent*& Wall, const int32& Ix);
+	void SetWall(UStaticMeshComponent* Wall) const;
 
 	void CreateFloor();
 
-	void CreateGenerateTileZone();
+	void SetGenerateTileZone();
 };
 

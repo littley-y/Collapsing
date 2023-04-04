@@ -7,7 +7,6 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Kismet/GameplayStatics.h"
 
-// Sets default values
 ARunCharacter::ARunCharacter()
 {
 	bUseControllerRotationYaw = false;
@@ -52,13 +51,11 @@ void ARunCharacter::SetCameraAndArm() const
 	SecondCamera->SetupAttachment(GetMesh(), TEXT("head"));
 }
 
-// Called when the game starts or when spawned
 void ARunCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 }
 
-// Called every frame
 void ARunCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);

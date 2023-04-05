@@ -46,11 +46,8 @@ void ARunPlayerController::SetupInputComponent()
 void ARunPlayerController::MoveWithoutTurn(const FInputActionValue& Value)
 {
 	const FVector2D MovementVector = Value.Get<FVector2D>();
-
 	const FRotator YawRotation(0.f, GetControlRotation().Yaw, 0.f);
-
 	const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
-
 	RunCharacter->AddMovementInput(RightDirection, MovementVector.X);
 }
 
@@ -59,7 +56,6 @@ void ARunPlayerController::ReadyToTurn(const FInputActionValue& Value)
 	if (RunCharacter->bCanTurn == true)
 	{
 		const float TurnAxisFloat = Value.Get<float>();
-
 		DesiredRotation = GetControlRotation();
 		DesiredRotation.Yaw += TurnAxisFloat * 90;
 		UE_LOG(LogTemp, Warning, TEXT("Set DesiredRotation : %s"), *DesiredRotation.ToString());
@@ -118,7 +114,7 @@ void ARunPlayerController::TurnCorner(const FRotator& ControlRot) // 회전 보�
 {
 	static bool bIsTurning;
 
-	if (RunCharacter->bCanTurn == true && !DesiredRotation.Equals(ControlRot, 0.1f))
+	if (RunCharacter->bCanTurn == true && DesiredRotation.Equals(ControlRot, 0.1f) == false)
 	{
 		bIsTurning = true;
 		RunCharacter->bCanTurn = false;

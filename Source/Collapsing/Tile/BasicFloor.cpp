@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "BasicFloor.h"
+#include "TileGenerator.h"
 #include "Collapsing/CollapsingGameModeBase.h"
 #include "Collapsing/Character/RunCharacter.h"
 #include "Components/BoxComponent.h"
@@ -122,10 +123,10 @@ void ABasicFloor::OnGenerateBoxBeginOverlap(UPrimitiveComponent* OverlappedComp,
 	const ARunCharacter* RunCharacter = Cast<ARunCharacter>(OtherActor);
 	if (RunCharacter != nullptr && OtherComp)
 	{
-		ACollapsingGameModeBase* RunGameMode = Cast<ACollapsingGameModeBase>(UGameplayStatics::GetGameMode(GetWorld()));
+		const ACollapsingGameModeBase* RunGameMode = Cast<ACollapsingGameModeBase>(UGameplayStatics::GetGameMode(GetWorld()));
 		if (RunGameMode != nullptr)
 		{
-			RunGameMode->AddFloorTile();
+			RunGameMode->TileGenerator->AddFloorTile();
 		}
 	}
 }

@@ -1,0 +1,64 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
+#pragma once
+
+#include "CoreMinimal.h"
+#include "UObject/NoExportTypes.h"
+#include "TileGenerator.generated.h"
+
+UENUM()
+enum EFloorType
+{
+	Basic = 0,
+	LeftCorner,
+	RightCorner,
+	Speed
+};
+
+USTRUCT()
+struct FTileGeneratorTransform
+{
+	GENERATED_BODY()
+
+	FVector Vector;
+	FRotator Rotator;
+
+	FTileGeneratorTransform() : Vector(0.f, 0.f, 0.f), Rotator(0.f, 0.f, 0.f) {}
+
+	void MoveVector(const float InValue);
+};
+
+/**
+ * 맵 정보에 따라 타일을 생성하는 클래스입니다.
+ */
+UCLASS()
+class COLLAPSING_API UTileGenerator : public UObject
+{
+	GENERATED_BODY()
+
+public:
+	UTileGenerator();
+
+	void SetMapString(const FString& InMapString) { MapString = InMapString; }
+
+	void AddBPFloor(FString BPPath);
+
+	void GenerateMaps();
+
+	void AddFloorTile();
+
+private:
+	FString MapString;
+	int32 CurrentMapIndex = 0;
+
+	static constexpr uint16 MaxTileNum = 10;
+
+	FTileGeneratorTransform TileGenTrans;
+
+protected:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	TArray<TSubclassOf<AActor>> BPFloorArray;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	TArray<TObjectPtr<AActor>> GeneratedFloorArray;
+};

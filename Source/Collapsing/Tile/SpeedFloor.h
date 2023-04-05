@@ -13,7 +13,10 @@ class COLLAPSING_API ASpeedFloor : public ABasicFloor
 
 public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components")
-	UStaticMeshComponent* ArrowMesh;
+	TObjectPtr<UStaticMeshComponent> UpArrowMesh;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components")
+	TObjectPtr<UStaticMeshComponent> DownArrowMesh;
 
 	ASpeedFloor();
 
@@ -26,7 +29,7 @@ public:
 
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="TriggerBox", meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<class UBoxComponent> SpeedZone;
+	TObjectPtr<UBoxComponent> SpeedZone;
 
 	void SetSpeedZone();
 };

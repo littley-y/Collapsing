@@ -48,6 +48,7 @@ void ARunPlayerController::MoveWithoutTurn(const FInputActionValue& Value)
 	const FRotator YawRotation(0.f, GetControlRotation().Yaw, 0.f);
 	const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 	RunCharacter->AddMovementInput(RightDirection, MovementVector.X);
+	RunCharacter->AddMovementInput(GetControlRotation().Vector());
 }
 
 void ARunPlayerController::ReadyToTurn(const FInputActionValue& Value)

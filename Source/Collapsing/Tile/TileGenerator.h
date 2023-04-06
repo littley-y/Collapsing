@@ -27,9 +27,6 @@ struct FTileGeneratorTransform
 	void MoveVector(const float InValue);
 };
 
-/**
- * 맵 정보에 따라 타일을 생성하는 클래스입니다.
- */
 UCLASS()
 class COLLAPSING_API UTileGenerator : public UObject
 {
@@ -42,7 +39,7 @@ public:
 
 	void AddBPFloor(const FString& BPPath);
 
-	void GenerateMaps();
+	void InitMaps();
 
 	void AddFloorTile();
 

@@ -6,6 +6,8 @@
 #include "GameFramework/Actor.h"
 #include "BasicFloor.generated.h"
 
+class UTileGenerator;
+
 UCLASS()
 class COLLAPSING_API ABasicFloor : public AActor
 {

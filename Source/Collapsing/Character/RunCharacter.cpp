@@ -23,7 +23,7 @@ void ARunCharacter::SetMovement() const
 
 	GetCharacterMovement()->JumpZVelocity = 500.f;
 	GetCharacterMovement()->AirControl = 2.f;
-	GetCharacterMovement()->MaxWalkSpeed = 1000.f;
+	GetCharacterMovement()->MaxWalkSpeed = 900.f;
 }
 
 void ARunCharacter::SetCameraAndArm()

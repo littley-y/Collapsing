@@ -17,6 +17,10 @@ public:
 
 	ACollapsingGameModeBase();
 
+	void SetTileGenerator() const;
+
+	void GenerateTile() const;
+
 protected:
 	virtual void BeginPlay() override;
 };

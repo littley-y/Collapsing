@@ -18,15 +18,12 @@ public:
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Value")
 	bool bIsInAir;
 
-	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Pawn")
-	APawn* Pawn;
-
 	virtual void NativeInitializeAnimation() override;
 
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
 
 private:
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Character", meta = (AllowPrivateAccess))
-	TObjectPtr<class ARunCharacter> RunCharacter;
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Pawn", meta = (AllowPrivateAccess = "true"))
+	APawn* BasicPawn;
 
 };

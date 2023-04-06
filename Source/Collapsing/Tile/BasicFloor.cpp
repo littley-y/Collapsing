@@ -1,7 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "BasicFloor.h"
-#include "TileGenerator.h"
 #include "Collapsing/CollapsingGameModeBase.h"
 #include "Collapsing/Character/RunCharacter.h"
 #include "Components/BoxComponent.h"
@@ -122,10 +121,11 @@ void ABasicFloor::OnGenerateBoxBeginOverlap(UPrimitiveComponent* OverlappedComp,
 	const ARunCharacter* RunCharacter = Cast<ARunCharacter>(OtherActor);
 	if (RunCharacter != nullptr && OtherComp)
 	{
+		// 델리게이트로 불러서 최적화 할 수 있는 방법 없으려나...
 		const ACollapsingGameModeBase* RunGameMode = Cast<ACollapsingGameModeBase>(UGameplayStatics::GetGameMode(GetWorld()));
 		if (RunGameMode != nullptr)
 		{
-			RunGameMode->TileGenerator->AddFloorTile();
+			RunGameMode->GenerateTile();
 		}
 	}
 }

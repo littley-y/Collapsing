@@ -89,7 +89,7 @@ void UTileGenerator::AddFloorTile()
 	CurrentMapIndex++;
 }
 
-void UTileGenerator::GenerateMaps()
+void UTileGenerator::InitMaps()
 {
 	for (int32 It = 0; It != 5; ++It)
 	{

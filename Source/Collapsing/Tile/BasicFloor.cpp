@@ -4,6 +4,7 @@
 #include "Collapsing/CollapsingGameModeBase.h"
 #include "Collapsing/Character/RunCharacter.h"
 #include "Components/BoxComponent.h"
+#include "GameFramework/PawnMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 
 ABasicFloor::ABasicFloor()
@@ -108,7 +109,7 @@ void ABasicFloor::OnWallHit(UPrimitiveComponent* HitComponent, AActor* OtherActo
 	if (RunCharacter != nullptr)
 	{
 		const float Dot = FVector::DotProduct(Hit.Normal, RunCharacter->GetActorForwardVector());
-		if (FMath::IsNearlyEqual(Dot, 1.f, 1.f))
+		if (RunCharacter->IsJumpProvidingForce() == true || FMath::IsNearlyEqual(Dot, 1.f, 1.f))
 		{
 			RunCharacter->Death();
 		}

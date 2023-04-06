@@ -17,7 +17,7 @@ public:
 
 	ACollapsingGameModeBase();
 
-	void SetTileGenerator() const;
+	void SetMapBasicString() const;
 
 	void GenerateTile() const;
 

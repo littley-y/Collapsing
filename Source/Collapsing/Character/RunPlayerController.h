@@ -25,9 +25,6 @@ public:
 
 	void ChangeSpeed(const FInputActionValue& Value);
 
-	void ChangeView(const FInputActionValue& Value);
-	void ResetView(const FInputActionValue& Value);
-
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input")
 	TObjectPtr<UInputMappingContext> InputMapping;
@@ -42,14 +39,14 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
-	bool bIsTurning = false;
+	bool bControllerCanTurn = false;
 
 	FRotator DesiredRotation;
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Pawn", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class ARunCharacter> RunCharacter;
 
-	void MoveForward(const FRotator& ControlRot);
+	void MoveForward(const FRotator& ControlRot) const;
 
-	void TurnCorner(const FRotator& ControlRot);
+	void TurnController(const FRotator& ControlRot);
 };											  

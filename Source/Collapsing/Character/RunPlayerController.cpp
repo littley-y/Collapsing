@@ -34,11 +34,6 @@ void ARunPlayerController::SetupInputComponent()
 		                                &ARunPlayerController::Jump);
 		PlayerEnhancedInput->BindAction(InputActions->InputJump, ETriggerEvent::Completed, this,
 		                                &ARunPlayerController::StopJump);
-
-		PlayerEnhancedInput->BindAction(InputActions->InputChangeView, ETriggerEvent::Triggered, this,
-		                                &ARunPlayerController::ChangeView);
-		PlayerEnhancedInput->BindAction(InputActions->InputChangeView, ETriggerEvent::Completed, this,
-		                                &ARunPlayerController::ResetView);
 	}
 }
 
@@ -49,15 +44,19 @@ void ARunPlayerController::MoveWithoutTurn(const FInputActionValue& Value)
 	const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 	RunCharacter->AddMovementInput(RightDirection, MovementVector.X);
 	RunCharacter->AddMovementInput(GetControlRotation().Vector());
+	
 }
 
 void ARunPlayerController::ReadyToTurn(const FInputActionValue& Value)
 {
-	if (RunCharacter->bCanTurn == true)
+	if (RunCharacter->bCanCharacterTurn == true)
 	{
 		const float TurnAxisFloat = Value.Get<float>();
 		DesiredRotation = GetControlRotation();
 		DesiredRotation.Yaw += TurnAxisFloat * 90;
+		RunCharacter->bCanCharacterTurn = false;
+		bControllerCanTurn = true;
+
 		UE_LOG(LogTemp, Warning, TEXT("Set DesiredRotation : %s"), *DesiredRotation.ToString());
 	}
 }
@@ -80,53 +79,41 @@ void ARunPlayerController::ChangeSpeed(const FInputActionValue& Value)
 	{
 		const float TargetSpeed = Value.Get<float>() * 200.f;
 		RunCharacter->GetCharacterMovement()->MaxWalkSpeed += TargetSpeed;
-		UE_LOG(LogTemp, Warning, TEXT("현재 속도 %f"), RunCharacter->GetCharacterMovement()->MaxWalkSpeed)
 		RunCharacter->bCanChangeSpeed = false;
+		UE_LOG(LogTemp, Warning, TEXT("현재 속도 %f"), RunCharacter->GetCharacterMovement()->MaxWalkSpeed)
 	}
-}
-
-void ARunPlayerController::ChangeView(const FInputActionValue& Value)
-{
-}
-
-void ARunPlayerController::ResetView(const FInputActionValue& Value)
-{
 }
 
 void ARunPlayerController::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 
-	if (RunCharacter->bIsDead == false)
+	if (RunCharacter->bIsDead == false) 
 	{
 		const FRotator ControlRot = GetControlRotation();
 		MoveForward(ControlRot);
-		TurnCorner(ControlRot);
+
+		if (bControllerCanTurn == true)
+		{
+			TurnController(ControlRot);
+		}
 	}
 }
 
-void ARunPlayerController::MoveForward(const FRotator& ControlRot)
+void ARunPlayerController::MoveForward(const FRotator& ControlRot) const
 {
 	RunCharacter->AddMovementInput(ControlRot.Vector());
 }
 
-void ARunPlayerController::TurnCorner(const FRotator& ControlRot) // 회전 보간 및 입력 막기.
+void ARunPlayerController::TurnController(const FRotator& ControlRot)
 {
-	if (RunCharacter->bCanTurn == true && DesiredRotation.Equals(ControlRot, 0.1f) == false)
+	const FRotator InterpolatedRot = FMath::RInterpTo(ControlRot, DesiredRotation, GetWorld()->GetDeltaSeconds(), 20.f);
+	SetControlRotation(InterpolatedRot);
+
+	if (DesiredRotation.Equals(InterpolatedRot, 0.01f))
 	{
-		bIsTurning = true;
-		RunCharacter->bCanTurn = false;
-	}
-	if (bIsTurning == true)
-	{
-		const FRotator InterpolatedRot = FMath::RInterpTo(ControlRot, DesiredRotation, GetWorld()->GetDeltaSeconds(),
-		                                                  15.f);
-		SetControlRotation(InterpolatedRot);
-		if (DesiredRotation.Equals(InterpolatedRot, 0.1f))
-		{
-			bIsTurning = false;
-			UE_LOG(LogTemp, Warning, TEXT("Rotation finished"));
-		}
+		bControllerCanTurn = false;
+		UE_LOG(LogTemp, Warning, TEXT("Rotation finished"));
 	}
 }
 

@@ -8,26 +8,26 @@ ACollapsingGameModeBase::ACollapsingGameModeBase()
 	TileGenerator = CreateDefaultSubobject<UTileGenerator>(TEXT("TileGenerator"));
 }
 
-void ACollapsingGameModeBase::SetTileGenerator() const
+void ACollapsingGameModeBase::SetMapBasicString() const
 {
-	FString BasicMapString;
+	FString MapString;
 	const FString FileString(TEXT("/Collapsing/Data/TextMaps/BasicMap.txt"));
+	FFileHelper::LoadFileToString(MapString, *(FPaths::Combine(FPaths::GameSourceDir(), FileString)));
+	check(!MapString.IsEmpty())
 
-	FFileHelper::LoadFileToString(BasicMapString, *(FPaths::Combine(FPaths::GameSourceDir(), FileString)));
-	check(!BasicMapString.IsEmpty())
-	TileGenerator->SetMapString(BasicMapString);
-	UE_LOG(LogTemp, Warning, TEXT("Map Loaded : %s"), *BasicMapString);
+	TileGenerator->SetMapString(MapString);
+	UE_LOG(LogTemp, Warning, TEXT("Map Loaded : %s"), *MapString);
 }
 
 void ACollapsingGameModeBase::GenerateTile() const
 {
-	TileGenerator->AddFloorTile();
+	TileGenerator->SpawnFloorTile();
 }
 
 void ACollapsingGameModeBase::BeginPlay()
 {
 	Super::BeginPlay();
 
-	SetTileGenerator();
+	SetMapBasicString();
 	TileGenerator->InitMaps();
 }

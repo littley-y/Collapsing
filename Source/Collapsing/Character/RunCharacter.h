@@ -12,7 +12,7 @@ class COLLAPSING_API ARunCharacter final : public ACharacter
 	GENERATED_BODY()
 
 public:
-	bool bCanTurn = false;
+	bool bCanCharacterTurn = false;
 
 	bool bIsDead = false;
 

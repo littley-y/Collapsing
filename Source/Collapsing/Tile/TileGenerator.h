@@ -5,13 +5,14 @@
 #include "CoreMinimal.h"
 #include "TileGenerator.generated.h"
 
-UENUM()
 enum EFloorType
 {
 	Basic = 0,
 	LeftCorner,
 	RightCorner,
-	Speed
+	Speed,
+	Up,
+	Do
 };
 
 USTRUCT()
@@ -22,9 +23,9 @@ struct FTileGeneratorTransform
 	FVector Vector;
 	FRotator Rotator;
 
-	FTileGeneratorTransform() : Vector(0.f, 0.f, 0.f), Rotator(0.f, 0.f, 0.f) {}
+	FTileGeneratorTransform() : Vector(-800.f, 0.f, 0.f), Rotator(0.f, 0.f, 0.f) {}
 
-	void MoveVector(const float InValue);
+	void UpdateVector(const float InValue);
 };
 
 UCLASS()
@@ -37,11 +38,11 @@ public:
 
 	void SetMapString(const FString& InMapString) { MapString = InMapString; }
 
-	void AddBPFloor(const FString& BPPath);
+	void LoadBPFloor(const FString& BPPath);
 
 	void InitMaps();
 
-	void AddFloorTile();
+	void SpawnFloorTile();
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
@@ -52,9 +53,13 @@ protected:
 
 private:
 	FString MapString;
-	int32 CurrentMapIndex = 0;
 
-	static constexpr uint16 MaxTileNum = 10;
+	int32 CurrentMapIndex;
+
+	static constexpr float TileSize = 400.f;
+
+	static constexpr uint8 InitTileNum = 6;
+	static constexpr uint8 MaxTileNum = 10;
 
 	FTileGeneratorTransform TileGenTrans;
 };

@@ -2,7 +2,7 @@
 
 #include "TileGenerator.h"
 
-void FTileGeneratorTransform::MoveVector(const float InValue)
+void FTileGeneratorTransform::UpdateVector(const float InValue)
 {
 	const float CurrentDegrees = FMath::FindDeltaAngleDegrees(Rotator.Yaw, 0.f);
 	if (FMath::IsNearlyEqual(CurrentDegrees, 0.f))
@@ -22,7 +22,8 @@ void FTileGeneratorTransform::MoveVector(const float InValue)
 		Vector.Y -= InValue;
 	}
 
-	if (FMath::IsNearlyEqual(FMath::Abs(Rotator.Yaw), 360.f, 0.01f))
+	Rotator.Yaw = FMath::Fmod(Rotator.Yaw, 360.f);
+	if (FMath::IsNearlyZero(Rotator.Yaw))
 	{
 		Rotator.Yaw = 0.f;
 	}
@@ -30,15 +31,16 @@ void FTileGeneratorTransform::MoveVector(const float InValue)
 
 UTileGenerator::UTileGenerator()
 {
-	AddBPFloor(TEXT("/Game/Collapsing/Blueprints/BP_BasicFloor"));
-	AddBPFloor(TEXT("/Game/Collapsing/Blueprints/BP_LeftCornerFloor"));
-	AddBPFloor(TEXT("/Game/Collapsing/Blueprints/BP_RightCornerFloor"));
-	AddBPFloor(TEXT("/Game/Collapsing/Blueprints/BP_SpeedFloor"));
+	LoadBPFloor(TEXT("/Game/Collapsing/Blueprints/BP_BasicFloor"));
+	LoadBPFloor(TEXT("/Game/Collapsing/Blueprints/BP_LeftCornerFloor"));
+	LoadBPFloor(TEXT("/Game/Collapsing/Blueprints/BP_RightCornerFloor"));
+	LoadBPFloor(TEXT("/Game/Collapsing/Blueprints/BP_SpeedFloor"));
 
 	GeneratedFloorArray.SetNum(MaxTileNum + 1);
+	CurrentMapIndex = 0;
 }
 
-void UTileGenerator::AddBPFloor(const FString& BPPath)
+void UTileGenerator::LoadBPFloor(const FString& BPPath)
 {
 	ConstructorHelpers::FClassFinder<AActor> BPFloor(*BPPath);
 	const int32 Position = BPPath.Find(TEXT("/"), ESearchCase::IgnoreCase, ESearchDir::FromEnd);
@@ -47,13 +49,9 @@ void UTileGenerator::AddBPFloor(const FString& BPPath)
 		BPFloorArray.Emplace(BPFloor.Class);
 		UE_LOG(LogTemp, Warning, TEXT("%s Loaded"), *BPPath.RightChop(Position + 1));
 	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("%s Load Failed"), *BPPath.RightChop(Position + 1));
-	}
 }
 
-void UTileGenerator::AddFloorTile()
+void UTileGenerator::SpawnFloorTile()
 {
 	const TCHAR& MapChar = MapString[CurrentMapIndex % MapString.Len()];
 	const int32 ArrayIndex = CurrentMapIndex % MaxTileNum;
@@ -68,7 +66,7 @@ void UTileGenerator::AddFloorTile()
 	{
 		GeneratedFloorArray[ArrayIndex] = GetWorld()->SpawnActor<AActor>(
 			BPFloorArray[MapChar == 'B' ? Basic : Speed], TileGenTrans.Vector, TileGenTrans.Rotator);
-		TileGenTrans.MoveVector(400.f);
+		TileGenTrans.UpdateVector(TileSize);
 	}
 	else if (MapChar == 'L')
 	{
@@ -80,20 +78,21 @@ void UTileGenerator::AddFloorTile()
 	{
 		GeneratedFloorArray[ArrayIndex] = GetWorld()->SpawnActor<AActor>(
 			BPFloorArray[RightCorner], TileGenTrans.Vector, TileGenTrans.Rotator);
-		TileGenTrans.MoveVector(400.f);
+		TileGenTrans.UpdateVector(TileSize);
 		TileGenTrans.Rotator.Yaw += 90.f;
-		TileGenTrans.MoveVector(400.f);
+		TileGenTrans.UpdateVector(TileSize);
 	}
+	CurrentMapIndex++;
+
 	UE_LOG(LogTemp, Warning, TEXT("Floor Gen Location : %s"), *TileGenTrans.Vector.ToString())
 	UE_LOG(LogTemp, Warning, TEXT("Floor Gen Yaw : %f"), TileGenTrans.Rotator.Yaw)
-	CurrentMapIndex++;
 }
 
 void UTileGenerator::InitMaps()
 {
-	for (int32 It = 0; It != 5; ++It)
+	for (int32 It = 0; It != InitTileNum; ++It)
 	{
-		AddFloorTile();
+		SpawnFloorTile();
 	}
 	UE_LOG(LogTemp, Warning, TEXT("Init Tiles Generated : %d"), MaxTileNum)
 }

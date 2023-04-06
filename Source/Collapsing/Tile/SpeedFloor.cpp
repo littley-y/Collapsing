@@ -9,10 +9,12 @@ ASpeedFloor::ASpeedFloor()
 	UpArrowMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("UpArrowMesh"));
 	UpArrowMesh->SetupAttachment(SceneComponent);
 	UpArrowMesh->SetCollisionProfileName("OverlapPawnOnly");
+	UpArrowMesh->SetRelativeLocation(FVector(200.f, 50.f, 50.f));
 
 	DownArrowMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("DownArrowMesh"));
 	DownArrowMesh->SetupAttachment(SceneComponent);
 	DownArrowMesh->SetCollisionProfileName("OverlapPawnOnly");
+	DownArrowMesh->SetRelativeLocation(FVector(200.f, 50.f, 50.f));
 
 	SetSpeedZone();
 }

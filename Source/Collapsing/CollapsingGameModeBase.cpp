@@ -1,7 +1,6 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "CollapsingGameModeBase.h"
-#include "Kismet/GameplayStatics.h"
 #include "Tile/TileGenerator.h"
 
 ACollapsingGameModeBase::ACollapsingGameModeBase()
@@ -14,7 +13,8 @@ void ACollapsingGameModeBase::BeginPlay()
 	Super::BeginPlay();
 
 	FString BasicMapString;
-	FFileHelper::LoadFileToString(BasicMapString, *(FPaths::GameSourceDir() + "/Collapsing/Data/TextMaps/Test.txt"));
+	const FString FileString(TEXT("/Collapsing/Data/TextMaps/BasicMap.txt"));
+	FFileHelper::LoadFileToString(BasicMapString, *(FPaths::Combine(FPaths::GameSourceDir(), FileString)));
 	check(!BasicMapString.IsEmpty())
 	UE_LOG(LogTemp, Warning, TEXT("Map Loaded : %s"), *BasicMapString);
 	TileGenerator->SetMapString(BasicMapString);

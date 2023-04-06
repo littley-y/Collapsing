@@ -1,6 +1,5 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "TileGenerator.h"
 
 void FTileGeneratorTransform::MoveVector(const float InValue)
@@ -39,7 +38,7 @@ UTileGenerator::UTileGenerator()
 	GeneratedFloorArray.SetNum(MaxTileNum + 1);
 }
 
-void UTileGenerator::AddBPFloor(const FString BPPath)
+void UTileGenerator::AddBPFloor(const FString& BPPath)
 {
 	ConstructorHelpers::FClassFinder<AActor> BPFloor(*BPPath);
 	const int32 Position = BPPath.Find(TEXT("/"), ESearchCase::IgnoreCase, ESearchDir::FromEnd);

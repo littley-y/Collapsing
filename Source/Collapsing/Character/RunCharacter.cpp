@@ -13,11 +13,6 @@ ARunCharacter::ARunCharacter()
 
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.f);
 	SetMovement();
-
-	CameraArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraArm"));
-	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
-	SecondCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("Second Camera"));
-
 	SetCameraAndArm();
 }
 
@@ -28,11 +23,12 @@ void ARunCharacter::SetMovement() const
 
 	GetCharacterMovement()->JumpZVelocity = 500.f;
 	GetCharacterMovement()->AirControl = 2.f;
-	GetCharacterMovement()->MaxWalkSpeed = 1200.f;
+	GetCharacterMovement()->MaxWalkSpeed = 1000.f;
 }
 
-void ARunCharacter::SetCameraAndArm() const
+void ARunCharacter::SetCameraAndArm()
 {
+	CameraArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraArm"));
 	CameraArm->SetupAttachment(GetRootComponent());
 	CameraArm->TargetArmLength = 600.f;
 	CameraArm->SocketOffset = FVector(-400.f, 0.f, 900.f);
@@ -44,10 +40,12 @@ void ARunCharacter::SetCameraAndArm() const
 	CameraArm->CameraLagSpeed = 8.f;
 	CameraArm->CameraRotationLagSpeed = 8.f;
 
+	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	Camera->bUsePawnControlRotation = false;
 	Camera->SetupAttachment(CameraArm, USpringArmComponent::SocketName);
 	Camera->SetRelativeRotation(FRotator(-40.f, 0.f, 0.f));
 
+	SecondCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("Second Camera"));
 	SecondCamera->SetupAttachment(GetMesh(), TEXT("head"));
 }
 

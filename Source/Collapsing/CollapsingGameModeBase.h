@@ -18,6 +18,5 @@ public:
 	ACollapsingGameModeBase();
 
 protected:
-
 	virtual void BeginPlay() override;
 };

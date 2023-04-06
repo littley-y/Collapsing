@@ -31,6 +31,15 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void Death();
 
+protected:
+	UPROPERTY()
+	FTimerHandle RestartTimerHandle;
+
+	virtual void BeginPlay() override;
+
+	UFUNCTION()
+	void OnDeath();
+
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	class USpringArmComponent* CameraArm;
@@ -41,16 +50,7 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	UCameraComponent* SecondCamera;
 
-	void SetCameraAndArm() const;
+	void SetCameraAndArm();
 
 	void SetMovement() const;	
-
-protected:
-	UPROPERTY()
-	FTimerHandle RestartTimerHandle;
-
-	virtual void BeginPlay() override;
-
-	UFUNCTION()
-	void OnDeath();
 };

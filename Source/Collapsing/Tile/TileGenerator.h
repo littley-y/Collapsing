@@ -3,7 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "UObject/NoExportTypes.h"
 #include "TileGenerator.generated.h"
 
 UENUM()
@@ -41,11 +40,18 @@ public:
 
 	void SetMapString(const FString& InMapString) { MapString = InMapString; }
 
-	void AddBPFloor(FString BPPath);
+	void AddBPFloor(const FString& BPPath);
 
 	void GenerateMaps();
 
 	void AddFloorTile();
+
+protected:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	TArray<TSubclassOf<AActor>> BPFloorArray;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	TArray<TObjectPtr<AActor>> GeneratedFloorArray;
 
 private:
 	FString MapString;
@@ -54,11 +60,4 @@ private:
 	static constexpr uint16 MaxTileNum = 10;
 
 	FTileGeneratorTransform TileGenTrans;
-
-protected:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	TArray<TSubclassOf<AActor>> BPFloorArray;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	TArray<TObjectPtr<AActor>> GeneratedFloorArray;
 };

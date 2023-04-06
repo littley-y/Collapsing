@@ -12,10 +12,10 @@ class COLLAPSING_API ASpeedFloor : public ABasicFloor
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	TObjectPtr<UStaticMeshComponent> UpArrowMesh;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	TObjectPtr<UStaticMeshComponent> DownArrowMesh;
 
 	ASpeedFloor();
@@ -28,7 +28,7 @@ public:
 	                        UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
 private:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="TriggerBox", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "TriggerBox", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UBoxComponent> SpeedZone;
 
 	void SetSpeedZone();

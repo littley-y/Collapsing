@@ -7,9 +7,6 @@
 #include "InputAction.h"
 #include "InputDataAsset.generated.h"
 
-/**
- * 
- */
 UCLASS()
 class COLLAPSING_API UInputDataAsset : public UDataAsset
 {

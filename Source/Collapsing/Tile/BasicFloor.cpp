@@ -5,7 +5,6 @@
 #include "Collapsing/CollapsingGameModeBase.h"
 #include "Collapsing/Character/RunCharacter.h"
 #include "Components/BoxComponent.h"
-#include "Engine/StaticMeshSocket.h"
 #include "Kismet/GameplayStatics.h"
 
 ABasicFloor::ABasicFloor()

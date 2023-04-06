@@ -1,6 +1,5 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "RunPlayerController.h"
 #include "RunCharacter.h"
 #include "Collapsing/Data/InputDataAsset.h"
@@ -112,8 +111,6 @@ void ARunPlayerController::MoveForward(const FRotator& ControlRot)
 
 void ARunPlayerController::TurnCorner(const FRotator& ControlRot) // 회전 보간 및 입력 막기.
 {
-	static bool bIsTurning;
-
 	if (RunCharacter->bCanTurn == true && DesiredRotation.Equals(ControlRot, 0.1f) == false)
 	{
 		bIsTurning = true;

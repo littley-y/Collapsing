@@ -12,15 +12,6 @@ UCLASS()
 class COLLAPSING_API ARunPlayerController : public APlayerController
 {
 	GENERATED_BODY()
-	
-	FRotator DesiredRotation;
-
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Pawn", meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<class ARunCharacter> RunCharacter;
-
-	void MoveForward(const FRotator& ControlRot);
-
-	void TurnCorner(const FRotator& ControlRot);
 
 public:
 	ARunPlayerController(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
@@ -38,15 +29,27 @@ public:
 	void ResetView(const FInputActionValue& Value);
 
 protected:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input")
+	TObjectPtr<UInputMappingContext> InputMapping;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input")
+	TObjectPtr<class UInputDataAsset> InputActions;
+
 	virtual void SetupInputComponent() override;
 
 	virtual void Tick(float DeltaSeconds) override;
 
 	virtual void BeginPlay() override;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input")
-	class UInputMappingContext* InputMapping;
+private:
+	bool bIsTurning = false;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input")
-	class UInputDataAsset* InputActions;
+	FRotator DesiredRotation;
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Pawn", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<class ARunCharacter> RunCharacter;
+
+	void MoveForward(const FRotator& ControlRot);
+
+	void TurnCorner(const FRotator& ControlRot);
 };											  

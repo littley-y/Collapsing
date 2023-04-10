@@ -36,22 +36,23 @@ void FTileGeneratorTransform::UpdateVectorZ(const float InValue)
 
 UTileGenerator::UTileGenerator()
 {
-	LoadBPFloor(TEXT("/Game/Collapsing/Blueprints/BP_BasicFloor"));
-	LoadBPFloor(TEXT("/Game/Collapsing/Blueprints/BP_LeftCornerFloor"));
-	LoadBPFloor(TEXT("/Game/Collapsing/Blueprints/BP_RightCornerFloor"));
-	LoadBPFloor(TEXT("/Game/Collapsing/Blueprints/BP_SpeedFloor"));
+	LoadBPFloor(TEXT("/Game/Collapsing/Blueprints/BP_BasicFloor"), '0');
+	LoadBPFloor(TEXT("/Game/Collapsing/Blueprints/BP_LeftCornerFloor"), 'L');
+	LoadBPFloor(TEXT("/Game/Collapsing/Blueprints/BP_RightCornerFloor"), 'R');
+	LoadBPFloor(TEXT("/Game/Collapsing/Blueprints/BP_SpeedFloor"), 'S');
+	LoadBPFloor(TEXT("/Game/Collapsing/Blueprints/BP_BrokenFloor"), 'B');
 
 	GeneratedFloorArray.SetNum(MaxTileNum + 1);
 	CurrentMapIndex = 0;
 }
 
-void UTileGenerator::LoadBPFloor(const FString& BPPath)
+void UTileGenerator::LoadBPFloor(const FString& BPPath, uint8 KeyChar)
 {
 	ConstructorHelpers::FClassFinder<AActor> BPFloor(*BPPath);
 	if (BPFloor.Succeeded())
 	{
 		const int32 Position = BPPath.Find(TEXT("/"), ESearchCase::IgnoreCase, ESearchDir::FromEnd);
-		BPFloorArray.Emplace(BPFloor.Class);
+		BPFloorArray.Emplace(KeyChar, BPFloor.Class);
 		UE_LOG(LogTemp, Warning, TEXT("%s Loaded"), *BPPath.RightChop(Position + 1));
 	}
 }
@@ -62,31 +63,29 @@ void UTileGenerator::SpawnFloorTile()
 	const int32 ArrayIndex = CurrentMapIndex % MaxTileNum;
 	UE_LOG(LogTemp, Warning, TEXT("Current Val : %c"), MapChar)
 
-	if (CurrentMapIndex >= MaxTileNum)
+	if (CurrentMapIndex >= MaxTileNum && IsValid(GeneratedFloorArray[ArrayIndex]))
 	{
 		GeneratedFloorArray[ArrayIndex]->Destroy();
 	}
 
-	if (MapChar == 'B' || MapChar == 'S')
+	GeneratedFloorArray[ArrayIndex] = GetWorld()->SpawnActor<AActor>(
+			BPFloorArray[MapChar], TileGenTrans.Vector, TileGenTrans.Rotator);
+
+	if (MapChar == 'L')
 	{
-		GeneratedFloorArray[ArrayIndex] = GetWorld()->SpawnActor<AActor>(
-			BPFloorArray[MapChar == 'B' ? Basic : Speed], TileGenTrans.Vector, TileGenTrans.Rotator);
-		TileGenTrans.UpdateVectorXY(TileSize);
-	}
-	else if (MapChar == 'L')
-	{
-		GeneratedFloorArray[ArrayIndex] = GetWorld()->SpawnActor<AActor>(
-			BPFloorArray[LeftCorner], TileGenTrans.Vector, TileGenTrans.Rotator);
 		TileGenTrans.Rotator.Yaw -= 90.f;
 	}
 	else if (MapChar == 'R')
 	{
-		GeneratedFloorArray[ArrayIndex] = GetWorld()->SpawnActor<AActor>(
-			BPFloorArray[RightCorner], TileGenTrans.Vector, TileGenTrans.Rotator);
 		TileGenTrans.UpdateVectorXY(TileSize);
 		TileGenTrans.Rotator.Yaw += 90.f;
 		TileGenTrans.UpdateVectorXY(TileSize);
 	}
+	else
+	{
+		TileGenTrans.UpdateVectorXY(TileSize);
+	}
+
 	CurrentMapIndex++;
 
 	UE_LOG(LogTemp, Warning, TEXT("Floor Gen Location : %s"), *TileGenTrans.Vector.ToString())

@@ -104,12 +104,6 @@ void ABasicFloor::SetGenerateTileZone()
 	}
 }
 
-void ABasicFloor::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-}
-
 void ABasicFloor::OnWallHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
 	FVector NormalImpulse, const FHitResult& Hit)
 {

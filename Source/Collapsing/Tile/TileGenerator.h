@@ -5,16 +5,6 @@
 #include "CoreMinimal.h"
 #include "TileGenerator.generated.h"
 
-enum EFloorType
-{
-	Basic = 0,
-	LeftCorner,
-	RightCorner,
-	Speed,
-	Up,
-	Do
-};
-
 USTRUCT()
 struct FTileGeneratorTransform
 {
@@ -39,7 +29,7 @@ public:
 
 	void SetMapString(const FString& InMapString) { MapString = InMapString; }
 
-	void LoadBPFloor(const FString& BPPath);
+	void LoadBPFloor(const FString& BPPath, uint8 KeyChar);
 
 	void InitMaps();
 
@@ -47,7 +37,7 @@ public:
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	TArray<TSubclassOf<AActor>> BPFloorArray;
+	TMap<uint8, TSubclassOf<AActor>> BPFloorArray;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TArray<TObjectPtr<AActor>> GeneratedFloorArray;

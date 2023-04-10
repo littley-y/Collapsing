@@ -12,20 +12,23 @@ ACornerFloor::ACornerFloor()
 void ACornerFloor::SetTurnZone()
 {
 	TurnZone = CreateDefaultSubobject<UBoxComponent>(TEXT("TurnZone"));
-	TurnZone->SetupAttachment(SceneComponent);
-	TurnZone->SetBoxExtent(FVector(200.f, 200.f, 10.f));
-	TurnZone->SetRelativeLocation(FVector(200.f, 200.f, 0.f));
+	if (IsValid(TurnZone))
+	{
+		TurnZone->SetupAttachment(SceneComponent);
+		TurnZone->SetBoxExtent(FVector(200.f, 200.f, 10.f));
+		TurnZone->SetRelativeLocation(FVector(200.f, 200.f, 0.f));
 
-	TurnZone->SetGenerateOverlapEvents(true);
-	TurnZone->OnComponentBeginOverlap.AddDynamic(this, &ACornerFloor::OnPlayerTurnOverlap);
-	TurnZone->OnComponentEndOverlap.AddDynamic(this, &ACornerFloor::OnPlayerEndOverlap);
+		TurnZone->SetGenerateOverlapEvents(true);
+		TurnZone->OnComponentBeginOverlap.AddDynamic(this, &ACornerFloor::OnPlayerTurnOverlap);
+		TurnZone->OnComponentEndOverlap.AddDynamic(this, &ACornerFloor::OnPlayerEndOverlap);
+	}
 }
 
 void ACornerFloor::OnPlayerTurnOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	ARunCharacter* RunCharacter = Cast<ARunCharacter>(OtherActor);
-	if (RunCharacter != nullptr && OtherComp)
+	if (IsValid(RunCharacter) && OtherComp)
 	{
 		RunCharacter->bCanCharacterTurn = true;
 	}
@@ -35,8 +38,9 @@ void ACornerFloor::OnPlayerEndOverlap(UPrimitiveComponent* OverlappedComponent, 
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
 	ARunCharacter* RunCharacter = Cast<ARunCharacter>(OtherActor);
-	if (RunCharacter != nullptr && OtherComp)
+	if (IsValid(RunCharacter) && OtherComp)
 	{
 		RunCharacter->bCanCharacterTurn = false;
 	}
 }
+

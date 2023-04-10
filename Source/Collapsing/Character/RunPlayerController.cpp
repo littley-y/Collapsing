@@ -18,10 +18,14 @@ void ARunPlayerController::SetupInputComponent()
 
 	UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(
 		GetLocalPlayer());
-
+	if (!IsValid(Subsystem))
+	{
+		return;
+	}
 	Subsystem->AddMappingContext(InputMapping, 0);
 
-	if (UEnhancedInputComponent* PlayerEnhancedInput = CastChecked<UEnhancedInputComponent>(InputComponent))
+	UEnhancedInputComponent* PlayerEnhancedInput = Cast<UEnhancedInputComponent>(InputComponent);
+	if (IsValid(PlayerEnhancedInput))
 	{
 		PlayerEnhancedInput->BindAction(InputActions->InputMove, ETriggerEvent::Triggered, this,
 										&ARunPlayerController::MoveWithoutTurn);
@@ -42,14 +46,17 @@ void ARunPlayerController::MoveWithoutTurn(const FInputActionValue& Value)
 	const FVector2D MovementVector = Value.Get<FVector2D>();
 	const FRotator YawRotation(0.f, GetControlRotation().Yaw, 0.f);
 	const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
-	RunCharacter->AddMovementInput(RightDirection, MovementVector.X);
-	RunCharacter->AddMovementInput(GetControlRotation().Vector());
-	
+
+	if (IsValid(RunCharacter))
+	{
+		RunCharacter->AddMovementInput(RightDirection, MovementVector.X);
+		RunCharacter->AddMovementInput(GetControlRotation().Vector());		
+	}
 }
 
 void ARunPlayerController::ReadyToTurn(const FInputActionValue& Value)
 {
-	if (RunCharacter->bCanCharacterTurn == true)
+	if (IsValid(RunCharacter) && RunCharacter->bCanCharacterTurn == true)
 	{
 		const float TurnAxisFloat = Value.Get<float>();
 		DesiredRotation = GetControlRotation();
@@ -63,24 +70,44 @@ void ARunPlayerController::ReadyToTurn(const FInputActionValue& Value)
 
 void ARunPlayerController::Jump(const FInputActionValue& Value)
 {
-	RunCharacter->Jump();
-	UE_LOG(LogTemp, Warning, TEXT("Jump Start"));
+	if (IsValid(RunCharacter))
+	{
+		RunCharacter->Jump();
+		UE_LOG(LogTemp, Warning, TEXT("Jump Start"));
+	}
 }
 
 void ARunPlayerController::StopJump(const FInputActionValue& Value)
 {
-	RunCharacter->StopJumping();
-	UE_LOG(LogTemp, Warning, TEXT("Jump End"));
+	if (IsValid(RunCharacter))
+	{
+		RunCharacter->StopJumping();
+		UE_LOG(LogTemp, Warning, TEXT("Jump End"));
+	}
 }
 
 void ARunPlayerController::ChangeSpeed(const FInputActionValue& Value)
 {
-	if (RunCharacter->bCanChangeSpeed == true)
+	if (IsValid(RunCharacter) && RunCharacter->bCanChangeSpeed == true)
 	{
-		const float TargetSpeed = Value.Get<float>() * 200.f;
-		RunCharacter->GetCharacterMovement()->MaxWalkSpeed += TargetSpeed;
-		RunCharacter->bCanChangeSpeed = false;
-		UE_LOG(LogTemp, Warning, TEXT("현재 속도 %f"), RunCharacter->GetCharacterMovement()->MaxWalkSpeed)
+		float& CharacterSpeed = RunCharacter->GetCharacterMovement()->MaxWalkSpeed;
+		if (CharacterSpeed > 1600.f)
+		{
+			return;
+		}
+
+		const float TargetSpeed = Value.Get<float>() * 400.f;
+		CharacterSpeed += TargetSpeed;
+
+		if (CharacterSpeed > 0.f)
+		{
+			RunCharacter->bCanChangeSpeed = false;
+			UE_LOG(LogTemp, Warning, TEXT("현재 속도 %f"), CharacterSpeed)
+		}
+		else
+		{
+			RunCharacter->Death();
+		}
 	}
 }
 
@@ -88,7 +115,7 @@ void ARunPlayerController::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 
-	if (RunCharacter->bIsDead == false) 
+	if (IsValid(RunCharacter) && RunCharacter->bIsDead == false) 
 	{
 		const FRotator ControlRot = GetControlRotation();
 		MoveForward(ControlRot);
@@ -102,7 +129,10 @@ void ARunPlayerController::Tick(float DeltaSeconds)
 
 void ARunPlayerController::MoveForward(const FRotator& ControlRot) const
 {
-	RunCharacter->AddMovementInput(ControlRot.Vector());
+	if (IsValid(RunCharacter))
+	{
+		RunCharacter->AddMovementInput(ControlRot.Vector());
+	}
 }
 
 void ARunPlayerController::TurnController(const FRotator& ControlRot)
@@ -122,5 +152,4 @@ void ARunPlayerController::BeginPlay()
 	Super::BeginPlay();
 
 	RunCharacter = Cast<ARunCharacter>(GetCharacter());
-	check(RunCharacter != nullptr)
 }

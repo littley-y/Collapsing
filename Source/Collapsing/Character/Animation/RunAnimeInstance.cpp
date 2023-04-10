@@ -13,7 +13,7 @@ void URunAnimeInstance::NativeInitializeAnimation()
 
 void URunAnimeInstance::NativeUpdateAnimation(float DeltaSeconds)
 {
-	if (BasicPawn != nullptr)
+	if (IsValid(BasicPawn))
 	{
 		bIsInAir = BasicPawn->GetMovementComponent()->IsFalling();
 		Speed = BasicPawn->GetVelocity().Size();

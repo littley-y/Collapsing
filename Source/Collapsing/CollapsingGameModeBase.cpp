@@ -21,13 +21,19 @@ void ACollapsingGameModeBase::SetMapBasicString() const
 
 void ACollapsingGameModeBase::GenerateTile() const
 {
-	TileGenerator->SpawnFloorTile();
+	if (IsValid(TileGenerator))
+	{
+		TileGenerator->SpawnFloorTile();
+	}
 }
 
 void ACollapsingGameModeBase::BeginPlay()
 {
 	Super::BeginPlay();
 
-	SetMapBasicString();
-	TileGenerator->InitMaps();
+	if (IsValid(TileGenerator))
+	{
+		SetMapBasicString();
+		TileGenerator->InitMaps();
+	}
 }

@@ -24,6 +24,6 @@ public:
 
 private:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Pawn", meta = (AllowPrivateAccess = "true"))
-	APawn* BasicPawn;
+	TObjectPtr<APawn> BasicPawn;
 
 };

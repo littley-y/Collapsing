@@ -12,17 +12,17 @@ class COLLAPSING_API ARunCharacter final : public ACharacter
 	GENERATED_BODY()
 
 public:
-	bool bCanCharacterTurn = false;
+	bool bCanCharacterTurn;
 
-	bool bIsDead = false;
+	bool bIsDead;
 
-	bool bCanChangeSpeed = false;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Asseets")
-	UParticleSystem* DeathParticleSystem;
+	bool bCanChangeSpeed;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Asseets")
-	USoundBase* DeathSound;
+	TObjectPtr<UParticleSystem> DeathParticleSystem;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Asseets")
+	TObjectPtr<USoundBase> DeathSound;
 
 	ARunCharacter();
 
@@ -42,15 +42,15 @@ protected:
 
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
-	class USpringArmComponent* CameraArm;
+	TObjectPtr<class USpringArmComponent> CameraArm;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
-	class UCameraComponent* Camera;
+	TObjectPtr<class UCameraComponent> Camera;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
-	UCameraComponent* SecondCamera;
+	TObjectPtr<UCameraComponent> SecondCamera;
 
 	void SetCameraAndArm();
 
-	void SetMovement() const;	
+	void SetCharacterMovement() const;	
 };

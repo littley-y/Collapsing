@@ -25,7 +25,8 @@ struct FTileGeneratorTransform
 
 	FTileGeneratorTransform() : Vector(-800.f, 0.f, 0.f), Rotator(0.f, 0.f, 0.f) {}
 
-	void UpdateVector(const float InValue);
+	void UpdateVectorXY(const float InValue);
+	void UpdateVectorZ(const float InValue);
 };
 
 UCLASS()

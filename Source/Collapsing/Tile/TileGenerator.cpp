@@ -2,7 +2,7 @@
 
 #include "TileGenerator.h"
 
-void FTileGeneratorTransform::UpdateVector(const float InValue)
+void FTileGeneratorTransform::UpdateVectorXY(const float InValue)
 {
 	const float CurrentDegrees = FMath::FindDeltaAngleDegrees(Rotator.Yaw, 0.f);
 	if (FMath::IsNearlyEqual(CurrentDegrees, 0.f))
@@ -29,6 +29,11 @@ void FTileGeneratorTransform::UpdateVector(const float InValue)
 	}
 }
 
+void FTileGeneratorTransform::UpdateVectorZ(const float InValue)
+{
+
+}
+
 UTileGenerator::UTileGenerator()
 {
 	LoadBPFloor(TEXT("/Game/Collapsing/Blueprints/BP_BasicFloor"));
@@ -43,9 +48,9 @@ UTileGenerator::UTileGenerator()
 void UTileGenerator::LoadBPFloor(const FString& BPPath)
 {
 	ConstructorHelpers::FClassFinder<AActor> BPFloor(*BPPath);
-	const int32 Position = BPPath.Find(TEXT("/"), ESearchCase::IgnoreCase, ESearchDir::FromEnd);
 	if (BPFloor.Succeeded())
 	{
+		const int32 Position = BPPath.Find(TEXT("/"), ESearchCase::IgnoreCase, ESearchDir::FromEnd);
 		BPFloorArray.Emplace(BPFloor.Class);
 		UE_LOG(LogTemp, Warning, TEXT("%s Loaded"), *BPPath.RightChop(Position + 1));
 	}
@@ -66,7 +71,7 @@ void UTileGenerator::SpawnFloorTile()
 	{
 		GeneratedFloorArray[ArrayIndex] = GetWorld()->SpawnActor<AActor>(
 			BPFloorArray[MapChar == 'B' ? Basic : Speed], TileGenTrans.Vector, TileGenTrans.Rotator);
-		TileGenTrans.UpdateVector(TileSize);
+		TileGenTrans.UpdateVectorXY(TileSize);
 	}
 	else if (MapChar == 'L')
 	{
@@ -78,9 +83,9 @@ void UTileGenerator::SpawnFloorTile()
 	{
 		GeneratedFloorArray[ArrayIndex] = GetWorld()->SpawnActor<AActor>(
 			BPFloorArray[RightCorner], TileGenTrans.Vector, TileGenTrans.Rotator);
-		TileGenTrans.UpdateVector(TileSize);
+		TileGenTrans.UpdateVectorXY(TileSize);
 		TileGenTrans.Rotator.Yaw += 90.f;
-		TileGenTrans.UpdateVector(TileSize);
+		TileGenTrans.UpdateVectorXY(TileSize);
 	}
 	CurrentMapIndex++;
 

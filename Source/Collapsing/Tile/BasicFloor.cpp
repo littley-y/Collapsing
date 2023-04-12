@@ -2,6 +2,7 @@
 
 #include "BasicFloor.h"
 #include "Collapsing/CollapsingGameModeBase.h"
+#include "Collapsing/RunGameInstance.h"
 #include "Collapsing/Character/RunCharacter.h"
 #include "Components/BoxComponent.h"
 #include "Kismet/GameplayStatics.h"
@@ -32,40 +33,40 @@ void ABasicFloor::SetWallArray()
 	WallArray.SetNum(2);
 	for (int32 Ix = 0; Ix != WallArray.Num(); ++Ix)
 	{
-		FString MeshName(TEXT("WallMesh"));
-		MeshName += FString::FromInt(Ix);
-
-		WallArray[Ix] = CreateDefaultSubobject<UStaticMeshComponent>(*MeshName);
-		if (!IsValid(WallArray[Ix]))
-		{
-			return;
-		}
-		SetWall(WallArray[Ix]);
-		if (Ix == 1)
-		{
-			WallArray[Ix]->SetRelativeLocation(FVector(0.f, 400.f, -20.f));
-		}
+		SetWall(WallArray[Ix], Ix);
 	}
 }
 
-void ABasicFloor::SetWall(UStaticMeshComponent* Wall) const
+void ABasicFloor::SetWall(TObjectPtr<UStaticMeshComponent>& Wall, const int8 Ix)
 {
+	FString MeshName(TEXT("WallMesh"));
+	MeshName += FString::FromInt(Ix);
+
+	Wall = CreateDefaultSubobject<UStaticMeshComponent>(*MeshName);
+	if (!IsValid(Wall))
+	{
+		return;
+	}
 	Wall->SetupAttachment(FloorMesh);
 	Wall->SetCollisionProfileName("BlockAll");
 	Wall->SetRelativeLocation(FVector(0.f, 0.f, -20.f));
 	Wall->OnComponentHit.AddDynamic(this, &ABasicFloor::OnWallHit);
 
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> MeshAsset(TEXT("/Game/_GameAssets/Meshes/Wall_400x200"));
-	if (MeshAsset.Succeeded())
+	if (static UStaticMesh* WallMeshAsset = URunGameInstance::AssetObjectFinder<UStaticMesh>(
+		TEXT("/Game/_GameAssets/Meshes/Wall_400x200")))
 	{
-		Wall->SetStaticMesh(MeshAsset.Object);
+		Wall->SetStaticMesh(WallMeshAsset);
 	}
 
-	static ConstructorHelpers::FObjectFinder<UMaterial> WoodMaterialAsset(
-		TEXT("/Game/_GameAssets/Meshes/Materials/M_Wood_Floor_Walnut_Polished"));
-	if (WoodMaterialAsset.Succeeded())
+	if (static UMaterial* WoodMaterialAsset = URunGameInstance::AssetObjectFinder<UMaterial>(
+		TEXT("/Game/_GameAssets/Meshes/Materials/M_Wood_Floor_Walnut_Polished")))
 	{
-		Wall->SetMaterial(0, WoodMaterialAsset.Object);
+		Wall->SetMaterial(0, WoodMaterialAsset);
+	}
+
+	if (Ix == 1)
+	{
+		WallArray[Ix]->SetRelativeLocation(FVector(0.f, 400.f, -20.f));
 	}
 }
 
@@ -75,17 +76,16 @@ void ABasicFloor::CreateFloor()
 	FloorMesh->SetupAttachment(SceneComponent);
 	FloorMesh->SetRelativeLocation(FVector(0.f, 0.f, 0.f));
 
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> MeshAsset(TEXT("/Game/_GameAssets/Meshes/Floor_400x400"));
-	if (MeshAsset.Succeeded())
+	if (static UStaticMesh* FloorMeshAsset = URunGameInstance::AssetObjectFinder<UStaticMesh>(
+		TEXT("/Game/_GameAssets/Meshes/Floor_400x400")))
 	{
-		FloorMesh->SetStaticMesh(MeshAsset.Object);
+		FloorMesh->SetStaticMesh(FloorMeshAsset);
 	}
 
-	static ConstructorHelpers::FObjectFinder<UMaterial> WoodMaterialAsset(
-		TEXT("/Game/_GameAssets/Meshes/Materials/M_Wood_Floor_Walnut_Polished"));
-	if (WoodMaterialAsset.Succeeded())
+	if (static UMaterial* WoodMaterialAsset = URunGameInstance::AssetObjectFinder<UMaterial>(
+		TEXT("/Game/_GameAssets/Meshes/Materials/M_Wood_Floor_Walnut_Polished")))
 	{
-		FloorMesh->SetMaterial(0, WoodMaterialAsset.Object);
+		FloorMesh->SetMaterial(0, WoodMaterialAsset);
 	}
 }
 

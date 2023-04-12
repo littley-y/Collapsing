@@ -96,7 +96,7 @@ void ARunPlayerController::ChangeSpeed(const FInputActionValue& Value)
 			return;
 		}
 
-		const float TargetSpeed = Value.Get<float>() * 400.f;
+		const float TargetSpeed = Value.Get<float>() * 200.f;
 		CharacterSpeed += TargetSpeed;
 
 		if (CharacterSpeed > 0.f)

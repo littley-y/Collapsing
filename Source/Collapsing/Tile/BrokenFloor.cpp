@@ -18,8 +18,6 @@ ABrokenFloor::ABrokenFloor()
 
 	RootComponent = SceneComponent;
 
-	CreateFloor();
-
 	SetGenerateTileZone();
 }
 
@@ -42,26 +40,6 @@ void ABrokenFloor::BeginPlay()
 {
 	Super::BeginPlay();
 	
-}
-
-void ABrokenFloor::CreateFloor()
-{
-	FloorMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("FloorMesh"));
-	FloorMesh->SetupAttachment(SceneComponent);
-	FloorMesh->SetRelativeLocation(FVector(0.f, 0.f, 0.f));
-
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> MeshAsset(TEXT("/Game/_GameAssets/Meshes/Floor_400x400"));
-	if (MeshAsset.Succeeded())
-	{
-		FloorMesh->SetStaticMesh(MeshAsset.Object);
-	}
-
-	static ConstructorHelpers::FObjectFinder<UMaterial> WoodMaterialAsset(
-		TEXT("/Game/_GameAssets/Meshes/Materials/M_Wood_Floor_Walnut_Polished"));
-	if (WoodMaterialAsset.Succeeded())
-	{
-		FloorMesh->SetMaterial(0, WoodMaterialAsset.Object);
-	}
 }
 
 void ABrokenFloor::SetGenerateTileZone()

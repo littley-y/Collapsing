@@ -22,8 +22,7 @@ void FTileGeneratorTransform::UpdateVectorXY(const float InValue)
 		Vector.Y -= InValue;
 	}
 
-	Rotator.Yaw = FMath::Fmod(Rotator.Yaw, 360.f);
-	if (FMath::IsNearlyZero(Rotator.Yaw))
+	if (FMath::IsNearlyEqual(FMath::Abs(Rotator.Yaw), 360.f))
 	{
 		Rotator.Yaw = 0.f;
 	}
@@ -68,8 +67,8 @@ void UTileGenerator::SpawnFloorTile()
 		GeneratedFloorArray[ArrayIndex]->Destroy();
 	}
 
-	GeneratedFloorArray[ArrayIndex] = GetWorld()->SpawnActor<AActor>(
-			BPFloorArray[MapChar], TileGenTrans.Vector, TileGenTrans.Rotator);
+	GeneratedFloorArray[ArrayIndex] = GetWorld()->SpawnActor<AActor>(BPFloorArray[MapChar], TileGenTrans.Vector,
+	                                                                 TileGenTrans.Rotator);
 
 	if (MapChar == 'L')
 	{
@@ -88,8 +87,7 @@ void UTileGenerator::SpawnFloorTile()
 
 	CurrentMapIndex++;
 
-	UE_LOG(LogTemp, Warning, TEXT("Floor Gen Location : %s"), *TileGenTrans.Vector.ToString())
-	UE_LOG(LogTemp, Warning, TEXT("Floor Gen Yaw : %f"), TileGenTrans.Rotator.Yaw)
+	UE_LOG(LogTemp, Warning, TEXT("Floor Gen Location : %s, Yaw : %f"), *TileGenTrans.Vector.ToString(), TileGenTrans.Rotator.Yaw)
 }
 
 void UTileGenerator::InitMaps()

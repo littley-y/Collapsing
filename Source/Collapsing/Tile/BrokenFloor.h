@@ -15,9 +15,6 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components")
 	TObjectPtr<USceneComponent> SceneComponent;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components")
-	TObjectPtr<UStaticMeshComponent> FloorMesh;
-
 	ABrokenFloor();
 
 	UFUNCTION()
@@ -32,7 +29,5 @@ protected:
 	TObjectPtr<class UBoxComponent> GenerateTileZone;
 
 public:	
-	void CreateFloor();
-
 	void SetGenerateTileZone();
 };

@@ -14,13 +14,13 @@ class COLLAPSING_API ABasicFloor : public AActor
 	GENERATED_BODY()
 	
 public:	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Scene")
 	TObjectPtr<USceneComponent> SceneComponent;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="StaticMeshComponent")
 	TObjectPtr<UStaticMeshComponent> FloorMesh;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Array")
 	TArray<TObjectPtr<UStaticMeshComponent>> WallArray;
 
 	ABasicFloor();
@@ -35,16 +35,16 @@ public:
 	                               const FHitResult& SweepResult);
 
 protected:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="BoxComponent")
 	TObjectPtr<class UBoxComponent> GenerateTileZone;
 
 	virtual void BeginPlay() override;
 
 	void SetWallArray();
 
-	void SetWall(UStaticMeshComponent* Wall) const;
+	virtual void SetWall(TObjectPtr<UStaticMeshComponent>& Wall, const int8 Ix);
 
-	void CreateFloor();
+	virtual void CreateFloor();
 
 	void SetGenerateTileZone();
 };

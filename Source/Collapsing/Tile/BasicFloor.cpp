@@ -2,8 +2,8 @@
 
 #include "BasicFloor.h"
 #include "Collapsing/CollapsingGameModeBase.h"
-#include "Collapsing/RunGameInstance.h"
 #include "Collapsing/Character/RunCharacter.h"
+#include "Collapsing/Utils/AssetObjectFinder.hpp"
 #include "Components/BoxComponent.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -16,7 +16,7 @@ ABasicFloor::ABasicFloor()
 
 	RootComponent = SceneComponent;
 
-	CreateFloor();
+	ABasicFloor::CreateFloor();
 
 	SetWallArray();
 
@@ -52,13 +52,13 @@ void ABasicFloor::SetWall(TObjectPtr<UStaticMeshComponent>& Wall, const int8 Ix)
 	Wall->SetRelativeLocation(FVector(0.f, 0.f, -20.f));
 	Wall->OnComponentHit.AddDynamic(this, &ABasicFloor::OnWallHit);
 
-	if (static UStaticMesh* WallMeshAsset = URunGameInstance::AssetObjectFinder<UStaticMesh>(
+	if (static UStaticMesh* WallMeshAsset = MyFunction::AssetObjectFinder<UStaticMesh>(
 		TEXT("/Game/_GameAssets/Meshes/Wall_400x200")))
 	{
 		Wall->SetStaticMesh(WallMeshAsset);
 	}
 
-	if (static UMaterial* WoodMaterialAsset = URunGameInstance::AssetObjectFinder<UMaterial>(
+	if (static UMaterial* WoodMaterialAsset = MyFunction::AssetObjectFinder<UMaterial>(
 		TEXT("/Game/_GameAssets/Meshes/Materials/M_Wood_Floor_Walnut_Polished")))
 	{
 		Wall->SetMaterial(0, WoodMaterialAsset);
@@ -76,13 +76,13 @@ void ABasicFloor::CreateFloor()
 	FloorMesh->SetupAttachment(SceneComponent);
 	FloorMesh->SetRelativeLocation(FVector(0.f, 0.f, 0.f));
 
-	if (static UStaticMesh* FloorMeshAsset = URunGameInstance::AssetObjectFinder<UStaticMesh>(
+	if (static UStaticMesh* FloorMeshAsset = MyFunction::AssetObjectFinder<UStaticMesh>(
 		TEXT("/Game/_GameAssets/Meshes/Floor_400x400")))
 	{
 		FloorMesh->SetStaticMesh(FloorMeshAsset);
 	}
 
-	if (static UMaterial* WoodMaterialAsset = URunGameInstance::AssetObjectFinder<UMaterial>(
+	if (static UMaterial* WoodMaterialAsset = MyFunction::AssetObjectFinder<UMaterial>(
 		TEXT("/Game/_GameAssets/Meshes/Materials/M_Wood_Floor_Walnut_Polished")))
 	{
 		FloorMesh->SetMaterial(0, WoodMaterialAsset);

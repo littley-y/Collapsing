@@ -69,7 +69,6 @@ void UTileGenerator::SpawnFloorTile()
 
 	GeneratedFloorArray[ArrayIndex] = GetWorld()->SpawnActor<AActor>(BPFloorArray[MapChar], TileGenTrans.Vector,
 	                                                                 TileGenTrans.Rotator);
-
 	if (MapChar == 'L')
 	{
 		TileGenTrans.Rotator.Yaw -= 90.f;

@@ -7,7 +7,9 @@ public class Collapsing : ModuleRules
 	public Collapsing(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
-	
+		
+		PublicIncludePaths.AddRange(new string[] { "Collapsing" });
+
 		PublicDependencyModuleNames.AddRange(new string[] { "EnhancedInput", "Core", "CoreUObject", "Engine", "InputCore" });
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });

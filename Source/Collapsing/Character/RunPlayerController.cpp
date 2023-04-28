@@ -2,7 +2,7 @@
 
 #include "RunPlayerController.h"
 #include "RunCharacter.h"
-#include "Collapsing/Data/InputDataAsset.h"
+#include "Data/InputDataAsset.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
@@ -152,4 +152,6 @@ void ARunPlayerController::BeginPlay()
 	Super::BeginPlay();
 
 	RunCharacter = Cast<ARunCharacter>(GetCharacter());
+	FInputModeGameOnly GameOnlyInputMode;
+	SetInputMode(GameOnlyInputMode);
 }

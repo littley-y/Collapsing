@@ -2,8 +2,8 @@
 
 
 #include "BrokenFloor.h"
-#include "Collapsing/CollapsingGameModeBase.h"
-#include "Collapsing/Character/RunCharacter.h"
+#include "Game/CollapsingGameMode.h"
+#include "Character/RunCharacter.h"
 #include "Components/BoxComponent.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -28,7 +28,7 @@ void ABrokenFloor::OnGenerateBoxBeginOverlap(UPrimitiveComponent* OverlappedComp
 	if (IsValid(RunCharacter) && IsValid(OtherComp))
 	{
 		// 델리게이트로 불러서 최적화 할 수 있는 방법 없으려나...
-		const ACollapsingGameModeBase* RunGameMode = Cast<ACollapsingGameModeBase>(UGameplayStatics::GetGameMode(GetWorld()));
+		const ACollapsingGameMode* RunGameMode = Cast<ACollapsingGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
 		if (IsValid(RunGameMode))
 		{
 			RunGameMode->GenerateTile();

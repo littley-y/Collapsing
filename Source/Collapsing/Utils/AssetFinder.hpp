@@ -13,4 +13,16 @@ namespace MyFunction
 		}
 		return nullptr;
 	}
+
+	template <typename T>
+	TSubclassOf<T> AssetClassFinder(const FString& FilePath)
+	{
+		ConstructorHelpers::FClassFinder<T> TargetAsset(*FilePath);
+		if (TargetAsset.Succeeded())
+		{
+			UE_LOG(LogTemp, Warning, TEXT("%s Loaded"), *FilePath);
+			return TargetAsset.Class;
+		}
+		return nullptr;
+	}
 }

@@ -1,9 +1,9 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "BasicFloor.h"
-#include "Collapsing/CollapsingGameModeBase.h"
-#include "Collapsing/Character/RunCharacter.h"
-#include "Collapsing/Utils/AssetObjectFinder.hpp"
+#include "Game/CollapsingGameMode.h"
+#include "Character/RunCharacter.h"
+#include "Utils/AssetFinder.hpp"
 #include "Components/BoxComponent.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -52,14 +52,14 @@ void ABasicFloor::SetWall(TObjectPtr<UStaticMeshComponent>& Wall, const int8 Ix)
 	Wall->SetRelativeLocation(FVector(0.f, 0.f, -20.f));
 	Wall->OnComponentHit.AddDynamic(this, &ABasicFloor::OnWallHit);
 
-	if (static UStaticMesh* WallMeshAsset = MyFunction::AssetObjectFinder<UStaticMesh>(
-		TEXT("/Game/_GameAssets/Meshes/Wall_400x200")))
+	static UStaticMesh* WallMeshAsset = MyFunction::AssetObjectFinder<UStaticMesh>(TEXT("/Game/_GameAssets/Meshes/Wall_400x200"));
+	if (IsValid(WallMeshAsset))
 	{
 		Wall->SetStaticMesh(WallMeshAsset);
 	}
 
-	if (static UMaterial* WoodMaterialAsset = MyFunction::AssetObjectFinder<UMaterial>(
-		TEXT("/Game/_GameAssets/Meshes/Materials/M_Wood_Floor_Walnut_Polished")))
+	static UMaterial* WoodMaterialAsset = MyFunction::AssetObjectFinder<UMaterial>(TEXT("/Game/_GameAssets/Meshes/Materials/M_Wood_Floor_Walnut_Polished"));
+	if (IsValid(WoodMaterialAsset))
 	{
 		Wall->SetMaterial(0, WoodMaterialAsset);
 	}
@@ -75,15 +75,15 @@ void ABasicFloor::CreateFloor()
 	FloorMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("FloorMesh"));
 	FloorMesh->SetupAttachment(SceneComponent);
 	FloorMesh->SetRelativeLocation(FVector(0.f, 0.f, 0.f));
-
-	if (static UStaticMesh* FloorMeshAsset = MyFunction::AssetObjectFinder<UStaticMesh>(
-		TEXT("/Game/_GameAssets/Meshes/Floor_400x400")))
+	
+	static UStaticMesh* FloorMeshAsset = MyFunction::AssetObjectFinder<UStaticMesh>(TEXT("/Game/_GameAssets/Meshes/Floor_400x400"));
+	if (IsValid(FloorMeshAsset))
 	{
 		FloorMesh->SetStaticMesh(FloorMeshAsset);
 	}
 
-	if (static UMaterial* WoodMaterialAsset = MyFunction::AssetObjectFinder<UMaterial>(
-		TEXT("/Game/_GameAssets/Meshes/Materials/M_Wood_Floor_Walnut_Polished")))
+	static UMaterial* WoodMaterialAsset = MyFunction::AssetObjectFinder<UMaterial>(TEXT("/Game/_GameAssets/Meshes/Materials/M_Wood_Floor_Walnut_Polished"));
+	if (IsValid(WoodMaterialAsset))
 	{
 		FloorMesh->SetMaterial(0, WoodMaterialAsset);
 	}
@@ -122,7 +122,7 @@ void ABasicFloor::OnGenerateBoxBeginOverlap(UPrimitiveComponent* OverlappedComp,
 	if (IsValid(RunCharacter) && IsValid(OtherComp))
 	{
 		// 델리게이트로 불러서 최적화 할 수 있는 방법 없으려나...
-		const ACollapsingGameModeBase* RunGameMode = Cast<ACollapsingGameModeBase>(UGameplayStatics::GetGameMode(GetWorld()));
+		const ACollapsingGameMode* RunGameMode = Cast<ACollapsingGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
 		if (IsValid(RunGameMode))
 		{
 			RunGameMode->GenerateTile();

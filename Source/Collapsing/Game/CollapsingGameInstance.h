@@ -4,13 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
-#include "RunGameInstance.generated.h"
+#include "CollapsingGameInstance.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class COLLAPSING_API URunGameInstance : public UGameInstance
+class COLLAPSING_API UCollapsingGameInstance : public UGameInstance
 {
 	GENERATED_BODY()
 

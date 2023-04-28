@@ -4,10 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
-#include "CollapsingGameModeBase.generated.h"
+#include "CollapsingGameMode.generated.h"
 
 UCLASS()
-class COLLAPSING_API ACollapsingGameModeBase : public AGameModeBase
+class COLLAPSING_API ACollapsingGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
 
@@ -15,7 +15,7 @@ public:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly)
 	TObjectPtr<class UTileGenerator> TileGenerator;
 
-	ACollapsingGameModeBase();
+	ACollapsingGameMode();
 
 	void SetMapBasicString() const;
 

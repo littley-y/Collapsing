@@ -24,7 +24,7 @@ public:
 
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "TriggerBox", meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<UBoxComponent> TurnZone;
+	TObjectPtr<class UBoxComponent> TurnZone;
 
 	void SetTurnZone();
 

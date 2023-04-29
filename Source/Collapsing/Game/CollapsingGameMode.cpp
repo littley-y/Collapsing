@@ -41,6 +41,11 @@ void ACollapsingGameMode::GenerateTile() const
 	}
 }
 
+void ACollapsingGameMode::SetTileGenerateTimer(float TargetTime) const
+{
+	TileGenerateTime = TargetTime;
+}
+
 void ACollapsingGameMode::BeginPlay()
 {
 	Super::BeginPlay();

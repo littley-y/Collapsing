@@ -19,7 +19,10 @@ public:
 
 	void SetMapBasicString() const;
 
+	// 시간에 따라 다음 타일을 생성하는 함수
 	void GenerateTile() const;
+
+	void SetTileGenerateTimer(float TargetTime) const;
 
 protected:
 	virtual void BeginPlay() override;

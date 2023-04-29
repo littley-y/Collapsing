@@ -29,7 +29,7 @@ public:
 
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "TriggerBox", meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<UBoxComponent> SpeedZone;
+	TObjectPtr<class UBoxComponent> SpeedZone;
 
 	void SetSpeedZone();
 };

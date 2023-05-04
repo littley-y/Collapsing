@@ -5,10 +5,4 @@
 
 ABrokenFloor::ABrokenFloor()
 {
-	this->CreateFloor();
-}
-
-void ABrokenFloor::CreateFloor()
-{
-
 }

@@ -25,17 +25,14 @@ public:
 
 	ABasicFloor();
 
+protected:
 	UFUNCTION()
 	void OnWallHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
 			       FVector NormalImpulse, const FHitResult& Hit);
 
-protected:
-	virtual void BeginPlay() override;
-
-	void SetWallArray();
-
 	virtual void SetWall(TObjectPtr<UStaticMeshComponent>& Wall, const int8 Ix);
 
-	virtual void CreateFloor();
+	void CreateFloor();
+	void CreateWallArray();
 };
 

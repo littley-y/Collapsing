@@ -16,9 +16,9 @@ class COLLAPSING_API ARunPlayerController : public APlayerController
 public:
 	ARunPlayerController(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
-	void MoveWithoutTurn(const FInputActionValue& Value);
+	void Move(const FInputActionValue& Value);
 
-	void ReadyToTurn(const FInputActionValue& Value);
+	void Turn(const FInputActionValue& Value);
 
 	void Jump(const FInputActionValue& Value);
 	void StopJump(const FInputActionValue& Value);
@@ -45,8 +45,6 @@ private:
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Pawn", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class ARunCharacter> RunCharacter;
-
-	void MoveForward(const FRotator& ControlRot) const;
 
 	void TurnController(const FRotator& ControlRot);
 };											  

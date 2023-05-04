@@ -26,8 +26,6 @@ public:
 
 	ARunCharacter();
 
-	virtual void Tick(float DeltaTime) override;
-
 	UFUNCTION(BlueprintCallable)
 	void Death();
 

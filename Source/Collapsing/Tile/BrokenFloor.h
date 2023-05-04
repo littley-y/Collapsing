@@ -16,7 +16,4 @@ class COLLAPSING_API ABrokenFloor : public ABasicFloor
 	
 public:
 	ABrokenFloor();
-
-private:
-	virtual void CreateFloor() override;
 };

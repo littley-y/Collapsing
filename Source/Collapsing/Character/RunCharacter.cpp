@@ -32,10 +32,6 @@ void ARunCharacter::SetCameraAndArm()
 
 	CameraArm->bDoCollisionTest = false;
 	CameraArm->bUsePawnControlRotation = true;
-	CameraArm->bEnableCameraLag = true;
-	CameraArm->bEnableCameraRotationLag = true;
-	CameraArm->CameraLagSpeed = 8.f;
-	CameraArm->CameraRotationLagSpeed = 8.f;
 
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	if (!IsValid(Camera))
@@ -67,12 +63,6 @@ void ARunCharacter::SetCharacterMovement() const
 	GetCharacterMovement()->JumpZVelocity = 500.f;
 	GetCharacterMovement()->AirControl = 2.f;
 	GetCharacterMovement()->MaxWalkSpeed = 800.f;
-}
-
-void ARunCharacter::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
 }
 
 void ARunCharacter::Death()

@@ -72,7 +72,6 @@ void ARunCharacter::CheckCollapsed()
 		const float TargetSpeed = (IntCollapsed / 5 + 1) * 200.f;
 		GetCharacterMovement()->MaxWalkSpeed = TargetSpeed;
 		UE_LOG(LogTemp, Warning, TEXT("Current Speed : %f"), TargetSpeed)
-		UE_LOG(LogTemp, Warning, TEXT("Current Collapsed : %f"), IntCollapsed)
 	}
 }
 

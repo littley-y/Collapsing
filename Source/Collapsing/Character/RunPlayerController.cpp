@@ -24,20 +24,16 @@ void ARunPlayerController::SetupInputComponent()
 	Subsystem->AddMappingContext(InputMapping, 0);
 
 	UEnhancedInputComponent* PlayerEnhancedInput = CastChecked<UEnhancedInputComponent>(InputComponent);
-	if (IsValid(PlayerEnhancedInput))
-	{
-		PlayerEnhancedInput->BindAction(InputActions->MoveAction, ETriggerEvent::Triggered, this,
-										&ARunPlayerController::Move);
-		PlayerEnhancedInput->BindAction(InputActions->ChangeSpeedAction, ETriggerEvent::Started, this,
-		                                &ARunPlayerController::ChangeSpeed);
-		PlayerEnhancedInput->BindAction(InputActions->TurnAction, ETriggerEvent::Started, this,
-		                                &ARunPlayerController::Turn);
-
-		PlayerEnhancedInput->BindAction(InputActions->JumpAction, ETriggerEvent::Started, this,
-		                                &ARunPlayerController::Jump);
-		PlayerEnhancedInput->BindAction(InputActions->JumpAction, ETriggerEvent::Completed, this,
-		                                &ARunPlayerController::StopJump);
-	}
+	PlayerEnhancedInput->BindAction(InputActions->MoveAction, ETriggerEvent::Triggered, this,
+									&ARunPlayerController::Move);
+	PlayerEnhancedInput->BindAction(InputActions->ChangeSpeedAction, ETriggerEvent::Started, this,
+		                            &ARunPlayerController::ChangeSpeed);
+	PlayerEnhancedInput->BindAction(InputActions->TurnAction, ETriggerEvent::Started, this,
+		                            &ARunPlayerController::Turn);
+	PlayerEnhancedInput->BindAction(InputActions->JumpAction, ETriggerEvent::Started, this,
+		                            &ARunPlayerController::Jump);
+	PlayerEnhancedInput->BindAction(InputActions->JumpAction, ETriggerEvent::Completed, this,
+		                            &ARunPlayerController::StopJump);
 }
 
 void ARunPlayerController::Move(const FInputActionValue& Value)

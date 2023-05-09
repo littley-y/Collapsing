@@ -6,9 +6,11 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Game/CollapsingGameInstance.h"
 
 ARunCharacter::ARunCharacter()
 {
+	PrimaryActorTick.bCanEverTick = true;
 	bUseControllerRotationYaw = false;
 	bCanCharacterTurn = false;
 	bIsDead = false;
@@ -53,6 +55,25 @@ void ARunCharacter::SetCameraAndArm()
 void ARunCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
+	UWorld* CurrWorld = GetWorld();
+	if (IsValid(CurrWorld))
+	{
+		CurrWorld->GetTimerManager().SetTimer(CheckCollapsedTimerHandle, this, &ARunCharacter::CheckCollapsed, 1.f, true);
+	}
+}
+
+void ARunCharacter::CheckCollapsed()
+{
+	UCollapsingGameInstance* CGI = Cast<UCollapsingGameInstance>(GetGameInstance());
+	if (IsValid(CGI))
+	{
+		const int IntCollapsed = FMath::RoundToInt(CGI->GetCollapsed());
+		const float TargetSpeed = (IntCollapsed / 5 + 1) * 200.f;
+		GetCharacterMovement()->MaxWalkSpeed = TargetSpeed;
+		UE_LOG(LogTemp, Warning, TEXT("Current Speed : %f"), TargetSpeed)
+		UE_LOG(LogTemp, Warning, TEXT("Current Collapsed : %f"), IntCollapsed)
+	}
 }
 
 void ARunCharacter::SetCharacterMovement() const

@@ -35,11 +35,11 @@ void FTileGeneratorTransform::UpdateVectorZ(const float InValue)
 
 UTileGenerator::UTileGenerator()
 {
-	LoadBPFloor(TEXT("/Game/Collapsing/Blueprints/BP_CBasicFloor"), '0');
-	LoadBPFloor(TEXT("/Game/Collapsing/Blueprints/BP_CLeftCornerFloor"), 'L');
-	LoadBPFloor(TEXT("/Game/Collapsing/Blueprints/BP_CRightCornerFloor"), 'R');
-	LoadBPFloor(TEXT("/Game/Collapsing/Blueprints/BP_CSpeedFloor"), 'S');
-	LoadBPFloor(TEXT("/Game/Collapsing/Blueprints/BP_CBrokenFloor"), 'B');
+	LoadBPFloor(TEXT("/Game/Collapsing/Tile/BP_CBasicFloor"), '0');
+	LoadBPFloor(TEXT("/Game/Collapsing/Tile/BP_CLeftCornerFloor"), 'L');
+	LoadBPFloor(TEXT("/Game/Collapsing/Tile/BP_CRightCornerFloor"), 'R');
+	LoadBPFloor(TEXT("/Game/Collapsing/Tile/BP_CSpeedFloor"), 'S');
+	LoadBPFloor(TEXT("/Game/Collapsing/Tile/BP_CBrokenFloor"), 'B');
 
 	GeneratedFloorArray.SetNum(MaxTileNum + 1);
 	CurrentMapIndex = 0;

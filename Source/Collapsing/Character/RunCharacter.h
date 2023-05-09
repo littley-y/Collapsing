@@ -7,7 +7,7 @@
 #include "RunCharacter.generated.h"
 
 UCLASS()
-class COLLAPSING_API ARunCharacter final : public ACharacter
+class COLLAPSING_API ARunCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
@@ -33,7 +33,13 @@ protected:
 	UPROPERTY()
 	FTimerHandle RestartTimerHandle;
 
+	UPROPERTY()
+	FTimerHandle CheckCollapsedTimerHandle;
+
 	virtual void BeginPlay() override;
+
+	UFUNCTION()
+	void CheckCollapsed();
 
 	UFUNCTION()
 	void OnDeath();

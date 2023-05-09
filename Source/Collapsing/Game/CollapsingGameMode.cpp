@@ -3,13 +3,15 @@
 #include "CollapsingGameMode.h"
 #include "Tile/TileGenerator.h"
 #include "Utils/AssetFinder.hpp"
+#include "CollapsingGameInstance.h"
 
 ACollapsingGameMode::ACollapsingGameMode()
 {
+	PrimaryActorTick.bCanEverTick = true;
 	TileGenerator = CreateDefaultSubobject<UTileGenerator>(TEXT("TileGenerator"));
 
 	static TSubclassOf<APawn> CollapsingPawn = MyFunction::AssetClassFinder<APawn>(
-		TEXT("/Game/Collapsing/Blueprints/BP_CCharacter.BP_CCharacter_C"));
+		TEXT("/Game/Collapsing/Character/BP_CCharacter.BP_CCharacter_C"));
 	if (IsValid(CollapsingPawn))
 	{
 		DefaultPawnClass = CollapsingPawn;
@@ -37,18 +39,6 @@ void ACollapsingGameMode::SetMapBasicString() const
 	UE_LOG(LogTemp, Warning, TEXT("Map Loaded : %s"), *MapString);
 }
 
-void ACollapsingGameMode::GenerateTile()
-{
-	if (IsValid(TileGenerator))
-	{
-		// DefaultPawnClass의 속도를 얻어온다.
-		const float DefaultPawnSpeed = Cast<APawn>(DefaultPawnClass->GetDefaultObject())->GetVelocity().Size();
-		SetTileGenerateTimer(DefaultPawnSpeed);
-
-		TileGenerator->SpawnFloorTile();
-	}
-}
-
 void ACollapsingGameMode::SetTileGenerateTimer(const float TargetTime)
 {
 	TileGenerateTime = TargetTime;
@@ -64,6 +54,30 @@ void ACollapsingGameMode::BeginPlay()
 		TileGenerator->InitMaps();
 	}
 
-	GetWorld()->GetTimerManager().SetTimer(TileGenerateTimerHandle, this, &ACollapsingGameMode::GenerateTile,
-	                                       TileGenerateTime, true);
+	UWorld* CurrWorld = GetWorld();
+	if (IsValid(CurrWorld))
+	{
+		CurrWorld->GetTimerManager().SetTimer(TileGenerateTimerHandle, this, &ACollapsingGameMode::GenerateTile,
+											  TileGenerateTime, true);
+		CurrWorld->GetTimerManager().SetTimer(CollapsedTimerHandle, this, &ACollapsingGameMode::DecreseCollapse,
+											  1.f, true);
+	}
+}
+
+void ACollapsingGameMode::GenerateTile()
+{
+	if (IsValid(TileGenerator))
+	{
+		TileGenerator->SpawnFloorTile();
+	}
+}
+
+void ACollapsingGameMode::DecreseCollapse()
+{
+	UCollapsingGameInstance* MyGameInstance = Cast<UCollapsingGameInstance>(GetGameInstance());
+	if (IsValid(MyGameInstance))
+	{
+		float CurrCollapsed = MyGameInstance->GetCollapsed();
+		MyGameInstance->SetCollapsed(CurrCollapsed - 1.f);
+	}
 }

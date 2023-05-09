@@ -2,6 +2,7 @@
 
 #include "RunAnimeInstance.h"
 #include "GameFramework/PawnMovementComponent.h"
+#include "GameFramework/Character.h"
 
 void URunAnimeInstance::NativeInitializeAnimation()
 {
@@ -13,9 +14,11 @@ void URunAnimeInstance::NativeInitializeAnimation()
 
 void URunAnimeInstance::NativeUpdateAnimation(float DeltaSeconds)
 {
-	if (IsValid(BasicPawn))
+	ACharacter* MyCharacter = Cast<ACharacter>(BasicPawn);
+	if (IsValid(MyCharacter))
 	{
-		bIsInAir = BasicPawn->GetMovementComponent()->IsFalling();
-		Speed = BasicPawn->GetVelocity().Size();
+		bIsJumping = MyCharacter->GetMovementComponent()->IsFalling() && MyCharacter->JumpCurrentCount;
+		bIsFalling = MyCharacter->GetMovementComponent()->IsFalling() && MyCharacter->JumpCurrentCount == 0;
+		Speed = MyCharacter->GetVelocity().Size();
 	}
 }

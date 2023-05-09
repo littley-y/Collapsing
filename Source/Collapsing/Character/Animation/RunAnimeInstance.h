@@ -16,7 +16,10 @@ public:
 	float Speed;
 	
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Value")
-	bool bIsInAir;
+	bool bIsJumping;
+
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Value")
+	bool bIsFalling;
 
 	virtual void NativeInitializeAnimation() override;
 

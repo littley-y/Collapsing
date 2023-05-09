@@ -19,15 +19,22 @@ public:
 
 	void SetMapBasicString() const;
 
-	// 시간에 따라 다음 타일을 생성하는 함수
-	void GenerateTile();
 	void SetTileGenerateTimer(const float TargetTime);
-
-protected:
-	FTimerHandle TileGenerateTimerHandle;
-
-	virtual void BeginPlay() override;
 
 private:
 	float TileGenerateTime;
+
+	UPROPERTY()
+	FTimerHandle TileGenerateTimerHandle;
+
+	UPROPERTY()
+	FTimerHandle CollapsedTimerHandle;
+
+	virtual void BeginPlay() override;
+
+	void DecreseCollapse();
+
+	// 시간에 따라 다음 타일을 생성하는 함수
+	void GenerateTile();
+
 };

@@ -17,7 +17,7 @@ class COLLAPSING_API UCollapsingGameInstance : public UGameInstance
 public:
 	virtual void Init() override;
 
-	const float GetCollapsed() const { return Collapsed; }
+	const float& GetCollapsed() const { return Collapsed; }
 	void SetCollapsed(const float InValue) { Collapsed = InValue; }
 
 private:

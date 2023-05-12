@@ -47,12 +47,12 @@ void ABasicFloor::SetWall(TObjectPtr<UStaticMeshComponent>& Wall, const int8 Ix)
 		Wall->SetStaticMesh(WallMeshAsset);
 	}
 
-	static UMaterial* WoodMaterialAsset = MyFunction::AssetObjectFinder<UMaterial>(
-		TEXT("/Game/_GameAssets/Meshes/Materials/M_Wood_Floor_Walnut_Polished"));
-	if (IsValid(WoodMaterialAsset))
-	{
-		Wall->SetMaterial(0, WoodMaterialAsset);
-	}
+	//static UMaterial* WoodMaterialAsset = MyFunction::AssetObjectFinder<UMaterial>(
+	//	TEXT("/Game/_GameAssets/Meshes/Materials/M_Wood_Floor_Walnut_Polished"));
+	//if (IsValid(WoodMaterialAsset))
+	//{
+	//	Wall->SetMaterial(0, WoodMaterialAsset);
+	//}
 
 	if (Ix == 1)
 	{
@@ -73,12 +73,12 @@ void ABasicFloor::CreateFloor()
 		FloorMesh->SetStaticMesh(FloorMeshAsset);
 	}
 
-	static UMaterial* WoodMaterialAsset = MyFunction::AssetObjectFinder<UMaterial>(
-		TEXT("/Game/_GameAssets/Meshes/Materials/M_Wood_Floor_Walnut_Polished"));
-	if (IsValid(WoodMaterialAsset))
-	{
-		FloorMesh->SetMaterial(0, WoodMaterialAsset);
-	}
+	//static UMaterial* WoodMaterialAsset = MyFunction::AssetObjectFinder<UMaterial>(
+	//	TEXT("/Game/_GameAssets/Meshes/Materials/M_Wood_Floor_Walnut_Polished"));
+	//if (IsValid(WoodMaterialAsset))
+	//{
+	//	FloorMesh->SetMaterial(0, WoodMaterialAsset);
+	//}
 }
 
 void ABasicFloor::OnWallHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,

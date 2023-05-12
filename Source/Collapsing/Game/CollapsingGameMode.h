@@ -32,9 +32,8 @@ private:
 
 	virtual void BeginPlay() override;
 
-	void DecreseCollapse();
+	void DecreaseCollapse() const;
 
-	// 시간에 따라 다음 타일을 생성하는 함수
-	void GenerateTile();
+	void GenerateTile() const;
 
 };

@@ -39,7 +39,7 @@ protected:
 	virtual void BeginPlay() override;
 
 	UFUNCTION()
-	void CheckCollapsed();
+	void CheckCollapsed() const;
 
 	UFUNCTION()
 	void OnDeath();

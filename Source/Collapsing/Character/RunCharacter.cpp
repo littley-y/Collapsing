@@ -56,16 +56,16 @@ void ARunCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	UWorld* CurrWorld = GetWorld();
-	if (IsValid(CurrWorld))
+	const UWorld* CurrentWorld = GetWorld();
+	if (IsValid(CurrentWorld))
 	{
-		CurrWorld->GetTimerManager().SetTimer(CheckCollapsedTimerHandle, this, &ARunCharacter::CheckCollapsed, 1.f, true);
+		CurrentWorld->GetTimerManager().SetTimer(CheckCollapsedTimerHandle, this, &ARunCharacter::CheckCollapsed, 1.f, true);
 	}
 }
 
-void ARunCharacter::CheckCollapsed()
+void ARunCharacter::CheckCollapsed() const
 {
-	UCollapsingGameInstance* CGI = Cast<UCollapsingGameInstance>(GetGameInstance());
+	const UCollapsingGameInstance* CGI = Cast<UCollapsingGameInstance>(GetGameInstance());
 	if (IsValid(CGI))
 	{
 		const int IntCollapsed = FMath::RoundToInt(CGI->GetCollapsed());
@@ -77,12 +77,12 @@ void ARunCharacter::CheckCollapsed()
 
 void ARunCharacter::SetCharacterMovement() const
 {
+	GetCharacterMovement()->MaxWalkSpeed = 800.f;
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	GetCharacterMovement()->RotationRate = FRotator(0.f, 300.f,0.f);
 
 	GetCharacterMovement()->JumpZVelocity = 500.f;
 	GetCharacterMovement()->AirControl = 2.f;
-	GetCharacterMovement()->MaxWalkSpeed = 800.f;
 }
 
 void ARunCharacter::Death()

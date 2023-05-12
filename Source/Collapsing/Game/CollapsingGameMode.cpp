@@ -54,17 +54,17 @@ void ACollapsingGameMode::BeginPlay()
 		TileGenerator->InitMaps();
 	}
 
-	UWorld* CurrWorld = GetWorld();
-	if (IsValid(CurrWorld))
+	const UWorld* CurrentWorld = GetWorld();
+	if (IsValid(CurrentWorld))
 	{
-		CurrWorld->GetTimerManager().SetTimer(TileGenerateTimerHandle, this, &ACollapsingGameMode::GenerateTile,
-											  TileGenerateTime, true);
-		CurrWorld->GetTimerManager().SetTimer(CollapsedTimerHandle, this, &ACollapsingGameMode::DecreseCollapse,
-											  1.f, true);
+		CurrentWorld->GetTimerManager().SetTimer(TileGenerateTimerHandle, this, &ACollapsingGameMode::GenerateTile,
+		                                         TileGenerateTime, true);
+		CurrentWorld->GetTimerManager().SetTimer(CollapsedTimerHandle, this, &ACollapsingGameMode::DecreaseCollapse,
+		                                         1.f, true);
 	}
 }
 
-void ACollapsingGameMode::GenerateTile()
+void ACollapsingGameMode::GenerateTile() const
 {
 	if (IsValid(TileGenerator))
 	{
@@ -72,12 +72,12 @@ void ACollapsingGameMode::GenerateTile()
 	}
 }
 
-void ACollapsingGameMode::DecreseCollapse()
+void ACollapsingGameMode::DecreaseCollapse() const
 {
 	UCollapsingGameInstance* MyGameInstance = Cast<UCollapsingGameInstance>(GetGameInstance());
 	if (IsValid(MyGameInstance))
 	{
-		float CurrCollapsed = MyGameInstance->GetCollapsed();
-		MyGameInstance->SetCollapsed(CurrCollapsed - 1.f);
+		const float CurrentCollapsed = MyGameInstance->GetCollapsed();
+		MyGameInstance->SetCollapsed(CurrentCollapsed - 1.f);
 	}
 }

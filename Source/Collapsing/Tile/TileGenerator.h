@@ -10,7 +10,6 @@ struct FTileGeneratorTransform
 {
 	GENERATED_BODY()
 
-
 	FVector Vector;
 	FRotator Rotator;
 

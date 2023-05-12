@@ -35,6 +35,11 @@ public:
 
 	void SpawnFloorTile();
 
+	UPROPERTY()
+	TSubclassOf<AActor> Test1;
+	UPROPERTY()
+	TSubclassOf<AActor> Test2;
+
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TMap<uint8, TSubclassOf<AActor>> BPFloorArray;

@@ -32,6 +32,8 @@ protected:
 
 	virtual void SetWall(TObjectPtr<UStaticMeshComponent>& Wall, const int8 Ix);
 
+	void DestroyingEffect();
+
 	void CreateFloor();
 	void CreateWallArray();
 };

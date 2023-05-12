@@ -13,7 +13,7 @@ UCLASS()
 class COLLAPSING_API UCollapsingGameInstance : public UGameInstance
 {
 	GENERATED_BODY()
-
+	
 public:
 	virtual void Init() override;
 

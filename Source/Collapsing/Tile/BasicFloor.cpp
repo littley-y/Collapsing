@@ -60,6 +60,11 @@ void ABasicFloor::SetWall(TObjectPtr<UStaticMeshComponent>& Wall, const int8 Ix)
 	}
 }
 
+void ABasicFloor::DestroyingEffect()
+{
+
+}
+
 void ABasicFloor::CreateFloor()
 {
 	FloorMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("FloorMesh"));

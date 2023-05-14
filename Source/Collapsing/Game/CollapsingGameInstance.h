@@ -13,13 +13,5 @@ UCLASS()
 class COLLAPSING_API UCollapsingGameInstance : public UGameInstance
 {
 	GENERATED_BODY()
-	
-public:
-	virtual void Init() override;
 
-	const float& GetCollapsed() const { return Collapsed; }
-	void SetCollapsed(const float InValue) { Collapsed = InValue; }
-
-private:
-	float Collapsed;
 };

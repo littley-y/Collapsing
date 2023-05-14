@@ -32,8 +32,6 @@ private:
 
 	virtual void BeginPlay() override;
 
-	void DecreaseCollapse() const;
-
 	void GenerateTile() const;
 
 };

@@ -34,17 +34,19 @@ protected:
 	FTimerHandle RestartTimerHandle;
 
 	UPROPERTY()
-	FTimerHandle CheckCollapsedTimerHandle;
-
-	virtual void BeginPlay() override;
-
-	UFUNCTION()
-	void CheckCollapsed() const;
+	FTimerHandle CollapsedTimerHandle;
 
 	UFUNCTION()
 	void OnDeath();
 
+	UFUNCTION()
+	void ChangeCharacterState();
+
+	virtual void BeginPlay() override;
+
 private:
+	int32 Collapsed;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class USpringArmComponent> CameraArm;
 

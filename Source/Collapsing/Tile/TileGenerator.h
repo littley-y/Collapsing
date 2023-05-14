@@ -33,7 +33,9 @@ public:
 
 	void InitMaps();
 
-	void SpawnFloorTile();
+	void ManageFloorTile();
+	void DestroyFloorTile(const TCHAR& MapChar, const int32 ArrayIndex);
+	void SpawnFloorTile(const TCHAR& MapChar, const int32 ArrayIndex);
 
 	UPROPERTY()
 	TSubclassOf<AActor> Test1;

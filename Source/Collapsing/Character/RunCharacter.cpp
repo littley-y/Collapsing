@@ -6,11 +6,10 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Kismet/GameplayStatics.h"
-#include "Game/CollapsingGameInstance.h"
 
 ARunCharacter::ARunCharacter()
 {
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 	bUseControllerRotationYaw = false;
 	bCanCharacterTurn = false;
 	bIsDead = false;
@@ -56,33 +55,23 @@ void ARunCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	const UWorld* CurrentWorld = GetWorld();
-	if (IsValid(CurrentWorld))
-	{
-		CurrentWorld->GetTimerManager().SetTimer(CheckCollapsedTimerHandle, this, &ARunCharacter::CheckCollapsed, 1.f, true);
-	}
-}
-
-void ARunCharacter::CheckCollapsed() const
-{
-	const UCollapsingGameInstance* CGI = Cast<UCollapsingGameInstance>(GetGameInstance());
-	if (IsValid(CGI))
-	{
-		const int IntCollapsed = FMath::RoundToInt(CGI->GetCollapsed());
-		const float TargetSpeed = (IntCollapsed / 5 + 1) * 200.f;
-		GetCharacterMovement()->MaxWalkSpeed = TargetSpeed;
-		UE_LOG(LogTemp, Warning, TEXT("Current Speed : %f"), TargetSpeed)
-	}
+	Collapsed = 0;
+	GetWorldTimerManager().SetTimer(CollapsedTimerHandle, this, &ARunCharacter::ChangeCharacterState, 1.f, true);
 }
 
 void ARunCharacter::SetCharacterMovement() const
 {
-	GetCharacterMovement()->MaxWalkSpeed = 800.f;
-	GetCharacterMovement()->bOrientRotationToMovement = true;
-	GetCharacterMovement()->RotationRate = FRotator(0.f, 300.f,0.f);
+	const UCharacterMovementComponent* CMC = GetCharacterMovement();
+	if (IsValid(CMC))
+	{
+		GetCharacterMovement()->bOrientRotationToMovement = true;
+		GetCharacterMovement()->RotationRate = FRotator(0.f, 300.f,0.f);
 
-	GetCharacterMovement()->JumpZVelocity = 500.f;
-	GetCharacterMovement()->AirControl = 2.f;
+		GetCharacterMovement()->MaxWalkSpeed = 800.f;
+		GetCharacterMovement()->JumpZVelocity = 500.f;
+		GetCharacterMovement()->AirControl = 2.f;
+	}
+
 }
 
 void ARunCharacter::Death()
@@ -122,5 +111,15 @@ void ARunCharacter::OnDeath()
 	}
 
 	UKismetSystemLibrary::ExecuteConsoleCommand(GetWorld(), TEXT("RestartLevel"));
+}
+
+void ARunCharacter::ChangeCharacterState()
+{
+	++Collapsed;
+	GetCharacterMovement()->MaxWalkSpeed -= 40;
+	if (Collapsed == 20)
+	{
+		Death();
+	}
 }
 

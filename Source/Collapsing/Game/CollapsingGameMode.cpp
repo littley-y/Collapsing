@@ -3,7 +3,6 @@
 #include "CollapsingGameMode.h"
 #include "Tile/TileGenerator.h"
 #include "Utils/AssetFinder.hpp"
-#include "CollapsingGameInstance.h"
 
 ACollapsingGameMode::ACollapsingGameMode()
 {
@@ -59,8 +58,6 @@ void ACollapsingGameMode::BeginPlay()
 	{
 		CurrentWorld->GetTimerManager().SetTimer(TileGenerateTimerHandle, this, &ACollapsingGameMode::GenerateTile,
 		                                         TileGenerateTime, true);
-		CurrentWorld->GetTimerManager().SetTimer(CollapsedTimerHandle, this, &ACollapsingGameMode::DecreaseCollapse,
-		                                         1.f, true);
 	}
 }
 
@@ -68,16 +65,6 @@ void ACollapsingGameMode::GenerateTile() const
 {
 	if (IsValid(TileGenerator))
 	{
-		TileGenerator->SpawnFloorTile();
-	}
-}
-
-void ACollapsingGameMode::DecreaseCollapse() const
-{
-	UCollapsingGameInstance* MyGameInstance = Cast<UCollapsingGameInstance>(GetGameInstance());
-	if (IsValid(MyGameInstance))
-	{
-		const float CurrentCollapsed = MyGameInstance->GetCollapsed();
-		MyGameInstance->SetCollapsed(CurrentCollapsed - 1.f);
+		TileGenerator->ManageFloorTile();
 	}
 }

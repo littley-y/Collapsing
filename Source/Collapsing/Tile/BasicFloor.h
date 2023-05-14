@@ -20,21 +20,29 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="StaticMeshComponent")
 	TObjectPtr<UStaticMeshComponent> FloorMesh;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="GeometryComponent")
+	TObjectPtr<class UGeometryCollectionComponent> GCComponent;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Array")
 	TArray<TObjectPtr<UStaticMeshComponent>> WallArray;
-
+	
 	ABasicFloor();
+
+	void DestroyFloor();
 
 protected:
 	UFUNCTION()
 	void OnWallHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
 			       FVector NormalImpulse, const FHitResult& Hit);
 
-	virtual void SetWall(TObjectPtr<UStaticMeshComponent>& Wall, const int8 Ix);
+	virtual void BeginPlay() override;
 
-	void DestroyingEffect();
+	virtual void SetWall(TObjectPtr<UStaticMeshComponent>& Wall, const int8 Ix);
 
 	void CreateFloor();
 	void CreateWallArray();
+	void CreateGC();
+
+	void OnDestroy();
 };
 

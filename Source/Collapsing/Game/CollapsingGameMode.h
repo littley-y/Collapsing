@@ -13,7 +13,7 @@ class COLLAPSING_API ACollapsingGameMode : public AGameModeBase
 
 public:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly)
-	TObjectPtr<class UTileGenerator> TileGenerator;
+	TObjectPtr<class UTileManager> TileGenerator;
 
 	ACollapsingGameMode();
 

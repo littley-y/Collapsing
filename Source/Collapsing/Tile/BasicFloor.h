@@ -6,8 +6,6 @@
 #include "GameFramework/Actor.h"
 #include "BasicFloor.generated.h"
 
-class UTileGenerator;
-
 UCLASS()
 class COLLAPSING_API ABasicFloor : public AActor
 {
@@ -28,21 +26,15 @@ public:
 	
 	ABasicFloor();
 
-	void DestroyFloor();
-
 protected:
 	UFUNCTION()
 	void OnWallHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
 			       FVector NormalImpulse, const FHitResult& Hit);
 
-	virtual void BeginPlay() override;
-
 	virtual void SetWall(TObjectPtr<UStaticMeshComponent>& Wall, const int8 Ix);
 
 	void CreateFloor();
 	void CreateWallArray();
-	void CreateGC();
 
-	void OnDestroy();
 };
 

@@ -1,13 +1,13 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "CollapsingGameMode.h"
-#include "Tile/TileGenerator.h"
+#include "Tile/TileManager.h"
 #include "Utils/AssetFinder.hpp"
 
 ACollapsingGameMode::ACollapsingGameMode()
 {
 	PrimaryActorTick.bCanEverTick = true;
-	TileGenerator = CreateDefaultSubobject<UTileGenerator>(TEXT("TileGenerator"));
+	TileGenerator = CreateDefaultSubobject<UTileManager>(TEXT("TileGenerator"));
 
 	static TSubclassOf<APawn> CollapsingPawn = MyFunction::AssetClassFinder<APawn>(
 		TEXT("/Game/Collapsing/Character/BP_CCharacter.BP_CCharacter_C"));
@@ -65,6 +65,6 @@ void ACollapsingGameMode::GenerateTile() const
 {
 	if (IsValid(TileGenerator))
 	{
-		TileGenerator->ManageFloorTile();
+		TileGenerator->ManageTile();
 	}
 }

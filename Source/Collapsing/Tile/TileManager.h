@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "TileGenerator.generated.h"
+#include "TileManager.generated.h"
 
 USTRUCT()
 struct FTileGeneratorTransform
@@ -20,31 +20,29 @@ struct FTileGeneratorTransform
 };
 
 UCLASS()
-class COLLAPSING_API UTileGenerator : public UObject
+class COLLAPSING_API UTileManager : public UObject
 {
 	GENERATED_BODY()
 
 public:
-	UTileGenerator();
+	UTileManager();
 
 	void SetMapString(const FString& InMapString) { MapString = InMapString; }
 
-	void LoadBPFloor(const FString& BPPath, uint8 KeyChar);
+	static void LoadBPClass(TMap<uint8, TSubclassOf<AActor>>& TargetMap, const FString& BPPath, uint8 KeyChar);
 
 	void InitMaps();
 
-	void ManageFloorTile();
-	void DestroyFloorTile(const TCHAR& MapChar, const int32 ArrayIndex);
-	void SpawnFloorTile(const TCHAR& MapChar, const int32 ArrayIndex);
-
-	UPROPERTY()
-	TSubclassOf<AActor> Test1;
-	UPROPERTY()
-	TSubclassOf<AActor> Test2;
+	void ManageTile();
+	void DestroyTile(const int32 ArrayIndex);
+	void SpawnTile(const TCHAR& MapChar, const int32 ArrayIndex);
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	TMap<uint8, TSubclassOf<AActor>> BPFloorArray;
+	TMap<uint8, TSubclassOf<AActor>> BPFloorMap;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	TMap<uint8, TSubclassOf<AActor>> GeometryFloorMap;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TArray<TObjectPtr<AActor>> GeneratedFloorArray;

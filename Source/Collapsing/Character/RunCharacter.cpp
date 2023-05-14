@@ -56,7 +56,7 @@ void ARunCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	Collapsed = 0;
-	GetWorldTimerManager().SetTimer(CollapsedTimerHandle, this, &ARunCharacter::ChangeCharacterState, 1.f, true);
+	//GetWorldTimerManager().SetTimer(CollapsedTimerHandle, this, &ARunCharacter::ChangeCharacterState, 1.f, true);
 }
 
 void ARunCharacter::SetCharacterMovement() const

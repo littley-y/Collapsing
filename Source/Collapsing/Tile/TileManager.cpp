@@ -1,7 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "TileGenerator.h"
-#include "Tile/BasicFloor.h"
+#include "TileManager.h"
 
 void FTileGeneratorTransform::UpdateVectorXY(const float InValue)
 {
@@ -34,58 +33,66 @@ void FTileGeneratorTransform::UpdateVectorZ(const float InValue)
 
 }
 
-UTileGenerator::UTileGenerator()
+UTileManager::UTileManager()
 {
-	LoadBPFloor(TEXT("/Game/Collapsing/Tile/BP_CBasicFloor"), '0');
-	LoadBPFloor(TEXT("/Game/Collapsing/Tile/BP_CLeftCornerFloor"), 'L');
-	LoadBPFloor(TEXT("/Game/Collapsing/Tile/BP_CRightCornerFloor"), 'R');
-	LoadBPFloor(TEXT("/Game/Collapsing/Tile/BP_CSpeedFloor"), 'S');
-	LoadBPFloor(TEXT("/Game/Collapsing/Tile/BP_CBrokenFloor"), 'B');
+	LoadBPClass(BPFloorMap, "/Game/Collapsing/Tile/BP_CBasicFloor", '0');
+	LoadBPClass(BPFloorMap, "/Game/Collapsing/Tile/BP_CLeftCornerFloor", 'L');
+	LoadBPClass(BPFloorMap, "/Game/Collapsing/Tile/BP_CRightCornerFloor", 'R');
+	LoadBPClass(BPFloorMap, "/Game/Collapsing/Tile/BP_CSpeedFloor", 'S');
+	LoadBPClass(BPFloorMap, "/Game/Collapsing/Tile/BP_CBrokenFloor", 'B');
+
+	LoadBPClass(GeometryFloorMap, "/Game/Collapsing/Tile/Geometry/GA_CBasicFloor", '0');
+	LoadBPClass(GeometryFloorMap, "/Game/Collapsing/Tile/Geometry/GA_CLeftCornerFloor", 'L');
+	LoadBPClass(GeometryFloorMap, "/Game/Collapsing/Tile/Geometry/GA_CRightCornerFloor", 'R');
+
 
 	GeneratedFloorArray.SetNum(MaxTileNum + 1);
 	CurrentMapIndex = 0;
-
-	// CPP 클래스 만들어서 그 아래 GeometryCollectionComponent 두고, BP로 상속받아 만든다음 내가 만든 Geometry로 지정해주기
-	//Test1 = MyFunction::AssetClassFinder<AActor>(TEXT("/Game/Collapsing/Tile/BP_CBasicFloor_GeometryCollection.BP_CBasicFloor_GeometryCollection_C"));
-	//Test2 = MyFunction::AssetClassFinder<AActor>(TEXT("/Game/Collapsing/Tile/FS_TEST2.FS_TEST2_C"));
 }
 
-void UTileGenerator::LoadBPFloor(const FString& BPPath, uint8 KeyChar)
+void UTileManager::LoadBPClass(TMap<uint8, TSubclassOf<AActor>>& TargetMap, const FString& BPPath, uint8 KeyChar)
 {
 	ConstructorHelpers::FClassFinder<AActor> BPFloor(*BPPath);
 	if (BPFloor.Succeeded())
 	{
 		const int32 Position = BPPath.Find(TEXT("/"), ESearchCase::IgnoreCase, ESearchDir::FromEnd);
-		BPFloorArray.Emplace(KeyChar, BPFloor.Class);
+		TargetMap.Emplace(KeyChar, BPFloor.Class);
 		UE_LOG(LogTemp, Warning, TEXT("%s Loaded"), *BPPath.RightChop(Position + 1));
 	}
 }
 
-void UTileGenerator::ManageFloorTile()
+void UTileManager::ManageTile()
 {
 	const TCHAR& MapChar = MapString[CurrentMapIndex % MapString.Len()];
 	const int32 ArrayIndex = CurrentMapIndex % MaxTileNum;
 	//UE_LOG(LogTemp, Warning, TEXT("Current Val : %c"), MapChar)
 
-	DestroyFloorTile(MapChar, ArrayIndex);
-	SpawnFloorTile(MapChar, ArrayIndex);
+	DestroyTile(ArrayIndex);
+	SpawnTile(MapChar, ArrayIndex);
 }
 
-void UTileGenerator::DestroyFloorTile(const TCHAR& MapChar, const int32 ArrayIndex)
+void UTileManager::DestroyTile(const int32 ArrayIndex)
 {
 	if (CurrentMapIndex >= MaxTileNum && IsValid(GeneratedFloorArray[ArrayIndex]))
 	{
-		ABasicFloor* CurrFloor = Cast<ABasicFloor>(GeneratedFloorArray[ArrayIndex]);
-		if (IsValid(CurrFloor))
+		AActor* CurrTile = GeneratedFloorArray[ArrayIndex];
+		if (IsValid(CurrTile))
 		{
-			CurrFloor->DestroyFloor();
+			TCHAR CurrChar = CurrTile->GetName()[4];
+			if (CurrChar != 'L' && CurrChar != 'R')
+			{
+				CurrChar = '0';
+			}
+			GetWorld()->SpawnActor<AActor>(GeometryFloorMap[CurrChar], CurrTile->GetActorLocation(), CurrTile->GetActorRotation());
+			CurrTile->SetActorHiddenInGame(true);
+			CurrTile->SetLifeSpan(0.1f);
 		}
 	}
 }
 
-void UTileGenerator::SpawnFloorTile(const TCHAR& MapChar, const int32 ArrayIndex)
+void UTileManager::SpawnTile(const TCHAR& MapChar, const int32 ArrayIndex)
 {
-	GeneratedFloorArray[ArrayIndex] = GetWorld()->SpawnActor<AActor>(BPFloorArray[MapChar], TileGenTrans.Vector,
+	GeneratedFloorArray[ArrayIndex] = GetWorld()->SpawnActor<AActor>(BPFloorMap[MapChar], TileGenTrans.Vector,
 	                                                                 TileGenTrans.Rotator);
 	if (MapChar == 'L')
 	{
@@ -106,11 +113,11 @@ void UTileGenerator::SpawnFloorTile(const TCHAR& MapChar, const int32 ArrayIndex
 	UE_LOG(LogTemp, Warning, TEXT("Floor Gen Location : %s, Yaw : %f"), *TileGenTrans.Vector.ToString(), TileGenTrans.Rotator.Yaw)
 }
 
-void UTileGenerator::InitMaps()
+void UTileManager::InitMaps()
 {
 	for (int32 It = 0; It != InitTileNum; ++It)
 	{
-		ManageFloorTile();
+		ManageTile();
 	}
 	UE_LOG(LogTemp, Warning, TEXT("Init Tiles Generated : %d"), MaxTileNum)
 }

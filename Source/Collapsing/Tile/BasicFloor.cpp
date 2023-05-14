@@ -2,7 +2,6 @@
 
 #include "BasicFloor.h"
 #include "Character/RunCharacter.h"
-#include "GeometryCollection/GeometryCollectionComponent.h"
 #include "Utils/AssetFinder.hpp"
 
 ABasicFloor::ABasicFloor()
@@ -15,7 +14,7 @@ ABasicFloor::ABasicFloor()
 	RootComponent = SceneComponent;
 	CreateFloor();
 	CreateWallArray();
-	CreateGC();
+
 }
 
 void ABasicFloor::CreateWallArray()
@@ -25,31 +24,6 @@ void ABasicFloor::CreateWallArray()
 	{
 		SetWall(WallArray[Ix], Ix);
 	}
-}
-
-void ABasicFloor::CreateGC()
-{
-	GCComponent = CreateDefaultSubobject<UGeometryCollectionComponent>(TEXT("GeometryCollection"));
-	GCComponent->SetupAttachment(RootComponent);
-	GCComponent->SetEnableGravity(true);
-	GCComponent->SetCollisionProfileName(TEXT("OverlapOnlyPawn"));
-}
-
-void ABasicFloor::OnDestroy()
-{
-	Destroy();
-}
-
-void ABasicFloor::DestroyFloor()
-{
-	FloorMesh->DestroyComponent();
-	for (const auto Iter : WallArray)
-	{
-		Iter->DestroyComponent();
-	}
-
-	FTimerHandle Temp;
-	GetWorldTimerManager().SetTimer(Temp, this, &ABasicFloor::OnDestroy, 1.f);
 }
 
 void ABasicFloor::SetWall(TObjectPtr<UStaticMeshComponent>& Wall, const int8 Ix)
@@ -117,10 +91,4 @@ void ABasicFloor::OnWallHit(UPrimitiveComponent* HitComponent, AActor* OtherActo
 		UE_LOG(LogTemp, Warning, TEXT("Player Contacted With Wall"))
 		RunCharacter->Death();
 	}
-}
-
-void ABasicFloor::BeginPlay()
-{
-	Super::BeginPlay();
-
 }

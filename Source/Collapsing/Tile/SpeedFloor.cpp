@@ -25,6 +25,7 @@ ASpeedFloor::ASpeedFloor()
 	DownArrowMesh->SetRelativeLocation(FVector(200.f, 50.f, 50.f));
 
 	SetSpeedZone();
+
 }
 
 void ASpeedFloor::OnPlayerSpeedOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,

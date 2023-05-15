@@ -45,7 +45,6 @@ UTileManager::UTileManager()
 	LoadBPClass(GeometryFloorMap, "/Game/Collapsing/Tile/Geometry/GA_CLeftCornerFloor", 'L');
 	LoadBPClass(GeometryFloorMap, "/Game/Collapsing/Tile/Geometry/GA_CRightCornerFloor", 'R');
 
-
 	GeneratedFloorArray.SetNum(MaxTileNum + 1);
 	CurrentMapIndex = 0;
 }

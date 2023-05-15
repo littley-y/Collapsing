@@ -1,24 +1,36 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "RunAnimeInstance.h"
-#include "GameFramework/PawnMovementComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Character.h"
+
+URunAnimeInstance::URunAnimeInstance()
+{
+	MovingThreshold = 3.f;
+	JumpingThreshold = 100.f;
+}
 
 void URunAnimeInstance::NativeInitializeAnimation()
 {
-	if (BasicPawn == nullptr)
+	Super::NativeInitializeAnimation();
+
+	Owner = Cast<ACharacter>(GetOwningActor());
+	if (Owner)
 	{
-		BasicPawn = TryGetPawnOwner();
+		Movement = Owner->GetCharacterMovement();
 	}
 }
 
 void URunAnimeInstance::NativeUpdateAnimation(float DeltaSeconds)
 {
-	ACharacter* MyCharacter = Cast<ACharacter>(BasicPawn);
-	if (IsValid(MyCharacter))
+	Super::NativeUpdateAnimation(DeltaSeconds);
+
+	if (Movement && Owner)
 	{
-		bIsJumping = MyCharacter->GetMovementComponent()->IsFalling() && MyCharacter->JumpCurrentCount;
-		bIsFalling = MyCharacter->GetMovementComponent()->IsFalling() && MyCharacter->JumpCurrentCount == 0;
-		Speed = MyCharacter->GetVelocity().Size();
+		Velocity = Movement->Velocity;
+		GroundSpeed = Velocity.Size2D();
+		bIsIdle = GroundSpeed < MovingThreshold;
+		bIsFalling = Movement->IsFalling();
+		bIsJumping = bIsFalling & (Velocity.Z > JumpingThreshold);
 	}
 }

@@ -55,8 +55,6 @@ void ARunCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	Collapsed = 0;
-	GetWorldTimerManager().SetTimer(CollapsedTimerHandle, this, &ARunCharacter::ChangeCharacterState, 1.f, true);
 }
 
 void ARunCharacter::SetCharacterMovement() const
@@ -111,14 +109,3 @@ void ARunCharacter::OnDeath()
 
 	UKismetSystemLibrary::ExecuteConsoleCommand(GetWorld(), TEXT("RestartLevel"));
 }
-
-void ARunCharacter::ChangeCharacterState()
-{
-	++Collapsed;
-	GetCharacterMovement()->MaxWalkSpeed -= 40;
-	if (Collapsed == 20)
-	{
-		Death();
-	}
-}
-

@@ -20,5 +20,21 @@ void UCCharacterStatComponent::BeginPlay()
 	Super::BeginPlay();
 
 	// ...
-	
+	MaxHp = 100.f;
+	CurrentHp = 100.f;
+
+}
+
+float UCCharacterStatComponent::ApplyDamage(float InDamage)
+{
+	const float PrevHp = CurrentHp;
+	const float ActualDamage = FMath::Clamp<float>(InDamage, 0.f, InDamage);
+
+	CurrentHp = FMath::Clamp<float>(PrevHp - ActualDamage, 0.f, MaxHp);
+	if (CurrentHp <= KINDA_SMALL_NUMBER)
+	{
+		OnHpZero.Broadcast();
+	}
+
+	return ActualDamage;
 }

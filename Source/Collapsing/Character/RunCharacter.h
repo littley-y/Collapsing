@@ -33,20 +33,12 @@ protected:
 	UPROPERTY()
 	FTimerHandle RestartTimerHandle;
 
-	UPROPERTY()
-	FTimerHandle CollapsedTimerHandle;
-
 	UFUNCTION()
 	void OnDeath();
-
-	UFUNCTION()
-	void ChangeCharacterState();
 
 	virtual void BeginPlay() override;
 
 private:
-	int32 Collapsed;
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class USpringArmComponent> CameraArm;
 
@@ -54,7 +46,7 @@ private:
 	TObjectPtr<class UCameraComponent> Camera;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<UCameraComponent> SecondCamera;
+	TObjectPtr<class UCameraComponent> SecondCamera;
 
 	void SetCameraAndArm();
 

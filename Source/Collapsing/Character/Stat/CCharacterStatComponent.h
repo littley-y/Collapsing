@@ -6,6 +6,8 @@
 #include "Components/ActorComponent.h"
 #include "CCharacterStatComponent.generated.h"
 
+DECLARE_MULTICAST_DELEGATE(FOnHpZeroDelegate);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnHpChangedDelegate, float /* Current Hp */);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class COLLAPSING_API UCCharacterStatComponent : public UActorComponent
@@ -22,9 +24,15 @@ protected:
 	UPROPERTY(Transient, VisibleInstanceOnly, Category = Stat)
 	float CurrentHp;
 
+	FORCEINLINE void SetHp(float NewHp) { CurrentHp = NewHp; }
+
 	virtual void BeginPlay() override;
 
 public:
+	FOnHpZeroDelegate OnHpZero;
+	FOnHpChangedDelegate OnHpChanged;
+
 	FORCEINLINE float GetMaxHp() { return MaxHp; }
 	FORCEINLINE float GetCurrentHp() { return CurrentHp; }
+	float ApplyDamage(float InDamage);
 };

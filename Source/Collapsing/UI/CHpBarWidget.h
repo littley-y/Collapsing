@@ -14,4 +14,19 @@ class COLLAPSING_API UCHpBarWidget : public UUserWidget
 {
 	GENERATED_BODY()
 	
+public:
+	UCHpBarWidget(const FObjectInitializer& ObjectInitializer);
+
+	void UpdateHpBar(float NewCurrentHp); 
+
+protected:
+	FORCEINLINE void SetHp(float NewMaxHp) { MaxHp = NewMaxHp; }
+
+	virtual void NativeConstruct();
+
+private:
+	float MaxHp;
+
+	UPROPERTY()
+	class UProgressBar* HPProgressBar;
 };

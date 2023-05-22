@@ -50,5 +50,5 @@ private:
 
 	void SetCameraAndArm();
 
-	void SetCharacterMovement() const;	
+	void SetCharacterMovement() const;
 };

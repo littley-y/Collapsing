@@ -54,16 +54,15 @@ void ARunCharacter::SetCameraAndArm()
 void ARunCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-
 }
 
 void ARunCharacter::SetCharacterMovement() const
 {
 	const UCharacterMovementComponent* CMC = GetCharacterMovement();
-	if (IsValid(CMC))
+	if (IsValid(CMC)) 
 	{
 		GetCharacterMovement()->bOrientRotationToMovement = true;
-		GetCharacterMovement()->RotationRate = FRotator(0.f, 300.f,0.f);
+		GetCharacterMovement()->RotationRate = FRotator(0.f, 300.f, 0.f);
 
 		GetCharacterMovement()->MaxWalkSpeed = 800.f;
 		GetCharacterMovement()->JumpZVelocity = 500.f;

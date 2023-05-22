@@ -30,7 +30,6 @@ void FTileGeneratorTransform::UpdateVectorXY(const float InValue)
 
 void FTileGeneratorTransform::UpdateVectorZ(const float InValue)
 {
-
 }
 
 UTileManager::UTileManager()
@@ -82,7 +81,8 @@ void UTileManager::DestroyTile(const int32 ArrayIndex)
 			{
 				CurrChar = '0';
 			}
-			GetWorld()->SpawnActor<AActor>(GeometryFloorMap[CurrChar], CurrTile->GetActorLocation(), CurrTile->GetActorRotation());
+			GetWorld()->SpawnActor<AActor>(GeometryFloorMap[CurrChar], CurrTile->GetActorLocation(),
+			                               CurrTile->GetActorRotation());
 			CurrTile->SetActorHiddenInGame(true);
 			CurrTile->SetLifeSpan(0.1f);
 		}
@@ -109,7 +109,8 @@ void UTileManager::SpawnTile(const TCHAR& MapChar, const int32 ArrayIndex)
 	}
 
 	CurrentMapIndex++;
-	UE_LOG(LogTemp, Warning, TEXT("Floor Gen Location : %s, Yaw : %f"), *TileGenTrans.Vector.ToString(), TileGenTrans.Rotator.Yaw)
+	UE_LOG(LogTemp, Warning, TEXT("Floor Gen Location : %s, Yaw : %f"), *TileGenTrans.Vector.ToString(),
+	       TileGenTrans.Rotator.Yaw)
 }
 
 void UTileManager::InitMaps()

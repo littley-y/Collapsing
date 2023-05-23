@@ -3,30 +3,32 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Blueprint/UserWidget.h"
+#include "CUserWidget.h"
 #include "CHpBarWidget.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class COLLAPSING_API UCHpBarWidget : public UUserWidget
+class COLLAPSING_API UCHpBarWidget : public UCUserWidget
 {
 	GENERATED_BODY()
 	
 public:
 	UCHpBarWidget(const FObjectInitializer& ObjectInitializer);
 
+	FORCEINLINE void SetMaxHp(float NewMaxHp) { MaxHp = NewMaxHp; }
 	void UpdateHpBar(float NewCurrentHp); 
 
 protected:
-	FORCEINLINE void SetHp(float NewMaxHp) { MaxHp = NewMaxHp; }
+	UPROPERTY()
+	TObjectPtr<class UProgressBar> HPProgressBar;
+
+	UPROPERTY()
+	float MaxHp;
 
 	virtual void NativeConstruct();
 
 private:
-	float MaxHp;
-
-	UPROPERTY()
-	class UProgressBar* HPProgressBar;
+	
 };

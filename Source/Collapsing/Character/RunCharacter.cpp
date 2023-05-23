@@ -6,6 +6,9 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "UI/CWidgetComponent.h"
+#include "Stat/CCharacterStatComponent.h"
+#include "UI/CHpBarWidget.h"
 
 ARunCharacter::ARunCharacter()
 {
@@ -18,6 +21,7 @@ ARunCharacter::ARunCharacter()
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.f);
 	SetCameraAndArm();
 	SetCharacterMovement();
+	SetStatAndWidget();
 }
 
 void ARunCharacter::SetCameraAndArm()
@@ -54,12 +58,25 @@ void ARunCharacter::SetCameraAndArm()
 void ARunCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
+	Stat->ApplyDamage(1.f);
+}
+
+void ARunCharacter::SetupCharacterWidget(UCUserWidget* InUserWidget)
+{
+	UCHpBarWidget* HpBarWidget = Cast<UCHpBarWidget>(InUserWidget);
+	if (HpBarWidget) 
+	{
+		HpBarWidget->SetMaxHp(Stat->GetMaxHp());
+		HpBarWidget->UpdateHpBar(Stat->GetCurrentHp());
+		Stat->OnHpChanged.AddUObject(HpBarWidget, &UCHpBarWidget::UpdateHpBar);
+	}
 }
 
 void ARunCharacter::SetCharacterMovement() const
 {
 	const UCharacterMovementComponent* CMC = GetCharacterMovement();
-	if (IsValid(CMC)) 
+	if (IsValid(CMC))
 	{
 		GetCharacterMovement()->bOrientRotationToMovement = true;
 		GetCharacterMovement()->RotationRate = FRotator(0.f, 300.f, 0.f);
@@ -67,6 +84,23 @@ void ARunCharacter::SetCharacterMovement() const
 		GetCharacterMovement()->MaxWalkSpeed = 800.f;
 		GetCharacterMovement()->JumpZVelocity = 500.f;
 		GetCharacterMovement()->AirControl = 2.f;
+	}
+}
+
+void ARunCharacter::SetStatAndWidget()
+{
+	Stat = CreateDefaultSubobject<UCCharacterStatComponent>(TEXT("Stat"));
+
+	HpBar = CreateDefaultSubobject<UCWidgetComponent>(TEXT("Widget"));
+	HpBar->SetupAttachment(GetMesh());
+	HpBar->SetRelativeLocation(FVector(0.f, 0.f, 180.f));
+	static ConstructorHelpers::FClassFinder<UUserWidget> HpBarWidgetRef(TEXT("/Game/Collapsing/UI/WBP_HpBar.WBP_HpBar_C"));
+	if (HpBarWidgetRef.Class)
+	{
+		HpBar->SetWidgetClass(HpBarWidgetRef.Class);
+		HpBar->SetWidgetSpace(EWidgetSpace::Screen);
+		HpBar->SetDrawSize(FVector2D(150.f, 10.f));
+		HpBar->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	}
 }
 

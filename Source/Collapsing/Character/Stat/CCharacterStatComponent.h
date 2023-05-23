@@ -24,7 +24,7 @@ protected:
 	UPROPERTY(Transient, VisibleInstanceOnly, Category = Stat)
 	float CurrentHp;
 
-	FORCEINLINE void SetHp(float NewHp) { CurrentHp = NewHp; }
+	void SetHp(float NewHp);
 
 	virtual void BeginPlay() override;
 

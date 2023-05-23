@@ -2,6 +2,7 @@
 
 #include "Components/ProgressBar.h"
 #include "CHpBarWidget.h"
+#include "Interface/CCharacterWidgetInterface.h"
 
 UCHpBarWidget::UCHpBarWidget(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
@@ -24,4 +25,10 @@ void UCHpBarWidget::NativeConstruct()
 
 	HPProgressBar = Cast<UProgressBar>(GetWidgetFromName(TEXT("PbHpBar")));
 	ensure(HPProgressBar);
+
+	ICCharacterWidgetInterface* CharacterWidget = Cast<ICCharacterWidgetInterface>(OwningActor);
+	if (CharacterWidget)
+	{
+		CharacterWidget->SetupCharacterWidget(this);
+	}
 }

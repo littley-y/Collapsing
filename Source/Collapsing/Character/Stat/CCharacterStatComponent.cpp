@@ -3,26 +3,24 @@
 
 #include "Character/Stat/CCharacterStatComponent.h"
 
-// Sets default values for this component's properties
 UCCharacterStatComponent::UCCharacterStatComponent()
 {
-	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
-	// off to improve performance if you don't need them.
-	PrimaryComponentTick.bCanEverTick = false;
-
-	// ...
+	MaxHp = 100.f;
+	CurrentHp = MaxHp;
 }
 
+void UCCharacterStatComponent::SetHp(float NewHp)
+{
+	CurrentHp = FMath::Clamp<float>(NewHp, 0.f, MaxHp);
 
-// Called when the game starts
+	OnHpChanged.Broadcast(CurrentHp);
+}
+
 void UCCharacterStatComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// ...
-	MaxHp = 100.f;
-	CurrentHp = 100.f;
-
+	SetHp(MaxHp);
 }
 
 float UCCharacterStatComponent::ApplyDamage(float InDamage)
@@ -30,7 +28,7 @@ float UCCharacterStatComponent::ApplyDamage(float InDamage)
 	const float PrevHp = CurrentHp;
 	const float ActualDamage = FMath::Clamp<float>(InDamage, 0.f, InDamage);
 
-	CurrentHp = FMath::Clamp<float>(PrevHp - ActualDamage, 0.f, MaxHp);
+	SetHp(PrevHp - ActualDamage);
 	if (CurrentHp <= KINDA_SMALL_NUMBER)
 	{
 		OnHpZero.Broadcast();

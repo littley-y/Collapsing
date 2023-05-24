@@ -27,6 +27,8 @@ public:
 
 	ARunCharacter();
 
+	void GetHpUpItem();
+
 	UFUNCTION(BlueprintCallable)
 	void Death();
 
@@ -55,12 +57,9 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UCameraComponent> Camera;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<class UCameraComponent> SecondCamera;
-
 	void SetCameraAndArm();
 
-	void SetCharacterMovement() const;
+	void SetupCharacterMovement() const;
 
 	void SetStatAndWidget();
 };

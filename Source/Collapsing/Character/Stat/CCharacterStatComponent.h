@@ -15,7 +15,16 @@ class COLLAPSING_API UCCharacterStatComponent : public UActorComponent
 	GENERATED_BODY()
 
 public:	
+	FOnHpZeroDelegate OnHpZero;
+	FOnHpChangedDelegate OnHpChanged;
+
 	UCCharacterStatComponent();
+
+	FORCEINLINE float GetMaxHp() { return MaxHp; }
+	FORCEINLINE float GetCurrentHp() { return CurrentHp; }
+	float ApplyDamage(float InDamage);
+	
+	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 protected:
 	UPROPERTY(VisibleInstanceOnly, Category = Stat)
@@ -28,11 +37,6 @@ protected:
 
 	virtual void BeginPlay() override;
 
-public:
-	FOnHpZeroDelegate OnHpZero;
-	FOnHpChangedDelegate OnHpChanged;
-
-	FORCEINLINE float GetMaxHp() { return MaxHp; }
-	FORCEINLINE float GetCurrentHp() { return CurrentHp; }
-	float ApplyDamage(float InDamage);
+private:
+	FTimerHandle HpHandler;
 };

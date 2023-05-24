@@ -7,6 +7,7 @@ UCCharacterStatComponent::UCCharacterStatComponent()
 {
 	MaxHp = 100.f;
 	CurrentHp = MaxHp;
+	PrimaryComponentTick.bCanEverTick = true;
 }
 
 void UCCharacterStatComponent::SetHp(float NewHp)
@@ -35,4 +36,9 @@ float UCCharacterStatComponent::ApplyDamage(float InDamage)
 	}
 
 	return ActualDamage;
+}
+
+void UCCharacterStatComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+{
+	ApplyDamage(.2f);
 }

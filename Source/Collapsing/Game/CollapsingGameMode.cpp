@@ -23,7 +23,7 @@ ACollapsingGameMode::ACollapsingGameMode()
 		PlayerControllerClass = CollapsingController;
 	}
 
-	SetTileGenerateTimer(1.f);
+	SetTileGenerateTimer(.5f);
 }
 
 void ACollapsingGameMode::SetMapBasicString() const
@@ -57,7 +57,7 @@ void ACollapsingGameMode::BeginPlay()
 	if (IsValid(CurrentWorld))
 	{
 		CurrentWorld->GetTimerManager().SetTimer(TileGenerateTimerHandle, this, &ACollapsingGameMode::GenerateTile,
-		                                         TileGenerateTime, true);
+			TileGenerateTime, true);
 	}
 }
 

@@ -20,8 +20,13 @@ ARunCharacter::ARunCharacter()
 
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.f);
 	SetCameraAndArm();
-	SetCharacterMovement();
+	SetupCharacterMovement();
 	SetStatAndWidget();
+}
+
+void ARunCharacter::GetHpUpItem()
+{
+	Stat->ApplyDamage(-20.f);
 }
 
 void ARunCharacter::SetCameraAndArm()
@@ -46,44 +51,37 @@ void ARunCharacter::SetCameraAndArm()
 	Camera->bUsePawnControlRotation = false;
 	Camera->SetupAttachment(CameraArm, USpringArmComponent::SocketName);
 	Camera->SetRelativeRotation(FRotator(-40.f, 0.f, 0.f));
-
-	SecondCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("Second Camera"));
-	if (!IsValid(SecondCamera))
-	{
-		return;
-	}
-	SecondCamera->SetupAttachment(GetMesh(), TEXT("head"));
 }
 
 void ARunCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	Stat->ApplyDamage(1.f);
 }
 
 void ARunCharacter::SetupCharacterWidget(UCUserWidget* InUserWidget)
 {
 	UCHpBarWidget* HpBarWidget = Cast<UCHpBarWidget>(InUserWidget);
-	if (HpBarWidget) 
+	if (HpBarWidget)
 	{
 		HpBarWidget->SetMaxHp(Stat->GetMaxHp());
 		HpBarWidget->UpdateHpBar(Stat->GetCurrentHp());
 		Stat->OnHpChanged.AddUObject(HpBarWidget, &UCHpBarWidget::UpdateHpBar);
+		Stat->OnHpZero.AddUObject(this, &ARunCharacter::Death);
 	}
 }
 
-void ARunCharacter::SetCharacterMovement() const
+void ARunCharacter::SetupCharacterMovement() const
 {
-	const UCharacterMovementComponent* CMC = GetCharacterMovement();
+	UCharacterMovementComponent* CMC = GetCharacterMovement();
 	if (IsValid(CMC))
 	{
-		GetCharacterMovement()->bOrientRotationToMovement = true;
-		GetCharacterMovement()->RotationRate = FRotator(0.f, 300.f, 0.f);
+		CMC->bOrientRotationToMovement = true;
+		CMC->RotationRate = FRotator(0.f, 300.f, 0.f);
 
-		GetCharacterMovement()->MaxWalkSpeed = 800.f;
-		GetCharacterMovement()->JumpZVelocity = 500.f;
-		GetCharacterMovement()->AirControl = 2.f;
+		CMC->MaxWalkSpeed = 800.f;
+		CMC->JumpZVelocity = 500.f;
+		CMC->AirControl = 2.f;
 	}
 }
 
@@ -92,8 +90,7 @@ void ARunCharacter::SetStatAndWidget()
 	Stat = CreateDefaultSubobject<UCCharacterStatComponent>(TEXT("Stat"));
 
 	HpBar = CreateDefaultSubobject<UCWidgetComponent>(TEXT("Widget"));
-	HpBar->SetupAttachment(GetMesh());
-	HpBar->SetRelativeLocation(FVector(0.f, 0.f, 180.f));
+	HpBar->SetupAttachment(GetMesh(), TEXT("head"));
 	static ConstructorHelpers::FClassFinder<UUserWidget> HpBarWidgetRef(TEXT("/Game/Collapsing/UI/WBP_HpBar.WBP_HpBar_C"));
 	if (HpBarWidgetRef.Class)
 	{
@@ -125,6 +122,7 @@ void ARunCharacter::Death()
 				UGameplayStatics::PlaySoundAtLocation(CurrentWorld, DeathSound, Location);
 			}
 			GetMesh()->SetVisibility(false);
+			HpBar->SetVisibility(false);
 
 			CurrentWorld->GetTimerManager().SetTimer(RestartTimerHandle, this, &ARunCharacter::OnDeath, 1.f);
 		}

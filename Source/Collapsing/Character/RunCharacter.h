@@ -19,11 +19,14 @@ public:
 
 	bool bCanChangeSpeed;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Asseets")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Particle")
 	TObjectPtr<UParticleSystem> DeathParticleSystem;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Asseets")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Sound")
 	TObjectPtr<USoundBase> DeathSound;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Sound")
+	TObjectPtr<USoundBase> PickSound;
 
 	ARunCharacter();
 

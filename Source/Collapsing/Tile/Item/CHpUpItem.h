@@ -18,6 +18,7 @@ public:
 	UCHpUpItem();
 
 protected:
+	UFUNCTION()
 	void OnItemHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
 			       FVector NormalImpulse, const FHitResult& Hit);
 };

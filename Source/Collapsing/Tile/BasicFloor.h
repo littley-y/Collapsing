@@ -36,5 +36,10 @@ protected:
 	void CreateFloor();
 	void CreateWallArray();
 
+private:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Item", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<class UCHpUpItem> HpUpItem;
+
+	void CreateItem();
 };
 

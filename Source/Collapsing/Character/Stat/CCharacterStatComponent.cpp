@@ -17,6 +17,11 @@ void UCCharacterStatComponent::SetHp(float NewHp)
 	OnHpChanged.Broadcast(CurrentHp);
 }
 
+void UCCharacterStatComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+{
+	ApplyDamage(.2f);
+}
+
 void UCCharacterStatComponent::BeginPlay()
 {
 	Super::BeginPlay();
@@ -38,7 +43,3 @@ float UCCharacterStatComponent::ApplyDamage(float InDamage)
 	return ActualDamage;
 }
 
-void UCCharacterStatComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
-{
-	ApplyDamage(.2f);
-}

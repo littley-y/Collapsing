@@ -26,7 +26,14 @@ ARunCharacter::ARunCharacter()
 
 void ARunCharacter::GetHpUpItem()
 {
-	Stat->ApplyDamage(-20.f);
+	if (IsValid(Stat))
+	{
+		Stat->SetHp(Stat->GetCurrentHp() + 20.f);
+		if (IsValid(PickSound))
+		{
+			UGameplayStatics::PlaySoundAtLocation(GetWorld(), PickSound, GetActorLocation());
+		}
+	}
 }
 
 void ARunCharacter::SetCameraAndArm()

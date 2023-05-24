@@ -3,6 +3,7 @@
 #include "BasicFloor.h"
 #include "Character/RunCharacter.h"
 #include "Utils/AssetFinder.hpp"
+#include "Item/CHpUpItem.h"
 
 ABasicFloor::ABasicFloor()
 {
@@ -14,7 +15,21 @@ ABasicFloor::ABasicFloor()
 	RootComponent = SceneComponent;
 	CreateFloor();
 	CreateWallArray();
+	CreateItem();
+}
 
+void ABasicFloor::CreateFloor()
+{
+	FloorMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("FloorMesh"));
+	FloorMesh->SetupAttachment(SceneComponent);
+	FloorMesh->SetRelativeLocation(FVector(0.f, 0.f, 0.f));
+
+	static UStaticMesh* FloorMeshAsset = MyFunction::AssetObjectFinder<UStaticMesh>(
+		TEXT("/Game/_GameAssets/Meshes/Floor_400x400"));
+	if (IsValid(FloorMeshAsset))
+	{
+		FloorMesh->SetStaticMesh(FloorMeshAsset);
+	}
 }
 
 void ABasicFloor::CreateWallArray()
@@ -54,19 +69,14 @@ void ABasicFloor::SetWall(TObjectPtr<UStaticMeshComponent>& Wall, const int8 Ix)
 	}
 }
 
-void ABasicFloor::CreateFloor()
+void ABasicFloor::CreateItem()
 {
-	FloorMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("FloorMesh"));
-	FloorMesh->SetupAttachment(SceneComponent);
-	FloorMesh->SetRelativeLocation(FVector(0.f, 0.f, 0.f));
-
-	static UStaticMesh* FloorMeshAsset = MyFunction::AssetObjectFinder<UStaticMesh>(
-		TEXT("/Game/_GameAssets/Meshes/Floor_400x400"));
-	if (IsValid(FloorMeshAsset))
+	HpUpItem = CreateDefaultSubobject<UCHpUpItem>(TEXT("HpUpItem"));
+	if (HpUpItem)
 	{
-		FloorMesh->SetStaticMesh(FloorMeshAsset);
+		HpUpItem->SetupAttachment(WallArray[0]);
+		HpUpItem->SetRelativeLocation(FVector(0.f, 0.f, 0.f));
 	}
-
 }
 
 void ABasicFloor::OnWallHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,

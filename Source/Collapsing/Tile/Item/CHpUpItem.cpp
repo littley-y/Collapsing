@@ -9,6 +9,8 @@ UCHpUpItem::UCHpUpItem()
 {
 	UStaticMesh* ItemMesh = MyFunction::AssetObjectFinder<UStaticMesh>(TEXT("/Engine/BasicShapes/Sphere.Sphere"));
 	SetStaticMesh(ItemMesh);
+	SetRelativeScale3D(FVector(0.5f, 0.5f, 0.5f));
+	SetCollisionProfileName("OvelapOnlyPawn");
 
 	OnComponentHit.AddDynamic(this, &UCHpUpItem::OnItemHit);
 }
@@ -19,5 +21,6 @@ void UCHpUpItem::OnItemHit(UPrimitiveComponent* HitComponent, AActor* OtherActor
 	if (IsValid(RunCharacter) && OtherComp)
 	{
 		RunCharacter->GetHpUpItem();
+		DestroyComponent();
 	}
 }

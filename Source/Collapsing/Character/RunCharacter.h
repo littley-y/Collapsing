@@ -33,6 +33,9 @@ public:
 	void GetHpUpItem();
 
 	UFUNCTION(BlueprintCallable)
+	const float GetHp() const;
+
+	UFUNCTION(BlueprintCallable)
 	void Death();
 
 protected:

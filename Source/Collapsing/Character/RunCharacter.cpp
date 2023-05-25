@@ -36,6 +36,15 @@ void ARunCharacter::GetHpUpItem()
 	}
 }
 
+const float ARunCharacter::GetHp() const
+{
+	if (IsValid(Stat))
+	{
+		return Stat->GetCurrentHp();
+	}
+	return -1.f;
+}
+
 void ARunCharacter::SetCameraAndArm()
 {
 	CameraArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraArm"));

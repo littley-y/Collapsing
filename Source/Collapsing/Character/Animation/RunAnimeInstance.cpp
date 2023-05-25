@@ -2,7 +2,7 @@
 
 #include "RunAnimeInstance.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "GameFramework/Character.h"
+#include "Character/RunCharacter.h"
 
 URunAnimeInstance::URunAnimeInstance()
 {
@@ -14,7 +14,7 @@ void URunAnimeInstance::NativeInitializeAnimation()
 {
 	Super::NativeInitializeAnimation();
 
-	Owner = Cast<ACharacter>(GetOwningActor());
+	Owner = Cast<ARunCharacter>(GetOwningActor());
 	if (Owner)
 	{
 		Movement = Owner->GetCharacterMovement();
@@ -32,5 +32,6 @@ void URunAnimeInstance::NativeUpdateAnimation(float DeltaSeconds)
 		bIsIdle = GroundSpeed < MovingThreshold;
 		bIsFalling = Movement->IsFalling();
 		bIsJumping = bIsFalling & (Velocity.Z > JumpingThreshold);
+		CharacterHp = Owner->GetHp();
 	}
 }

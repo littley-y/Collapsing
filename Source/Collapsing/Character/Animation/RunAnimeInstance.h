@@ -36,13 +36,16 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Value")
 	uint8 bIsFalling : 1;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Value")
+	float CharacterHp;
+
 	virtual void NativeInitializeAnimation() override;
 
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
 
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Pawn", meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<class ACharacter> Owner;
+	TObjectPtr<class ARunCharacter> Owner;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Pawn", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UCharacterMovementComponent> Movement;

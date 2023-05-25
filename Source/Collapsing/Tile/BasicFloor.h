@@ -18,15 +18,15 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="StaticMeshComponent")
 	TObjectPtr<UStaticMeshComponent> FloorMesh;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="GeometryComponent")
-	TObjectPtr<class UGeometryCollectionComponent> GCComponent;
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Array")
 	TArray<TObjectPtr<UStaticMeshComponent>> WallArray;
 	
 	ABasicFloor();
 
 protected:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Item")
+	TObjectPtr<class UCHpUpItem> HpUpItem;
+
 	UFUNCTION()
 	void OnWallHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
 			       FVector NormalImpulse, const FHitResult& Hit);
@@ -36,9 +36,7 @@ protected:
 	void CreateFloor();
 	void CreateWallArray();
 
-private:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Item", meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<class UCHpUpItem> HpUpItem;
+
 
 	void CreateItem();
 };

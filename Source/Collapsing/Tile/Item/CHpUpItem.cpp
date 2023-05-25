@@ -10,12 +10,12 @@ UCHpUpItem::UCHpUpItem()
 	UStaticMesh* ItemMesh = MyFunction::AssetObjectFinder<UStaticMesh>(TEXT("/Engine/BasicShapes/Sphere.Sphere"));
 	SetStaticMesh(ItemMesh);
 	SetRelativeScale3D(FVector(0.5f, 0.5f, 0.5f));
-	SetCollisionProfileName("OvelapOnlyPawn");
+	SetCollisionProfileName("OverlapOnlyPawn");
 
-	OnComponentHit.AddDynamic(this, &UCHpUpItem::OnItemHit);
+	OnComponentBeginOverlap.AddDynamic(this, &UCHpUpItem::OnPlayerItemOverlap);
 }
 
-void UCHpUpItem::OnItemHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
+void UCHpUpItem::OnPlayerItemOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	ARunCharacter* RunCharacter = Cast<ARunCharacter>(OtherActor);
 	if (IsValid(RunCharacter) && OtherComp)

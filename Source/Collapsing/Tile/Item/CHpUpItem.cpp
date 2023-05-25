@@ -8,9 +8,8 @@
 UCHpUpItem::UCHpUpItem()
 {
 	UStaticMesh* ItemMesh = MyFunction::AssetObjectFinder<UStaticMesh>(TEXT("/Engine/BasicShapes/Sphere.Sphere"));
-	SetStaticMesh(ItemMesh);
+	UStaticMeshComponent::SetStaticMesh(ItemMesh);
 	SetRelativeScale3D(FVector(0.5f, 0.5f, 0.5f));
-	SetCollisionProfileName("OvelapOnlyPawn");
 
 	OnComponentHit.AddDynamic(this, &UCHpUpItem::OnItemHit);
 }

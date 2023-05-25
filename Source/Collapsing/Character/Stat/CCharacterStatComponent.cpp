@@ -10,7 +10,7 @@ UCCharacterStatComponent::UCCharacterStatComponent()
 	PrimaryComponentTick.bCanEverTick = true;
 }
 
-void UCCharacterStatComponent::SetHp(float NewHp)
+void UCCharacterStatComponent::SetHp(const float NewHp)
 {
 	CurrentHp = FMath::Clamp<float>(NewHp, 0.f, MaxHp);
 
@@ -29,7 +29,7 @@ void UCCharacterStatComponent::BeginPlay()
 	SetHp(MaxHp);
 }
 
-float UCCharacterStatComponent::ApplyDamage(float InDamage)
+float UCCharacterStatComponent::ApplyDamage(const float InDamage)
 {
 	const float PrevHp = CurrentHp;
 	const float ActualDamage = FMath::Clamp<float>(InDamage, 0.f, InDamage);

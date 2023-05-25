@@ -30,7 +30,7 @@ public:
 
 	ARunCharacter();
 
-	void GetHpUpItem();
+	void GetHpUpItem() const;
 
 	UFUNCTION(BlueprintCallable)
 	void Death();

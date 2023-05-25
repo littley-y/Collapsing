@@ -10,7 +10,7 @@ UCHpBarWidget::UCHpBarWidget(const FObjectInitializer& ObjectInitializer) : Supe
 
 }
 
-void UCHpBarWidget::UpdateHpBar(float NewCurrentHp)
+void UCHpBarWidget::UpdateHpBar(const float NewCurrentHp) const
 {
 	ensure(MaxHp > 0.f);
 	if (HPProgressBar)

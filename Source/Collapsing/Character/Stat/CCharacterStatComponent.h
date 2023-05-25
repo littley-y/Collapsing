@@ -20,8 +20,8 @@ public:
 
 	UCCharacterStatComponent();
 
-	FORCEINLINE float GetMaxHp() { return MaxHp; }
-	FORCEINLINE float GetCurrentHp() { return CurrentHp; }
+	FORCEINLINE float GetMaxHp() const { return MaxHp; }
+	FORCEINLINE float GetCurrentHp() const { return CurrentHp; }
 	float ApplyDamage(float InDamage);
 
 	void SetHp(float NewHp);

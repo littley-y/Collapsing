@@ -24,7 +24,7 @@ ARunCharacter::ARunCharacter()
 	SetStatAndWidget();
 }
 
-void ARunCharacter::GetHpUpItem()
+void ARunCharacter::GetHpUpItem() const
 {
 	if (IsValid(Stat))
 	{

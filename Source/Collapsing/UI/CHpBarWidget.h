@@ -17,8 +17,8 @@ class COLLAPSING_API UCHpBarWidget : public UCUserWidget
 public:
 	UCHpBarWidget(const FObjectInitializer& ObjectInitializer);
 
-	FORCEINLINE void SetMaxHp(float NewMaxHp) { MaxHp = NewMaxHp; }
-	void UpdateHpBar(float NewCurrentHp); 
+	FORCEINLINE void SetMaxHp(const float NewMaxHp) { MaxHp = NewMaxHp; }
+	void UpdateHpBar(float NewCurrentHp) const; 
 
 protected:
 	UPROPERTY()
@@ -27,7 +27,7 @@ protected:
 	UPROPERTY()
 	float MaxHp;
 
-	virtual void NativeConstruct();
+	virtual void NativeConstruct() override;
 
 private:
 	

@@ -33,7 +33,10 @@ public:
 	void GetHpUpItem() const;
 
 	UFUNCTION(BlueprintCallable)
-	const float GetHp() const;
+	float GetCharacterHp() const;
+
+	UFUNCTION(BlueprintCallable)
+	float GetCharacterMaxHp() const;
 
 	UFUNCTION(BlueprintCallable)
 	void Death();
@@ -45,16 +48,15 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stat, Meta = (AllowPrivatAcces = "true"))
 	TObjectPtr<class UCCharacterStatComponent> Stat;
 
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Widget, Meta = (AllowPrivatAcces = "true"))
 	TObjectPtr<class UCWidgetComponent> HpBar;
 
 	UFUNCTION()
 	void OnDeath();
 
-	virtual void BeginPlay() override;
-
 	virtual void SetupCharacterWidget(class UCUserWidget* InUserWidget) override;
+
+	virtual void BeginPlay() override;
 
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))

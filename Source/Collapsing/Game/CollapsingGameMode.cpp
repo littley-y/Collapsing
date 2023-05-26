@@ -23,7 +23,7 @@ ACollapsingGameMode::ACollapsingGameMode()
 		PlayerControllerClass = CollapsingController;
 	}
 
-	SetTileGenerateTimer(.5f);
+	SetTileGenerateTimer(.4f);
 }
 
 void ACollapsingGameMode::SetMapBasicString() const

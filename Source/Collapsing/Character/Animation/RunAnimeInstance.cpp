@@ -18,6 +18,7 @@ void URunAnimeInstance::NativeInitializeAnimation()
 	if (Owner)
 	{
 		Movement = Owner->GetCharacterMovement();
+		CharacterMaxHp = Owner->GetCharacterMaxHp();
 	}
 }
 
@@ -32,6 +33,6 @@ void URunAnimeInstance::NativeUpdateAnimation(float DeltaSeconds)
 		bIsIdle = GroundSpeed < MovingThreshold;
 		bIsFalling = Movement->IsFalling();
 		bIsJumping = bIsFalling & (Velocity.Z > JumpingThreshold);
-		CharacterHp = Owner->GetHp();
+		CharacterHp = Owner->GetCharacterHp();
 	}
 }

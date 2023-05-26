@@ -39,6 +39,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Value")
 	float CharacterHp;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Value")
+	float CharacterMaxHp;
+
 	virtual void NativeInitializeAnimation() override;
 
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;

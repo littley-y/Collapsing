@@ -36,11 +36,20 @@ void ARunCharacter::GetHpUpItem() const
 	}
 }
 
-const float ARunCharacter::GetHp() const
+float ARunCharacter::GetCharacterHp() const
 {
 	if (IsValid(Stat))
 	{
 		return Stat->GetCurrentHp();
+	}
+	return -1.f;
+}
+
+float ARunCharacter::GetCharacterMaxHp() const
+{
+	if (IsValid(Stat))
+	{
+		return Stat->GetMaxHp();
 	}
 	return -1.f;
 }
@@ -69,12 +78,6 @@ void ARunCharacter::SetCameraAndArm()
 	Camera->SetRelativeRotation(FRotator(-40.f, 0.f, 0.f));
 }
 
-void ARunCharacter::BeginPlay()
-{
-	Super::BeginPlay();
-
-}
-
 void ARunCharacter::SetupCharacterWidget(UCUserWidget* InUserWidget)
 {
 	UCHpBarWidget* HpBarWidget = Cast<UCHpBarWidget>(InUserWidget);
@@ -87,6 +90,12 @@ void ARunCharacter::SetupCharacterWidget(UCUserWidget* InUserWidget)
 	}
 }
 
+void ARunCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+
+}
+
 void ARunCharacter::SetupCharacterMovement() const
 {
 	UCharacterMovementComponent* CMC = GetCharacterMovement();
@@ -95,7 +104,7 @@ void ARunCharacter::SetupCharacterMovement() const
 		CMC->bOrientRotationToMovement = true;
 		CMC->RotationRate = FRotator(0.f, 300.f, 0.f);
 
-		CMC->MaxWalkSpeed = 800.f;
+		CMC->MaxWalkSpeed = 1000.f;
 		CMC->JumpZVelocity = 500.f;
 		CMC->AirControl = 2.f;
 	}
@@ -122,7 +131,6 @@ void ARunCharacter::Death()
 	if (bIsDead == false)
 	{
 		const FVector Location = GetActorLocation();
-
 		const UWorld* CurrentWorld = GetWorld();
 		if (IsValid(CurrentWorld))
 		{

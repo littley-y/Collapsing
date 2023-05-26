@@ -47,15 +47,16 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TArray<TObjectPtr<AActor>> GeneratedFloorArray;
 
+	virtual void PostInitProperties();
+
 private:
 	FString MapString;
 
 	int32 CurrentMapIndex;
 
-	static constexpr float TileSize = 400.f;
-
-	static constexpr uint8 InitTileNum = 6;
-	static constexpr uint8 MaxTileNum = 10;
+	static constexpr float TileSize = 800.f;
+	static constexpr uint8 InitTileNum = 3;
+	static constexpr uint8 MaxTileNum = 5;
 
 	FTileGeneratorTransform TileGenTrans;
 };

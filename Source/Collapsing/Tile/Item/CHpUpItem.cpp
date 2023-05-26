@@ -8,7 +8,7 @@ UCHpUpItem::UCHpUpItem()
 {
 	UStaticMesh* ItemMesh = MyFunction::AssetObjectFinder<UStaticMesh>(TEXT("/Engine/BasicShapes/Sphere.Sphere"));
 	UStaticMeshComponent::SetStaticMesh(ItemMesh);
-	SetRelativeScale3D(FVector(0.5f, 0.5f, 0.5f));
+	SetRelativeScale3D(FVector(0.25f, 0.25f, 0.25f));
 
 	OnComponentBeginOverlap.AddDynamic(this, &UCHpUpItem::OnPlayerItemOverlap);
 }
@@ -20,7 +20,7 @@ void UCHpUpItem::OnPlayerItemOverlap(UPrimitiveComponent* OverlappedComp, AActor
 	const ARunCharacter* RunCharacter = Cast<ARunCharacter>(OtherActor);
 	if (IsValid(RunCharacter) && OtherComp)
 	{
-		RunCharacter->GetHpUpItem();
+		RunCharacter->EarnHpUpItem();
 		DestroyComponent();
 	}
 }

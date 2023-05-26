@@ -7,5 +7,6 @@
 AGeometryActorClass::AGeometryActorClass()
 {
 	GetGeometryCollectionComponent()->SetCollisionProfileName("OverlapOnlyPawn");
+	GetGeometryCollectionComponent()->SetEnableGravity(false);
 	AActor::SetLifeSpan(2.f);
 }

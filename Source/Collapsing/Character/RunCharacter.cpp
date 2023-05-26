@@ -24,7 +24,7 @@ ARunCharacter::ARunCharacter()
 	SetStatAndWidget();
 }
 
-void ARunCharacter::GetHpUpItem() const
+void ARunCharacter::EarnHpUpItem() const
 {
 	if (IsValid(Stat))
 	{
@@ -65,7 +65,7 @@ void ARunCharacter::SetCameraAndArm()
 	CameraArm->TargetArmLength = 600.f;
 	CameraArm->SocketOffset = FVector(-400.f, 0.f, 900.f);
 
-	CameraArm->bDoCollisionTest = false;
+	CameraArm->bDoCollisionTest = true;
 	CameraArm->bUsePawnControlRotation = true;
 
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));

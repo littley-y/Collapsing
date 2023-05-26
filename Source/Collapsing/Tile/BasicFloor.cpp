@@ -13,22 +13,28 @@ ABasicFloor::ABasicFloor()
 	check(SceneComponent)
 
 	RootComponent = SceneComponent;
-	CreateFloor();
+	CreateFloorAndCeiling();
 	CreateWallArray();
 	CreateItem();
 }
 
-void ABasicFloor::CreateFloor()
+void ABasicFloor::CreateFloorAndCeiling()
 {
 	FloorMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("FloorMesh"));
 	FloorMesh->SetupAttachment(SceneComponent);
 	FloorMesh->SetRelativeLocation(FVector(0.f, 0.f, 0.f));
+	FloorMesh->SetRelativeScale3D(FVector(2.f, 2.f, 2.f));
+
+	CeilingMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("CeilingMesh"));
+	CeilingMesh->SetupAttachment(FloorMesh);
+	CeilingMesh->SetRelativeLocation(FVector(0.f, 0.f, 180.f));
 
 	static UStaticMesh* FloorMeshAsset = MyFunction::AssetObjectFinder<UStaticMesh>(
 		TEXT("/Game/_GameAssets/Meshes/Floor_400x400"));
 	if (IsValid(FloorMeshAsset))
 	{
 		FloorMesh->SetStaticMesh(FloorMeshAsset);
+		CeilingMesh->SetStaticMesh(FloorMeshAsset);
 	}
 }
 
@@ -85,7 +91,10 @@ void ABasicFloor::OnWallHit(UPrimitiveComponent* HitComponent, AActor* OtherActo
 	ARunCharacter* RunCharacter = Cast<ARunCharacter>(OtherActor);
 	if (IsValid(RunCharacter))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Player Contacted With Wall"))
-		RunCharacter->Death();
+		const float Dot = FVector::DotProduct(Hit.Normal, RunCharacter->GetActorForwardVector());
+		if (Dot > 0.99f && Dot < 1.01f)
+		{
+			RunCharacter->Death();
+		}
 	}
 }

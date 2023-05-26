@@ -3,10 +3,12 @@
 #include "CornerFloor.h"
 #include "Collapsing/Character/RunCharacter.h"
 #include "Components/BoxComponent.h"
+#include "Item/CHpUpItem.h"
 
 ACornerFloor::ACornerFloor()
 {
 	SetTurnZone();
+	HpUpItem->DestroyComponent();
 }
 
 void ACornerFloor::SetTurnZone()
@@ -14,8 +16,8 @@ void ACornerFloor::SetTurnZone()
 	TurnZone = CreateDefaultSubobject<UBoxComponent>(TEXT("TurnZone"));
 	if (IsValid(TurnZone))
 	{
-		TurnZone->SetupAttachment(SceneComponent);
-		TurnZone->SetBoxExtent(FVector(150.f	, 150.f, 10.f));
+		TurnZone->SetupAttachment(FloorMesh);
+		TurnZone->SetBoxExtent(FVector(150.f, 150.f, 10.f));
 		TurnZone->SetRelativeLocation(FVector(200.f, 200.f, 0.f));
 
 		TurnZone->SetGenerateOverlapEvents(true);

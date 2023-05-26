@@ -30,7 +30,7 @@ public:
 
 	ARunCharacter();
 
-	void GetHpUpItem() const;
+	void EarnHpUpItem() const;
 
 	UFUNCTION(BlueprintCallable)
 	float GetCharacterHp() const;

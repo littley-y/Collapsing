@@ -18,6 +18,9 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="StaticMeshComponent")
 	TObjectPtr<UStaticMeshComponent> FloorMesh;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="StaticMeshComponent")
+	TObjectPtr<UStaticMeshComponent> CeilingMesh;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Array")
 	TArray<TObjectPtr<UStaticMeshComponent>> WallArray;
 	
@@ -33,7 +36,7 @@ protected:
 
 	virtual void SetWall(TObjectPtr<UStaticMeshComponent>& Wall, const int8 Ix);
 
-	void CreateFloor();
+	void CreateFloorAndCeiling();
 	void CreateWallArray();
 
 

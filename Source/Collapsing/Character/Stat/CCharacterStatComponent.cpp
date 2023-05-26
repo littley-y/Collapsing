@@ -5,7 +5,7 @@
 
 UCCharacterStatComponent::UCCharacterStatComponent()
 {
-	MaxHp = 200.f;
+	MaxHp = 100.f;
 	CurrentHp = MaxHp;
 	PrimaryComponentTick.bCanEverTick = true;
 }
@@ -19,7 +19,7 @@ void UCCharacterStatComponent::SetHp(const float NewHp)
 
 void UCCharacterStatComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
-	ApplyDamage(.2f);
+	ApplyDamage(1.f);
 }
 
 void UCCharacterStatComponent::BeginPlay()
@@ -27,6 +27,7 @@ void UCCharacterStatComponent::BeginPlay()
 	Super::BeginPlay();
 
 	SetHp(MaxHp);
+	PrimaryComponentTick.TickInterval = 0.1f;
 }
 
 float UCCharacterStatComponent::ApplyDamage(const float InDamage)

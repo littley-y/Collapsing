@@ -63,7 +63,6 @@ void UTileManager::ManageTile()
 {
 	const TCHAR& MapChar = MapString[CurrentMapIndex % MapString.Len()];
 	const int32 ArrayIndex = CurrentMapIndex % MaxTileNum;
-	//UE_LOG(LogTemp, Warning, TEXT("Current Val : %c"), MapChar)
 
 	DestroyTile(ArrayIndex);
 	SpawnTile(MapChar, ArrayIndex);

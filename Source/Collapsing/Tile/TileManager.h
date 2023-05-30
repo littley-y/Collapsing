@@ -47,8 +47,6 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TArray<TObjectPtr<AActor>> GeneratedFloorArray;
 
-	virtual void PostInitProperties();
-
 private:
 	FString MapString;
 

@@ -30,6 +30,8 @@ public:
 
 	ARunCharacter();
 
+	virtual void Tick(float DeltaSeconds) override;
+
 	void EarnHpUpItem() const;
 
 	UFUNCTION(BlueprintCallable)
@@ -55,8 +57,6 @@ protected:
 	void OnDeath();
 
 	virtual void SetupCharacterWidget(class UCUserWidget* InUserWidget) override;
-
-	virtual void BeginPlay() override;
 
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))

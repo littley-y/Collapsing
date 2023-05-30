@@ -32,6 +32,6 @@ private:
 
 	virtual void BeginPlay() override;
 
-	void GenerateTile() const;
+	void CallTileManager() const;
 
 };

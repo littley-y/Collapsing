@@ -56,12 +56,12 @@ void ACollapsingGameMode::BeginPlay()
 	const UWorld* CurrentWorld = GetWorld();
 	if (IsValid(CurrentWorld))
 	{
-		CurrentWorld->GetTimerManager().SetTimer(TileGenerateTimerHandle, this, &ACollapsingGameMode::GenerateTile,
+		CurrentWorld->GetTimerManager().SetTimer(TileGenerateTimerHandle, this, &ACollapsingGameMode::CallTileManager,
 			TileGenerateTime, true);
 	}
 }
 
-void ACollapsingGameMode::GenerateTile() const
+void ACollapsingGameMode::CallTileManager() const
 {
 	if (IsValid(TileGenerator))
 	{

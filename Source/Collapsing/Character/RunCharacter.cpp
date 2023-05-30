@@ -12,7 +12,6 @@
 
 ARunCharacter::ARunCharacter()
 {
-	PrimaryActorTick.bCanEverTick = false;
 	bUseControllerRotationYaw = false;
 	bCanCharacterTurn = false;
 	bIsDead = false;
@@ -90,12 +89,6 @@ void ARunCharacter::SetupCharacterWidget(UCUserWidget* InUserWidget)
 	}
 }
 
-void ARunCharacter::BeginPlay()
-{
-	Super::BeginPlay();
-
-}
-
 void ARunCharacter::SetupCharacterMovement() const
 {
 	UCharacterMovementComponent* CMC = GetCharacterMovement();
@@ -151,6 +144,11 @@ void ARunCharacter::Death()
 			CurrentWorld->GetTimerManager().SetTimer(RestartTimerHandle, this, &ARunCharacter::OnDeath, 1.f);
 		}
 	}
+}
+
+void ARunCharacter::Tick(float DeltaSeconds)
+{
+	GetCharacterMovement()->MaxWalkSpeed = FMath::Clamp(GetCharacterHp() * 20.f, 400.f, 1000.f);
 }
 
 void ARunCharacter::OnDeath()

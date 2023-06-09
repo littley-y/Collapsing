@@ -3,7 +3,6 @@
 #include "SpeedFloor.h"
 #include "Collapsing/Character/RunCharacter.h"
 #include "Components/BoxComponent.h"
-#include "Item/CHpUpItem.h"
 
 ASpeedFloor::ASpeedFloor()
 {
@@ -26,7 +25,6 @@ ASpeedFloor::ASpeedFloor()
 	DownArrowMesh->SetRelativeLocation(FVector(200.f, 50.f, 50.f));
 
 	SetSpeedZone();
-	HpUpItem->DestroyComponent();
 }
 
 void ASpeedFloor::OnPlayerSpeedOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,

@@ -5,6 +5,8 @@
 #include "Utils/AssetFinder.hpp"
 #include "Item/CHpUpItem.h"
 
+
+
 ABasicFloor::ABasicFloor()
 {
 	PrimaryActorTick.bCanEverTick = false;
@@ -15,7 +17,6 @@ ABasicFloor::ABasicFloor()
 	RootComponent = SceneComponent;
 	CreateFloorAndCeiling();
 	CreateWallArray();
-	CreateItem();
 }
 
 void ABasicFloor::CreateFloorAndCeiling()
@@ -75,18 +76,23 @@ void ABasicFloor::SetWall(TObjectPtr<UStaticMeshComponent>& Wall, const int8 Ix)
 	}
 }
 
-void ABasicFloor::CreateItem()
+void ABasicFloor::BeginPlay()
 {
-	HpUpItem = CreateDefaultSubobject<UCHpUpItem>(TEXT("HpUpItem"));
-	if (HpUpItem)
+	Super::BeginPlay();
+
+	UCHpUpItem* HpUpItem = NewObject<UCHpUpItem>(this, UCHpUpItem::StaticClass(), TEXT("HpUpItem"));
+	if (IsValid(HpUpItem))
 	{
-		HpUpItem->SetupAttachment(WallArray[0]);
-		HpUpItem->SetRelativeLocation(FVector(0.f, 0.f, 0.f));
+		HpUpItem->RegisterComponent();
+		HpUpItem->AttachToComponent(FloorMesh, FAttachmentTransformRules::KeepRelativeTransform);
+		HpUpItem->SetRelativeLocation(FVector(200.f, FMath::FRandRange(100.f, 300.f), FMath::FRandRange(50.f, 150.f)));
+		HpUpItem->SetCollisionProfileName(TEXT("OverlapOnlyPawn"));
 	}
+
 }
 
 void ABasicFloor::OnWallHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
-							FVector NormalImpulse, const FHitResult& Hit)
+	FVector NormalImpulse, const FHitResult& Hit)
 {
 	ARunCharacter* RunCharacter = Cast<ARunCharacter>(OtherActor);
 	if (IsValid(RunCharacter))

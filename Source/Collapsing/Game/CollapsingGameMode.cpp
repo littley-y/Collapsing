@@ -57,7 +57,7 @@ void ACollapsingGameMode::BeginPlay()
 	if (IsValid(CurrentWorld))
 	{
 		CurrentWorld->GetTimerManager().SetTimer(TileGenerateTimerHandle, this, &ACollapsingGameMode::CallTileManager,
-			TileGenerateTime, true);
+			TileGenerateTime, true, 4.f);
 	}
 }
 

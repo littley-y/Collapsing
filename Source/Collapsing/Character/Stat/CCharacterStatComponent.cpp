@@ -27,7 +27,7 @@ void UCCharacterStatComponent::BeginPlay()
 	Super::BeginPlay();
 
 	SetHp(MaxHp);
-	PrimaryComponentTick.TickInterval = 0.1f;
+	PrimaryComponentTick.TickInterval = 0.2f;
 }
 
 float UCCharacterStatComponent::ApplyDamage(const float InDamage)

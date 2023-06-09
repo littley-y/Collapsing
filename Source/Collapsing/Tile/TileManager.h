@@ -16,7 +16,6 @@ struct FTileGeneratorTransform
 	FTileGeneratorTransform() : Vector(-800.f, 0.f, 0.f), Rotator(0.f, 0.f, 0.f) {}
 
 	void UpdateVectorXY(const float InValue);
-	void UpdateVectorZ(const float InValue);
 };
 
 UCLASS()
@@ -53,8 +52,7 @@ private:
 	int32 CurrentMapIndex;
 
 	static constexpr float TileSize = 800.f;
-	static constexpr uint8 InitTileNum = 3;
-	static constexpr uint8 MaxTileNum = 5;
+	static constexpr uint8 MaxTileNum = 10;
 
 	FTileGeneratorTransform TileGenTrans;
 };

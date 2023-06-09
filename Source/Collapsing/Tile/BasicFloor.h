@@ -27,20 +27,16 @@ public:
 	ABasicFloor();
 
 protected:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Item")
-	TObjectPtr<class UCHpUpItem> HpUpItem;
-
 	UFUNCTION()
 	void OnWallHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
 			       FVector NormalImpulse, const FHitResult& Hit);
 
-	virtual void SetWall(TObjectPtr<UStaticMeshComponent>& Wall, const int8 Ix);
+	void SetWall(TObjectPtr<UStaticMeshComponent>& Wall, const int8 Ix);
 
 	void CreateFloorAndCeiling();
 	void CreateWallArray();
 
+	virtual void BeginPlay() override;
 
-
-	void CreateItem();
 };
 

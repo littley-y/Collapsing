@@ -28,9 +28,6 @@ void FTileGeneratorTransform::UpdateVectorXY(const float InValue)
 	}
 }
 
-void FTileGeneratorTransform::UpdateVectorZ(const float InValue)
-{
-}
 
 UTileManager::UTileManager()
 {
@@ -39,10 +36,14 @@ UTileManager::UTileManager()
 	LoadBPClass(BPFloorMap, "/Game/Collapsing/Tile/BP_CRightCornerFloor", 'R');
 	LoadBPClass(BPFloorMap, "/Game/Collapsing/Tile/BP_CSpeedFloor", 'S');
 	LoadBPClass(BPFloorMap, "/Game/Collapsing/Tile/BP_CBrokenFloor", 'B');
+	LoadBPClass(BPFloorMap, "/Game/Collapsing/Tile/BP_CUpRampFloor", 'U');
+	LoadBPClass(BPFloorMap, "/Game/Collapsing/Tile/BP_CDownRampFloor", 'D');
 
 	LoadBPClass(GeometryFloorMap, "/Game/Collapsing/Tile/Geometry/GA_CBasicFloor", '0');
 	LoadBPClass(GeometryFloorMap, "/Game/Collapsing/Tile/Geometry/GA_CLeftCornerFloor", 'L');
 	LoadBPClass(GeometryFloorMap, "/Game/Collapsing/Tile/Geometry/GA_CRightCornerFloor", 'R');
+	LoadBPClass(GeometryFloorMap, "/Game/Collapsing/Tile/Geometry/GA_CUpRampFloor", 'U');
+	LoadBPClass(GeometryFloorMap, "/Game/Collapsing/Tile/Geometry/GA_CDownRampFloor", 'D');
 
 	GeneratedFloorArray.SetNum(MaxTileNum + 1);
 	CurrentMapIndex = 0;
@@ -76,7 +77,7 @@ void UTileManager::DestroyTile(const int32 ArrayIndex)
 		if (IsValid(CurrTile))
 		{
 			TCHAR CurrChar = CurrTile->GetName()[4];
-			if (CurrChar != 'L' && CurrChar != 'R')
+			if (CurrChar != 'L' && CurrChar != 'R' && CurrChar != 'U' && CurrChar != 'D')
 			{
 				CurrChar = '0';
 			}
@@ -102,19 +103,23 @@ void UTileManager::SpawnTile(const TCHAR& MapChar, const int32 ArrayIndex)
 		TileGenTrans.Rotator.Yaw += 90.f;
 		TileGenTrans.UpdateVectorXY(TileSize);
 	}
+	else if (MapChar == 'U' || MapChar == 'D')
+	{
+		TileGenTrans.UpdateVectorXY(TileSize);
+		TileGenTrans.Vector.Z += MapChar == 'U' ? 200 : -200;
+	}
 	else
 	{
 		TileGenTrans.UpdateVectorXY(TileSize);
 	}
 
 	CurrentMapIndex++;
-	UE_LOG(LogTemp, Warning, TEXT("Floor Gen Location : %s, Yaw : %f"), *TileGenTrans.Vector.ToString(),
-	       TileGenTrans.Rotator.Yaw)
+	UE_LOG(LogTemp, Warning, TEXT("Floor Gen Location : %s, Yaw : %f"), *TileGenTrans.Vector.ToString(), TileGenTrans.Rotator.Yaw)
 }
 
 void UTileManager::InitMaps()
 {
-	for (int32 It = 0; It != InitTileNum; ++It)
+	for (int32 It = 0; It != MaxTileNum; ++It)
 	{
 		ManageTile();
 	}

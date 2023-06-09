@@ -3,12 +3,10 @@
 #include "CornerFloor.h"
 #include "Collapsing/Character/RunCharacter.h"
 #include "Components/BoxComponent.h"
-#include "Item/CHpUpItem.h"
 
 ACornerFloor::ACornerFloor()
 {
 	SetTurnZone();
-	HpUpItem->DestroyComponent();
 }
 
 void ACornerFloor::SetTurnZone()

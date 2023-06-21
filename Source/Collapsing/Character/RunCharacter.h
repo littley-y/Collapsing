@@ -13,53 +13,11 @@ class COLLAPSING_API ARunCharacter : public ACharacter, public ICCharacterWidget
 	GENERATED_BODY()
 
 public:
-	bool bCanCharacterTurn;
-
-	bool bIsDead;
-
-	bool bCanChangeSpeed;
-
-	bool bIsSliding;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Particle")
-	TObjectPtr<UParticleSystem> DeathParticleSystem;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Sound")
-	TObjectPtr<USoundBase> DeathSound;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Sound")
-	TObjectPtr<USoundBase> PickSound;
-
 	ARunCharacter();
 
 	virtual void Tick(float DeltaSeconds) override;
 
-	void EarnHpUpItem() const;
-
-	UFUNCTION(BlueprintCallable)
-	float GetCharacterHp() const;
-
-	UFUNCTION(BlueprintCallable)
-	float GetCharacterMaxHp() const;
-
-	UFUNCTION(BlueprintCallable)
-	void Death();
-
-protected:
-	UPROPERTY()
-	FTimerHandle RestartTimerHandle;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stat, Meta = (AllowPrivatAcces = "true"))
-	TObjectPtr<class UCCharacterStatComponent> Stat;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Widget, Meta = (AllowPrivatAcces = "true"))
-	TObjectPtr<class UCWidgetComponent> HpBar;
-
-	UFUNCTION()
-	void OnDeath();
-
-	virtual void SetupCharacterWidget(class UCUserWidget* InUserWidget) override;
-
+// Camera System
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class USpringArmComponent> CameraArm;
@@ -69,7 +27,63 @@ private:
 
 	void SetCameraAndArm();
 
+// Movement System
+public:
+	bool bCanCharacterTurn;
+
+	bool bCanChangeSpeed;
+
+	bool bIsSliding;
+
+protected:
 	void SetupCharacterMovement() const;
 
+// Stat System
+public:
+	UFUNCTION(BlueprintCallable)
+	float GetCharacterHp() const;
+
+	UFUNCTION(BlueprintCallable)
+	float GetCharacterMaxHp() const;
+
+protected:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stat, Meta = (AllowPrivatAcces = "true"))
+	TObjectPtr<class UCCharacterStatComponent> Stat;
+
+// UI System
+protected:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Widget, Meta = (AllowPrivatAcces = "true"))
+	TObjectPtr<class UCWidgetComponent> HpBar;
+
+	virtual void SetupCharacterWidget(class UCUserWidget* InUserWidget) override;
+
 	void SetStatAndWidget();
+
+// Item System
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Sound")
+	TObjectPtr<USoundBase> PickSound;
+
+	void EarnHpUpItem() const;
+
+// Death System
+public:
+	bool bIsDead;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Particle")
+	TObjectPtr<UParticleSystem> DeathParticleSystem;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Sound")
+	TObjectPtr<USoundBase> DeathSound;
+	
+	UFUNCTION(BlueprintCallable)
+	void Death();
+
+protected:
+	UPROPERTY()
+	FTimerHandle RestartTimerHandle;
+
+	UFUNCTION()
+	void OnDeath();
+
 };

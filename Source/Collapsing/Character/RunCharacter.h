@@ -19,6 +19,8 @@ public:
 
 	bool bCanChangeSpeed;
 
+	bool bIsSliding;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Particle")
 	TObjectPtr<UParticleSystem> DeathParticleSystem;
 

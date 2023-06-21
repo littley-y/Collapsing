@@ -34,6 +34,10 @@ void ARunPlayerController::SetupInputComponent()
 		                            &ARunPlayerController::Jump);
 	PlayerEnhancedInput->BindAction(InputActions->JumpAction, ETriggerEvent::Completed, this,
 		                            &ARunPlayerController::StopJump);
+	PlayerEnhancedInput->BindAction(InputActions->SlideAction, ETriggerEvent::Started, this,
+		                            &ARunPlayerController::Slide);
+	PlayerEnhancedInput->BindAction(InputActions->SlideAction, ETriggerEvent::Completed, this,
+		                            &ARunPlayerController::StopSlide);
 }
 
 void ARunPlayerController::Move(const FInputActionValue& Value)
@@ -103,6 +107,22 @@ void ARunPlayerController::ChangeSpeed(const FInputActionValue& Value)
 		{
 			RunCharacter->Death();
 		}
+	}
+}
+
+void ARunPlayerController::Slide(const FInputActionValue& Value)
+{
+	if (IsValid(RunCharacter))
+	{
+		RunCharacter->bIsSliding = true;
+	}
+}
+
+void ARunPlayerController::StopSlide(const FInputActionValue& Value)
+{
+	if (IsValid(RunCharacter))
+	{
+		RunCharacter->bIsSliding = false;
 	}
 }
 

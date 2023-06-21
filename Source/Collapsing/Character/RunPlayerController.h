@@ -25,6 +25,9 @@ public:
 
 	void ChangeSpeed(const FInputActionValue& Value);
 
+	void Slide(const FInputActionValue& Value);
+	void StopSlide(const FInputActionValue& Value);
+
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input")
 	TObjectPtr<UInputMappingContext> InputMapping;

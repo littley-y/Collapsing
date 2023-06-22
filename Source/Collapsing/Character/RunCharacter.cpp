@@ -9,6 +9,7 @@
 #include "UI/CWidgetComponent.h"
 #include "Stat/CCharacterStatComponent.h"
 #include "UI/CHpBarWidget.h"
+#include "Utils/AssetFinder.hpp"
 
 ARunCharacter::ARunCharacter()
 {
@@ -80,7 +81,7 @@ void ARunCharacter::SetCameraAndArm()
 void ARunCharacter::SetupCharacterWidget(UCUserWidget* InUserWidget)
 {
 	UCHpBarWidget* HpBarWidget = Cast<UCHpBarWidget>(InUserWidget);
-	if (HpBarWidget)
+	if (IsValid(HpBarWidget))
 	{
 		HpBarWidget->SetMaxHp(Stat->GetMaxHp());
 		HpBarWidget->UpdateHpBar(Stat->GetCurrentHp());
@@ -109,10 +110,11 @@ void ARunCharacter::SetStatAndWidget()
 
 	HpBar = CreateDefaultSubobject<UCWidgetComponent>(TEXT("Widget"));
 	HpBar->SetupAttachment(GetMesh(), TEXT("head"));
-	static ConstructorHelpers::FClassFinder<UUserWidget> HpBarWidgetRef(TEXT("/Game/Collapsing/UI/WBP_HpBar.WBP_HpBar_C"));
-	if (HpBarWidgetRef.Class)
+	const TSubclassOf<UCUserWidget> HpBarWidget = MyFunction::AssetClassFinder<UCUserWidget>(
+		TEXT("/Game/Collapsing/UI/WBP_HpBar.WBP_HpBar_C"));
+	if (IsValid(HpBarWidget))
 	{
-		HpBar->SetWidgetClass(HpBarWidgetRef.Class);
+		HpBar->SetWidgetClass(HpBarWidget);
 		HpBar->SetWidgetSpace(EWidgetSpace::Screen);
 		HpBar->SetDrawSize(FVector2D(150.f, 10.f));
 		HpBar->SetCollisionEnabled(ECollisionEnabled::NoCollision);

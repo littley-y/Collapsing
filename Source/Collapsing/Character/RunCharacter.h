@@ -33,8 +33,6 @@ public:
 
 	bool bCanChangeSpeed;
 
-	bool bIsSliding;
-
 protected:
 	void SetupCharacterMovement() const;
 

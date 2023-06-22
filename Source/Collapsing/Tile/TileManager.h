@@ -28,7 +28,7 @@ public:
 
 	void SetMapString(const FString& InMapString) { MapString = InMapString; }
 
-	static void LoadBPClass(TMap<uint8, TSubclassOf<AActor>>& TargetMap, const FString& BPPath, uint8 KeyChar);
+	static void LoadBPClass(TMap<uint8, TSubclassOf<AActor>>& TargetMap, uint8 KeyChar, const FString& BPPath);
 
 	void InitMaps();
 

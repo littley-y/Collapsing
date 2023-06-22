@@ -31,25 +31,25 @@ void FTileGeneratorTransform::UpdateVectorXY(const float InValue)
 
 UTileManager::UTileManager()
 {
-	LoadBPClass(BPFloorMap, "/Game/Collapsing/Tile/BP_CBasicFloor", '0');
-	LoadBPClass(BPFloorMap, "/Game/Collapsing/Tile/BP_CLeftCornerFloor", 'L');
-	LoadBPClass(BPFloorMap, "/Game/Collapsing/Tile/BP_CRightCornerFloor", 'R');
-	LoadBPClass(BPFloorMap, "/Game/Collapsing/Tile/BP_CSpeedFloor", 'S');
-	LoadBPClass(BPFloorMap, "/Game/Collapsing/Tile/BP_CBrokenFloor", 'B');
-	LoadBPClass(BPFloorMap, "/Game/Collapsing/Tile/BP_CUpRampFloor", 'U');
-	LoadBPClass(BPFloorMap, "/Game/Collapsing/Tile/BP_CDownRampFloor", 'D');
+	LoadBPClass(BPFloorMap, '0', "/Game/Collapsing/Tile/BP_CBasicFloor");
+	LoadBPClass(BPFloorMap, 'L', "/Game/Collapsing/Tile/BP_CLeftCornerFloor");
+	LoadBPClass(BPFloorMap, 'R', "/Game/Collapsing/Tile/BP_CRightCornerFloor");
+	LoadBPClass(BPFloorMap, 'S', "/Game/Collapsing/Tile/BP_CSpeedFloor");
+	LoadBPClass(BPFloorMap, 'B', "/Game/Collapsing/Tile/BP_CBrokenFloor");
+	LoadBPClass(BPFloorMap, 'U', "/Game/Collapsing/Tile/BP_CUpRampFloor");
+	LoadBPClass(BPFloorMap, 'D', "/Game/Collapsing/Tile/BP_CDownRampFloor");
 
-	LoadBPClass(GeometryFloorMap, "/Game/Collapsing/Tile/Geometry/GA_CBasicFloor", '0');
-	LoadBPClass(GeometryFloorMap, "/Game/Collapsing/Tile/Geometry/GA_CLeftCornerFloor", 'L');
-	LoadBPClass(GeometryFloorMap, "/Game/Collapsing/Tile/Geometry/GA_CRightCornerFloor", 'R');
-	LoadBPClass(GeometryFloorMap, "/Game/Collapsing/Tile/Geometry/GA_CUpRampFloor", 'U');
-	LoadBPClass(GeometryFloorMap, "/Game/Collapsing/Tile/Geometry/GA_CDownRampFloor", 'D');
+	LoadBPClass(GeometryFloorMap, '0', "/Game/Collapsing/Tile/Geometry/GA_CBasicFloor");
+	LoadBPClass(GeometryFloorMap, 'L', "/Game/Collapsing/Tile/Geometry/GA_CLeftCornerFloor");
+	LoadBPClass(GeometryFloorMap, 'R', "/Game/Collapsing/Tile/Geometry/GA_CRightCornerFloor");
+	LoadBPClass(GeometryFloorMap, 'U', "/Game/Collapsing/Tile/Geometry/GA_CUpRampFloor");
+	LoadBPClass(GeometryFloorMap, 'D', "/Game/Collapsing/Tile/Geometry/GA_CDownRampFloor");
 
 	GeneratedFloorArray.SetNum(MaxTileNum + 1);
 	CurrentMapIndex = 0;
 }
 
-void UTileManager::LoadBPClass(TMap<uint8, TSubclassOf<AActor>>& TargetMap, const FString& BPPath, uint8 KeyChar)
+void UTileManager::LoadBPClass(TMap<uint8, TSubclassOf<AActor>>& TargetMap, uint8 KeyChar, const FString& BPPath)
 {
 	ConstructorHelpers::FClassFinder<AActor> BPFloor(*BPPath);
 	if (BPFloor.Succeeded())

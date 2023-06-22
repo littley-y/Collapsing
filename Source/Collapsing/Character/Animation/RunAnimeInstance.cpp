@@ -34,6 +34,5 @@ void URunAnimeInstance::NativeUpdateAnimation(float DeltaSeconds)
 		bIsFalling = Movement->IsFalling();
 		bIsJumping = bIsFalling & (Velocity.Z > JumpingThreshold);
 		CharacterHp = Owner->GetCharacterHp();
-		bIsSliding = Owner->bIsSliding;
 	}
 }

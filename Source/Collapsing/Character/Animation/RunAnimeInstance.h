@@ -37,9 +37,6 @@ protected:
 	uint8 bIsFalling : 1;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Value")
-	uint8 bIsSliding : 1;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Value")
 	float CharacterHp;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Value")

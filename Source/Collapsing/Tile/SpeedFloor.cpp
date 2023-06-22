@@ -6,23 +6,33 @@
 
 ASpeedFloor::ASpeedFloor()
 {
-	UpArrowMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("UpArrowMesh"));
-	if (!IsValid(UpArrowMesh))
+	ArrowMesh = CreateDefaultSubobject<UStaticMesh>(TEXT("ArrowMesh"));
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> ArrowMeshRef(TEXT("/Script/Engine.StaticMesh'/Game/_GameAssets/Meshes/SM_Arrows.SM_Arrows'"));
+	if (ArrowMeshRef.Succeeded())
 	{
-		return;
+		ArrowMesh = ArrowMeshRef.Object;
 	}
+
+	UpArrowMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("UpArrowMesh"));
 	UpArrowMesh->SetupAttachment(SceneComponent);
 	UpArrowMesh->SetCollisionProfileName("OverlapPawnOnly");
 	UpArrowMesh->SetRelativeLocation(FVector(200.f, 50.f, 50.f));
 
 	DownArrowMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("DownArrowMesh"));
-	if (!IsValid(DownArrowMesh))
-	{
-		return;
-	}
 	DownArrowMesh->SetupAttachment(SceneComponent);
 	DownArrowMesh->SetCollisionProfileName("OverlapPawnOnly");
 	DownArrowMesh->SetRelativeLocation(FVector(200.f, 50.f, 50.f));
+
+	if (IsValid(ArrowMesh))
+	{
+		if (UpArrowMesh.IsPending())
+		{
+			UpArrowMesh.LoadSynchronous();
+			DownArrowMesh.LoadSynchronous();
+		}
+		UpArrowMesh->SetStaticMesh(ArrowMesh);
+		DownArrowMesh->SetStaticMesh(ArrowMesh);
+	}
 
 	SetSpeedZone();
 }

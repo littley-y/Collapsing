@@ -26,7 +26,6 @@ public:
 	void ChangeSpeed(const FInputActionValue& Value);
 
 	void Slide(const FInputActionValue& Value);
-	void StopSlide(const FInputActionValue& Value);
 
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input")
@@ -34,6 +33,9 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input")
 	TObjectPtr<class UInputDataAsset> InputActions;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation")
+	TObjectPtr<class UAnimMontage> SlideMontage;
 
 	virtual void SetupInputComponent() override;
 

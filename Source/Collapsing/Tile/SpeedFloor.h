@@ -13,10 +13,13 @@ class COLLAPSING_API ASpeedFloor : public ABasicFloor
 
 public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
-	TObjectPtr<UStaticMeshComponent> UpArrowMesh;
+	TSoftObjectPtr<UStaticMeshComponent> UpArrowMesh;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
-	TObjectPtr<UStaticMeshComponent> DownArrowMesh;
+	TSoftObjectPtr<UStaticMeshComponent> DownArrowMesh;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	TObjectPtr<UStaticMesh> ArrowMesh;
 
 	ASpeedFloor();
 

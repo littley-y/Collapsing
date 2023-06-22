@@ -10,13 +10,21 @@ ARunPlayerController::ARunPlayerController(const FObjectInitializer& ObjectIniti
 {
 	PrimaryActorTick.bCanEverTick = true;
 	DesiredRotation = AController::GetControlRotation();
+
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> SlideMontageRef(
+		TEXT("/Script/Engine.AnimMontage'/Game/Collapsing/Character/Animation/AM_Slide.AM_Slide'"));
+	if (SlideMontageRef.Succeeded())
+	{
+		SlideMontage = SlideMontageRef.Object;
+	}
 }
 
 void ARunPlayerController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
 
-	UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer());
+	UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(
+		GetLocalPlayer());
 	if (!IsValid(Subsystem))
 	{
 		return;
@@ -36,8 +44,6 @@ void ARunPlayerController::SetupInputComponent()
 		                            &ARunPlayerController::StopJump);
 	PlayerEnhancedInput->BindAction(InputActions->SlideAction, ETriggerEvent::Started, this,
 		                            &ARunPlayerController::Slide);
-	PlayerEnhancedInput->BindAction(InputActions->SlideAction, ETriggerEvent::Completed, this,
-		                            &ARunPlayerController::StopSlide);
 }
 
 void ARunPlayerController::Move(const FInputActionValue& Value)
@@ -112,17 +118,10 @@ void ARunPlayerController::ChangeSpeed(const FInputActionValue& Value)
 
 void ARunPlayerController::Slide(const FInputActionValue& Value)
 {
-	if (IsValid(RunCharacter))
+	if (IsValid(RunCharacter) && RunCharacter->GetCharacterMovement()->IsFalling() == false)
 	{
-		RunCharacter->bIsSliding = true;
-	}
-}
-
-void ARunPlayerController::StopSlide(const FInputActionValue& Value)
-{
-	if (IsValid(RunCharacter))
-	{
-		RunCharacter->bIsSliding = false;
+		UAnimInstance* AnimInstance = RunCharacter->GetMesh()->GetAnimInstance();
+		AnimInstance->Montage_Play(SlideMontage, 1.f);
 	}
 }
 

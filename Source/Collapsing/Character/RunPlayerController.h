@@ -25,7 +25,8 @@ public:
 
 	void ChangeSpeed(const FInputActionValue& Value);
 
-	void Slide(const FInputActionValue& Value);
+	void SlideAction(const FInputActionValue& Value);
+	void OnSlideEnd(UAnimMontage* TargetMontage, bool IsProperlyEnded);
 
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input")

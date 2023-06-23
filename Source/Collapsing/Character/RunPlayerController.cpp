@@ -43,7 +43,7 @@ void ARunPlayerController::SetupInputComponent()
 	PlayerEnhancedInput->BindAction(InputActions->JumpAction, ETriggerEvent::Completed, this,
 		                            &ARunPlayerController::StopJump);
 	PlayerEnhancedInput->BindAction(InputActions->SlideAction, ETriggerEvent::Started, this,
-		                            &ARunPlayerController::Slide);
+		                            &ARunPlayerController::SlideAction);
 }
 
 void ARunPlayerController::Move(const FInputActionValue& Value)
@@ -116,13 +116,29 @@ void ARunPlayerController::ChangeSpeed(const FInputActionValue& Value)
 	}
 }
 
-void ARunPlayerController::Slide(const FInputActionValue& Value)
+void ARunPlayerController::SlideAction(const FInputActionValue& Value)
 {
-	if (IsValid(RunCharacter) && RunCharacter->GetCharacterMovement()->IsFalling() == false)
+	if (IsValid(RunCharacter))
 	{
-		UAnimInstance* AnimInstance = RunCharacter->GetMesh()->GetAnimInstance();
-		AnimInstance->Montage_Play(SlideMontage, 1.f);
+		const UCharacterMovementComponent* CharacterMovement = RunCharacter->GetCharacterMovement();
+		if (IsValid(CharacterMovement) && CharacterMovement->IsFalling() == false)
+		{
+			UAnimInstance* AnimInstance = RunCharacter->GetMesh()->GetAnimInstance();
+			AnimInstance->Montage_Play(SlideMontage, 1.f);
+
+			FOnMontageEnded EndDelegate;
+			EndDelegate.BindUObject(this, &ARunPlayerController::OnSlideEnd);
+			AnimInstance->Montage_SetEndDelegate(EndDelegate, SlideMontage);
+
+			DisableInput(this);
+		}
+
 	}
+}
+
+void ARunPlayerController::OnSlideEnd(UAnimMontage* TargetMontage, bool IsProperlyEnded)
+{
+	EnableInput(this);
 }
 
 void ARunPlayerController::Tick(float DeltaSeconds)

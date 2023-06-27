@@ -33,17 +33,17 @@ void ARunPlayerController::SetupInputComponent()
 
 	UEnhancedInputComponent* PlayerEnhancedInput = CastChecked<UEnhancedInputComponent>(InputComponent);
 	PlayerEnhancedInput->BindAction(InputActions->MoveAction, ETriggerEvent::Triggered, this,
-									&ARunPlayerController::Move);
+		&ARunPlayerController::Move);
 	PlayerEnhancedInput->BindAction(InputActions->ChangeSpeedAction, ETriggerEvent::Started, this,
-		                            &ARunPlayerController::ChangeSpeed);
+		&ARunPlayerController::ChangeSpeed);
 	PlayerEnhancedInput->BindAction(InputActions->TurnAction, ETriggerEvent::Started, this,
-		                            &ARunPlayerController::Turn);
+		&ARunPlayerController::Turn);
 	PlayerEnhancedInput->BindAction(InputActions->JumpAction, ETriggerEvent::Started, this,
-		                            &ARunPlayerController::Jump);
+		&ARunPlayerController::Jump);
 	PlayerEnhancedInput->BindAction(InputActions->JumpAction, ETriggerEvent::Completed, this,
-		                            &ARunPlayerController::StopJump);
+		&ARunPlayerController::StopJump);
 	PlayerEnhancedInput->BindAction(InputActions->SlideAction, ETriggerEvent::Started, this,
-		                            &ARunPlayerController::SlideAction);
+		&ARunPlayerController::SlideAction);
 }
 
 void ARunPlayerController::Move(const FInputActionValue& Value)
@@ -123,6 +123,7 @@ void ARunPlayerController::SlideAction(const FInputActionValue& Value)
 		const UCharacterMovementComponent* CharacterMovement = RunCharacter->GetCharacterMovement();
 		if (IsValid(CharacterMovement) && CharacterMovement->IsFalling() == false)
 		{
+			RunCharacter->Crouch();
 			UAnimInstance* AnimInstance = RunCharacter->GetMesh()->GetAnimInstance();
 			AnimInstance->Montage_Play(SlideMontage, 1.f);
 
@@ -138,7 +139,12 @@ void ARunPlayerController::SlideAction(const FInputActionValue& Value)
 
 void ARunPlayerController::OnSlideEnd(UAnimMontage* TargetMontage, bool IsProperlyEnded)
 {
-	EnableInput(this);
+	if (IsValid(RunCharacter))
+	{
+		RunCharacter->UnCrouch();
+		EnableInput(this);
+	}
+
 }
 
 void ARunPlayerController::Tick(float DeltaSeconds)

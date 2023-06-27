@@ -5,8 +5,6 @@
 #include "Utils/AssetFinder.hpp"
 #include "Item/CHpUpItem.h"
 
-
-
 ABasicFloor::ABasicFloor()
 {
 	PrimaryActorTick.bCanEverTick = false;
@@ -16,7 +14,20 @@ ABasicFloor::ABasicFloor()
 
 	RootComponent = SceneComponent;
 	CreateFloorAndCeiling();
-	CreateWallArray();
+	CreateWalls();
+
+	// Obstacle
+
+	TArray<FName> SocketNames = Walls[0]->GetAllSocketNames();
+	for (auto& SocketName : SocketNames)
+	{
+		FString ObstacleName = FString::Printf(TEXT("Left%s"), *SocketName.ToString());
+		UStaticMeshComponent* CurrObstacle = CreateDefaultSubobject<UStaticMeshComponent>(*ObstacleName);
+		CurrObstacle->SetupAttachment(Walls[0], SocketName);
+		CurrObstacle->SetCollisionProfileName(TEXT("BlockNotCamera"));
+		Obstacles.Add(CurrObstacle);
+	}
+
 }
 
 void ABasicFloor::CreateFloorAndCeiling()
@@ -39,12 +50,12 @@ void ABasicFloor::CreateFloorAndCeiling()
 	}
 }
 
-void ABasicFloor::CreateWallArray()
+void ABasicFloor::CreateWalls()
 {
-	WallArray.SetNum(2);
-	for (int32 Ix = 0; Ix != WallArray.Num(); ++Ix)
+	Walls.SetNum(2);
+	for (int32 Ix = 0; Ix != Walls.Num(); ++Ix)
 	{
-		SetWall(WallArray[Ix], Ix);
+		SetWall(Walls[Ix], Ix);
 	}
 }
 
@@ -72,7 +83,7 @@ void ABasicFloor::SetWall(TObjectPtr<UStaticMeshComponent>& Wall, const int8 Ix)
 
 	if (Ix == 1)
 	{
-		WallArray[Ix]->SetRelativeLocation(FVector(0.f, 400.f, -20.f));
+		Walls[Ix]->SetRelativeLocation(FVector(0.f, 400.f, -20.f));
 	}
 }
 
@@ -88,7 +99,6 @@ void ABasicFloor::BeginPlay()
 		HpUpItem->SetRelativeLocation(FVector(200.f, FMath::FRandRange(100.f, 300.f), FMath::FRandRange(50.f, 150.f)));
 		HpUpItem->SetCollisionProfileName(TEXT("OverlapOnlyPawn"));
 	}
-
 }
 
 void ABasicFloor::OnWallHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,

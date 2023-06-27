@@ -12,17 +12,20 @@ class COLLAPSING_API ABasicFloor : public AActor
 	GENERATED_BODY()
 	
 public:	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Scene")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TObjectPtr<USceneComponent> SceneComponent;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="StaticMeshComponent")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Floor")
 	TObjectPtr<UStaticMeshComponent> FloorMesh;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="StaticMeshComponent")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Ceiling")
 	TObjectPtr<UStaticMeshComponent> CeilingMesh;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Array")
-	TArray<TObjectPtr<UStaticMeshComponent>> WallArray;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Obstacle")
+	TArray<TObjectPtr<UStaticMeshComponent>> Obstacles;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Wall")
+	TArray<TObjectPtr<UStaticMeshComponent>> Walls;
 	
 	ABasicFloor();
 
@@ -34,7 +37,7 @@ protected:
 	void SetWall(TObjectPtr<UStaticMeshComponent>& Wall, const int8 Ix);
 
 	void CreateFloorAndCeiling();
-	void CreateWallArray();
+	void CreateWalls();
 
 	virtual void BeginPlay() override;
 

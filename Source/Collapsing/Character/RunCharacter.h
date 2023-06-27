@@ -17,6 +17,8 @@ public:
 
 	virtual void Tick(float DeltaSeconds) override;
 
+	void ChangeCapsuleSize(float InWidth, float InHeight);
+
 // Camera System
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))

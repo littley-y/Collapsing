@@ -62,8 +62,6 @@ void ARunCharacter::SetCameraAndArm()
 		return;
 	}
 	CameraArm->SetupAttachment(GetRootComponent());
-	CameraArm->TargetArmLength = 600.f;
-	CameraArm->SocketOffset = FVector(-400.f, 0.f, 900.f);
 
 	CameraArm->bDoCollisionTest = true;
 	CameraArm->bUsePawnControlRotation = true;
@@ -95,6 +93,7 @@ void ARunCharacter::SetupCharacterMovement() const
 	UCharacterMovementComponent* CMC = GetCharacterMovement();
 	if (IsValid(CMC))
 	{
+		CMC->MaxWalkSpeedCrouched = 1000.f;
 		CMC->bOrientRotationToMovement = true;
 		CMC->RotationRate = FRotator(0.f, 300.f, 0.f);
 
@@ -102,6 +101,14 @@ void ARunCharacter::SetupCharacterMovement() const
 		CMC->JumpZVelocity = 500.f;
 		CMC->AirControl = 2.f;
 	}
+}
+
+void ARunCharacter::Crouch(bool bClientSimulation)
+{
+}
+
+void ARunCharacter::UnCrouch(bool bClientSimulation)
+{
 }
 
 void ARunCharacter::SetStatAndWidget()
@@ -151,6 +158,11 @@ void ARunCharacter::Death()
 void ARunCharacter::Tick(float DeltaSeconds)
 {
 	GetCharacterMovement()->MaxWalkSpeed = FMath::Clamp(GetCharacterHp() * 20.f, 400.f, 1000.f);
+}
+
+void ARunCharacter::ChangeCapsuleSize(float InWidth, float InHeight)
+{
+	GetCapsuleComponent()->SetCapsuleSize(InWidth, InHeight);
 }
 
 void ARunCharacter::OnDeath()

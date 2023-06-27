@@ -83,6 +83,7 @@ void UTileManager::DestroyTile(const int32 ArrayIndex)
 			}
 			GetWorld()->SpawnActor<AActor>(GeometryFloorMap[CurrChar], CurrTile->GetActorLocation(),
 			                               CurrTile->GetActorRotation());
+			// 타일 수명을 설정하지 말고 풀링 형식으로 바꾸기
 			CurrTile->SetActorHiddenInGame(true);
 			CurrTile->SetLifeSpan(0.1f);
 		}

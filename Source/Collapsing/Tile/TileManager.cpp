@@ -65,7 +65,7 @@ void UTileManager::ManageTile()
 	const TCHAR& MapChar = MapString[CurrentMapIndex % MapString.Len()];
 	const int32 ArrayIndex = CurrentMapIndex % MaxTileNum;
 
-	//DestroyTile(ArrayIndex);
+	DestroyTile(ArrayIndex);
 	SpawnTile(MapChar, ArrayIndex);
 }
 
@@ -81,8 +81,8 @@ void UTileManager::DestroyTile(const int32 ArrayIndex)
 			{
 				CurrChar = '0';
 			}
-			GetWorld()->SpawnActor<AActor>(GeometryFloorMap[CurrChar], CurrTile->GetActorLocation(),
-			                               CurrTile->GetActorRotation());
+			//GetWorld()->SpawnActor<AActor>(GeometryFloorMap[CurrChar], CurrTile->GetActorLocation(),
+			//                               CurrTile->GetActorRotation());
 			// 타일 수명을 설정하지 말고 풀링 형식으로 바꾸기
 			CurrTile->SetActorHiddenInGame(true);
 			CurrTile->SetLifeSpan(0.1f);

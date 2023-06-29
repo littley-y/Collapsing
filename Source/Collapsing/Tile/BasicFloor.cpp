@@ -2,7 +2,6 @@
 
 #include "BasicFloor.h"
 #include "Character/RunCharacter.h"
-#include "Utils/AssetFinder.hpp"
 #include "Item/CHpUpItem.h"
 
 ABasicFloor::ABasicFloor()
@@ -41,12 +40,11 @@ void ABasicFloor::CreateFloorAndCeiling()
 	CeilingMesh->SetupAttachment(FloorMesh);
 	CeilingMesh->SetRelativeLocation(FVector(0.f, 0.f, 180.f));
 
-	static UStaticMesh* FloorMeshAsset = MyFunction::AssetObjectFinder<UStaticMesh>(
-		TEXT("/Game/_GameAssets/Meshes/Floor_400x400"));
-	if (IsValid(FloorMeshAsset))
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> FloorMeshRef(TEXT("/Game/_GameAssets/Meshes/Floor_400x400"));
+	if (IsValid(FloorMeshRef.Object))
 	{
-		FloorMesh->SetStaticMesh(FloorMeshAsset);
-		CeilingMesh->SetStaticMesh(FloorMeshAsset);
+		FloorMesh->SetStaticMesh(FloorMeshRef.Object);
+		CeilingMesh->SetStaticMesh(FloorMeshRef.Object);
 	}
 }
 
@@ -74,11 +72,10 @@ void ABasicFloor::SetWall(TObjectPtr<UStaticMeshComponent>& Wall, const int8 Ix)
 	Wall->SetRelativeLocation(FVector(0.f, 0.f, -20.f));
 	Wall->OnComponentHit.AddDynamic(this, &ABasicFloor::OnWallHit);
 
-	static UStaticMesh* WallMeshAsset = MyFunction::AssetObjectFinder<UStaticMesh>(
-		TEXT("/Game/_GameAssets/Meshes/Wall_400x200"));
-	if (IsValid(WallMeshAsset))
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> WallMeshRef(TEXT("/Game/_GameAssets/Meshes/Wall_400x200"));
+	if (IsValid(WallMeshRef.Object))
 	{
-		Wall->SetStaticMesh(WallMeshAsset);
+		Wall->SetStaticMesh(WallMeshRef.Object);
 	}
 
 	if (Ix == 1)

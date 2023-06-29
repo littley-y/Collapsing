@@ -9,7 +9,6 @@
 #include "UI/CWidgetComponent.h"
 #include "Stat/CCharacterStatComponent.h"
 #include "UI/CHpBarWidget.h"
-#include "Utils/AssetFinder.hpp"
 
 ARunCharacter::ARunCharacter()
 {
@@ -117,11 +116,10 @@ void ARunCharacter::SetStatAndWidget()
 
 	HpBar = CreateDefaultSubobject<UCWidgetComponent>(TEXT("Widget"));
 	HpBar->SetupAttachment(GetMesh(), TEXT("head"));
-	const TSubclassOf<UCUserWidget> HpBarWidget = MyFunction::AssetClassFinder<UCUserWidget>(
-		TEXT("/Game/Collapsing/UI/WBP_HpBar.WBP_HpBar_C"));
-	if (IsValid(HpBarWidget))
+	static ConstructorHelpers::FClassFinder<UCUserWidget> HpBarWidgetRef(TEXT("/Game/Collapsing/UI/WBP_HpBar.WBP_HpBar_C"));
+	if (IsValid(HpBarWidgetRef.Class))
 	{
-		HpBar->SetWidgetClass(HpBarWidget);
+		HpBar->SetWidgetClass(HpBarWidgetRef.Class);
 		HpBar->SetWidgetSpace(EWidgetSpace::Screen);
 		HpBar->SetDrawSize(FVector2D(150.f, 10.f));
 		HpBar->SetCollisionEnabled(ECollisionEnabled::NoCollision);
@@ -157,12 +155,52 @@ void ARunCharacter::Death()
 
 void ARunCharacter::Tick(float DeltaSeconds)
 {
-	GetCharacterMovement()->MaxWalkSpeed = FMath::Clamp(GetCharacterHp() * 20.f, 400.f, 1000.f);
+	const UCharacterMovementComponent* CMC = GetCharacterMovement();
+	if (IsValid(CMC) && CMC->IsFalling() == false)
+	{
+		UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+		AnimInstance->Montage_Play(SlideMontage, 1.f);
+
+		FOnMontageEnded SlideEndDelegate;
+		SlideEndDelegate.BindUObject(this, &ARunCharacter::OnMontageEnded);
+		AnimInstance->Montage_SetEndDelegate(SlideEndDelegate, SlideMontage);
+
+		APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
+		if (IsValid(PlayerController))
+		{
+			PlayerController->DisableInput(PlayerController);
+		}
+	}
 }
 
 void ARunCharacter::ChangeCapsuleSize(float InWidth, float InHeight)
 {
 	GetCapsuleComponent()->SetCapsuleSize(InWidth, InHeight);
+}
+
+void ARunCharacter::HitByWall()
+{
+	const UCharacterMovementComponent* CMC = GetCharacterMovement();
+	if (IsValid(CMC))
+	{
+		UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+		AnimInstance->Montage_Play(FallingBackMontage, 1.f);
+
+		FOnMontageEnded FallingBackEndDelegate;
+		FallingBackEndDelegate.BindUObject(this, &ARunCharacter::OnMontageEnded);
+		AnimInstance->Montage_SetEndDelegate(FallingBackEndDelegate, FallingBackMontage);
+
+		APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
+		if (IsValid(PlayerController))
+		{
+			PlayerController->DisableInput(PlayerController);
+		}
+	}
+}
+
+void ARunCharacter::Tick(float DeltaSeconds)
+{
+	GetCharacterMovement()->MaxWalkSpeed = FMath::Clamp(GetCharacterHp() * 20.f, 400.f, 1000.f);
 }
 
 void ARunCharacter::OnDeath()

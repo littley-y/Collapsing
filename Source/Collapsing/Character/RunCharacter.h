@@ -7,6 +7,7 @@
 #include "Interface/CCharacterWidgetInterface.h"
 #include "RunCharacter.generated.h"
 
+
 UCLASS()
 class COLLAPSING_API ARunCharacter : public ACharacter, public ICCharacterWidgetInterface
 {
@@ -16,8 +17,6 @@ public:
 	ARunCharacter();
 
 	virtual void Tick(float DeltaSeconds) override;
-
-	void ChangeCapsuleSize(float InWidth, float InHeight);
 
 // Camera System
 private:
@@ -65,6 +64,20 @@ public:
 	TObjectPtr<USoundBase> PickSound;
 
 	void EarnHpUpItem() const;
+
+// Animation System
+public:
+	virtual void Crouch(bool bClientSimulation) override;
+	void OnMontageEnded(UAnimMontage* Montage, bool Interrupted);
+
+	void HitByWall();
+
+protected:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation")
+	TObjectPtr<class UAnimMontage> SlideMontage;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation")
+	TObjectPtr<class UAnimMontage> FallingBackMontage;
 
 // Death System
 public:

@@ -24,9 +24,7 @@ public:
 	void StopJump(const FInputActionValue& Value);
 
 	void ChangeSpeed(const FInputActionValue& Value);
-
 	void SlideAction(const FInputActionValue& Value);
-	void OnSlideEnd(UAnimMontage* TargetMontage, bool IsProperlyEnded);
 
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input")
@@ -34,9 +32,6 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input")
 	TObjectPtr<class UInputDataAsset> InputActions;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation")
-	TObjectPtr<class UAnimMontage> SlideMontage;
 
 	virtual void SetupInputComponent() override;
 

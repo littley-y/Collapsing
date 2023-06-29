@@ -11,12 +11,6 @@ ARunPlayerController::ARunPlayerController(const FObjectInitializer& ObjectIniti
 	PrimaryActorTick.bCanEverTick = true;
 	DesiredRotation = AController::GetControlRotation();
 
-	static ConstructorHelpers::FObjectFinder<UAnimMontage> SlideMontageRef(
-		TEXT("/Script/Engine.AnimMontage'/Game/Collapsing/Character/Animation/AM_Slide.AM_Slide'"));
-	if (SlideMontageRef.Succeeded())
-	{
-		SlideMontage = SlideMontageRef.Object;
-	}
 }
 
 void ARunPlayerController::SetupInputComponent()
@@ -120,32 +114,10 @@ void ARunPlayerController::SlideAction(const FInputActionValue& Value)
 {
 	if (IsValid(RunCharacter))
 	{
-		const UCharacterMovementComponent* CharacterMovement = RunCharacter->GetCharacterMovement();
-		if (IsValid(CharacterMovement) && CharacterMovement->IsFalling() == false)
-		{
-			RunCharacter->Crouch();
-			UAnimInstance* AnimInstance = RunCharacter->GetMesh()->GetAnimInstance();
-			AnimInstance->Montage_Play(SlideMontage, 1.f);
-
-			FOnMontageEnded EndDelegate;
-			EndDelegate.BindUObject(this, &ARunPlayerController::OnSlideEnd);
-			AnimInstance->Montage_SetEndDelegate(EndDelegate, SlideMontage);
-
-			DisableInput(this);
-		}
-
+		RunCharacter->Crouch(true);
 	}
 }
 
-void ARunPlayerController::OnSlideEnd(UAnimMontage* TargetMontage, bool IsProperlyEnded)
-{
-	if (IsValid(RunCharacter))
-	{
-		RunCharacter->UnCrouch();
-		EnableInput(this);
-	}
-
-}
 
 void ARunPlayerController::Tick(float DeltaSeconds)
 {

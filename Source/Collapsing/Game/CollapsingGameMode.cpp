@@ -2,25 +2,24 @@
 
 #include "CollapsingGameMode.h"
 #include "Tile/TileManager.h"
-#include "Utils/AssetFinder.hpp"
 
 ACollapsingGameMode::ACollapsingGameMode()
 {
 	PrimaryActorTick.bCanEverTick = true;
 	TileGenerator = CreateDefaultSubobject<UTileManager>(TEXT("TileGenerator"));
 
-	static TSubclassOf<APawn> CollapsingPawn = MyFunction::AssetClassFinder<APawn>(
+	static ConstructorHelpers::FClassFinder<APawn> CollapsingPawnRef(
 		TEXT("/Game/Collapsing/Character/BP_CCharacter.BP_CCharacter_C"));
-	if (IsValid(CollapsingPawn))
+	if (IsValid(CollapsingPawnRef.Class))
 	{
-		DefaultPawnClass = CollapsingPawn;
+		DefaultPawnClass = CollapsingPawnRef.Class;
 	}
 
-	static TSubclassOf<AController> CollapsingController = MyFunction::AssetClassFinder<AController>(
+	static ConstructorHelpers::FClassFinder<AController> CollapsingControllerRef(
 		TEXT("/Game/Collapsing/Input/BPC_CPlayerController.BPC_CPlayerController_C"));
-	if (IsValid(CollapsingController))
+	if (IsValid(CollapsingControllerRef.Class))
 	{
-		PlayerControllerClass = CollapsingController;
+		PlayerControllerClass = CollapsingControllerRef.Class;
 	}
 
 	SetTileGenerateTimer(.8f);

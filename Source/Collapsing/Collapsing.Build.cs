@@ -10,7 +10,7 @@ public class Collapsing : ModuleRules
 		
 		PublicIncludePaths.AddRange(new string[] { "Collapsing" });
 
-		PublicDependencyModuleNames.AddRange(new string[] { "GeometryCollectionEngine", "EnhancedInput", "Core", "CoreUObject", "Engine", "InputCore", "UMG" });
+		PublicDependencyModuleNames.AddRange(new string[] { "EnhancedInput", "Core", "CoreUObject", "Engine", "InputCore", "UMG" });
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 

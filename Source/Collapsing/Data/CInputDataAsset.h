@@ -5,10 +5,10 @@
 #include "CoreMinimal.h"
 #include "Engine/DataAsset.h"
 #include "InputAction.h"
-#include "InputDataAsset.generated.h"
+#include "CInputDataAsset.generated.h"
 
 UCLASS()
-class COLLAPSING_API UInputDataAsset : public UDataAsset
+class COLLAPSING_API UCInputDataAsset : public UDataAsset
 {
 	GENERATED_BODY()
 

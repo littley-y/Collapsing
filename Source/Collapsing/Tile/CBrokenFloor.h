@@ -3,17 +3,17 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Tile/BasicFloor.h"
-#include "BrokenFloor.generated.h"
+#include "Tile/CBasicFloor.h"
+#include "CBrokenFloor.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class COLLAPSING_API ABrokenFloor : public ABasicFloor
+class COLLAPSING_API ACBrokenFloor : public ACBasicFloor
 {
 	GENERATED_BODY()
 	
 public:
-	ABrokenFloor();
+	ACBrokenFloor();
 };

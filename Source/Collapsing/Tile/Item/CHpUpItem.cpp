@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Tile/Item/CHpUpItem.h"
-#include "Character/RunCharacter.h"
+#include "Character/CCharacter.h"
 
 UCHpUpItem::UCHpUpItem()
 {
@@ -19,7 +19,7 @@ void UCHpUpItem::OnPlayerItemOverlap(UPrimitiveComponent* OverlappedComp, AActor
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
 	const FHitResult& SweepResult)
 {
-	const ARunCharacter* RunCharacter = Cast<ARunCharacter>(OtherActor);
+	const ACCharacter* RunCharacter = Cast<ACCharacter>(OtherActor);
 	if (IsValid(RunCharacter) && OtherComp)
 	{
 		RunCharacter->EarnHpUpItem();

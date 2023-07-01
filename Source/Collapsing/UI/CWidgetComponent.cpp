@@ -9,7 +9,7 @@ void UCWidgetComponent::InitWidget()
 	Super::InitWidget();
 
 	UCUserWidget* CUserWidget = Cast<UCUserWidget>(GetWidget());
-	if (CUserWidget)
+	if (nullptr != CUserWidget)
 	{
 		CUserWidget->SetOwningActor(GetOwner());
 	}

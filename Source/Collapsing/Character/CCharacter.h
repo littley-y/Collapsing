@@ -5,16 +5,16 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Interface/CCharacterWidgetInterface.h"
-#include "RunCharacter.generated.h"
+#include "CCharacter.generated.h"
 
 
 UCLASS()
-class COLLAPSING_API ARunCharacter : public ACharacter, public ICCharacterWidgetInterface
+class COLLAPSING_API ACCharacter : public ACharacter, public ICCharacterWidgetInterface
 {
 	GENERATED_BODY()
 
 public:
-	ARunCharacter();
+	ACCharacter();
 
 	virtual void Tick(float DeltaSeconds) override;
 
@@ -70,6 +70,7 @@ public:
 	virtual void Crouch(bool bClientSimulation) override;
 	void OnMontageEnded(UAnimMontage* Montage, bool Interrupted);
 
+	UFUNCTION(BlueprintCallable)
 	void HitByWall();
 
 protected:

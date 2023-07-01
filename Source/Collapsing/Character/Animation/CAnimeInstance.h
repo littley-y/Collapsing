@@ -4,15 +4,15 @@
 
 #include "CoreMinimal.h"
 #include "Animation/AnimInstance.h"
-#include "RunAnimeInstance.generated.h"
+#include "CAnimeInstance.generated.h"
 
 UCLASS()
-class COLLAPSING_API URunAnimeInstance : public UAnimInstance
+class COLLAPSING_API UCAnimeInstance : public UAnimInstance
 {
 	GENERATED_BODY()
 
 public:
-	URunAnimeInstance();
+	UCAnimeInstance();
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Value")
@@ -48,7 +48,7 @@ protected:
 
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Pawn", meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<class ARunCharacter> Owner;
+	TObjectPtr<class ACCharacter> Owner;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Pawn", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UCharacterMovementComponent> Movement;

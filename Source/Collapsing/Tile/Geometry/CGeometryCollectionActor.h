@@ -4,16 +4,16 @@
 
 #include "CoreMinimal.h"
 #include "GeometryCollection/GeometryCollectionActor.h"
-#include "GeometryActorClass.generated.h"
+#include "CGeometryCollectionActor.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class COLLAPSING_API AGeometryActorClass : public AGeometryCollectionActor
+class COLLAPSING_API ACGeometryCollectionActor : public AGeometryCollectionActor
 {
 	GENERATED_BODY()
 
 public:
-	AGeometryActorClass();
+	ACGeometryCollectionActor();
 };

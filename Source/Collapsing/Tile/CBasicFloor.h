@@ -4,10 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "BasicFloor.generated.h"
+#include "CBasicFloor.generated.h"
 
 UCLASS()
-class COLLAPSING_API ABasicFloor : public AActor
+class COLLAPSING_API ACBasicFloor : public AActor
 {
 	GENERATED_BODY()
 	
@@ -27,7 +27,7 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Wall")
 	TArray<TObjectPtr<UStaticMeshComponent>> Walls;
 	
-	ABasicFloor();
+	ACBasicFloor();
 
 protected:
 	UFUNCTION()

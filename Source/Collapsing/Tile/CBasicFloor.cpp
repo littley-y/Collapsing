@@ -1,10 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "BasicFloor.h"
-#include "Character/RunCharacter.h"
+#include "CBasicFloor.h"
+#include "Character/CCharacter.h"
 #include "Item/CHpUpItem.h"
 
-ABasicFloor::ABasicFloor()
+ACBasicFloor::ACBasicFloor()
 {
 	PrimaryActorTick.bCanEverTick = false;
 
@@ -29,7 +29,7 @@ ABasicFloor::ABasicFloor()
 
 }
 
-void ABasicFloor::CreateFloorAndCeiling()
+void ACBasicFloor::CreateFloorAndCeiling()
 {
 	FloorMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("FloorMesh"));
 	FloorMesh->SetupAttachment(SceneComponent);
@@ -48,7 +48,7 @@ void ABasicFloor::CreateFloorAndCeiling()
 	}
 }
 
-void ABasicFloor::CreateWalls()
+void ACBasicFloor::CreateWalls()
 {
 	Walls.SetNum(2);
 	for (int32 Ix = 0; Ix != Walls.Num(); ++Ix)
@@ -57,7 +57,7 @@ void ABasicFloor::CreateWalls()
 	}
 }
 
-void ABasicFloor::SetWall(TObjectPtr<UStaticMeshComponent>& Wall, const int8 Ix)
+void ACBasicFloor::SetWall(TObjectPtr<UStaticMeshComponent>& Wall, const int8 Ix)
 {
 	FString MeshName(TEXT("WallMesh"));
 	MeshName += FString::FromInt(Ix);
@@ -70,7 +70,7 @@ void ABasicFloor::SetWall(TObjectPtr<UStaticMeshComponent>& Wall, const int8 Ix)
 	Wall->SetupAttachment(FloorMesh);
 	Wall->SetCollisionProfileName("BlockAll");
 	Wall->SetRelativeLocation(FVector(0.f, 0.f, -20.f));
-	Wall->OnComponentHit.AddDynamic(this, &ABasicFloor::OnWallHit);
+	Wall->OnComponentHit.AddDynamic(this, &ACBasicFloor::OnWallHit);
 
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> WallMeshRef(TEXT("/Game/_GameAssets/Meshes/Wall_400x200"));
 	if (IsValid(WallMeshRef.Object))
@@ -84,7 +84,7 @@ void ABasicFloor::SetWall(TObjectPtr<UStaticMeshComponent>& Wall, const int8 Ix)
 	}
 }
 
-void ABasicFloor::BeginPlay()
+void ACBasicFloor::BeginPlay()
 {
 	Super::BeginPlay();
 
@@ -98,16 +98,16 @@ void ABasicFloor::BeginPlay()
 	}
 }
 
-void ABasicFloor::OnWallHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
+void ACBasicFloor::OnWallHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
 	FVector NormalImpulse, const FHitResult& Hit)
 {
-	ARunCharacter* RunCharacter = Cast<ARunCharacter>(OtherActor);
+	ACCharacter* RunCharacter = Cast<ACCharacter>(OtherActor);
 	if (IsValid(RunCharacter))
 	{
 		const float Dot = FVector::DotProduct(Hit.Normal, RunCharacter->GetActorForwardVector());
 		if (Dot > 0.99f && Dot < 1.01f)
 		{
-			RunCharacter->Death();
+			RunCharacter->HitByWall();
 		}
 	}
 }

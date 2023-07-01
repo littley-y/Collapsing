@@ -1,10 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Tile/Geometry/GeometryActorClass.h"
+#include "Tile/Geometry/CGeometryCollectionActor.h"
 #include "GeometryCollection/GeometryCollectionComponent.h"
 
-AGeometryActorClass::AGeometryActorClass()
+ACGeometryCollectionActor::ACGeometryCollectionActor()
 {
 	GetGeometryCollectionComponent()->SetCollisionProfileName("OverlapOnlyPawn");
 	GetGeometryCollectionComponent()->SetEnableGravity(false);

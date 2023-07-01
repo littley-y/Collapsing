@@ -3,16 +3,16 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "BasicFloor.h"
-#include "CornerFloor.generated.h"
+#include "CBasicFloor.h"
+#include "CCornerFloor.generated.h"
 
 UCLASS()
-class COLLAPSING_API ACornerFloor : public ABasicFloor
+class COLLAPSING_API ACCornerFloor : public ACBasicFloor
 {
 	GENERATED_BODY()
 
 public:
-	ACornerFloor();
+	ACCornerFloor();
 
 	UFUNCTION()
 	void OnPlayerTurnOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,

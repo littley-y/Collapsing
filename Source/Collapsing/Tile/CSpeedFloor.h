@@ -3,11 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "BasicFloor.h"
-#include "SpeedFloor.generated.h"
+#include "CBasicFloor.h"
+#include "CSpeedFloor.generated.h"
 
 UCLASS()
-class COLLAPSING_API ASpeedFloor : public ABasicFloor
+class COLLAPSING_API ACSpeedFloor : public ACBasicFloor
 {
 	GENERATED_BODY()
 
@@ -21,7 +21,7 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	TObjectPtr<UStaticMesh> ArrowMesh;
 
-	ASpeedFloor();
+	ACSpeedFloor();
 
 	UFUNCTION()
 	void OnPlayerSpeedOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,

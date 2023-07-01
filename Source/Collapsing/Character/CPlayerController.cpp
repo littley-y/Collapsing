@@ -1,19 +1,19 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
-#include "RunPlayerController.h"
-#include "RunCharacter.h"
-#include "Data/InputDataAsset.h"
+#include "CPlayerController.h"
+#include "CCharacter.h"
+#include "Data/CInputDataAsset.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
-ARunPlayerController::ARunPlayerController(const FObjectInitializer& ObjectInitializer)
+ACPlayerController::ACPlayerController(const FObjectInitializer& ObjectInitializer)
 {
 	PrimaryActorTick.bCanEverTick = true;
 	DesiredRotation = AController::GetControlRotation();
 
 }
 
-void ARunPlayerController::SetupInputComponent()
+void ACPlayerController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
 
@@ -27,20 +27,20 @@ void ARunPlayerController::SetupInputComponent()
 
 	UEnhancedInputComponent* PlayerEnhancedInput = CastChecked<UEnhancedInputComponent>(InputComponent);
 	PlayerEnhancedInput->BindAction(InputActions->MoveAction, ETriggerEvent::Triggered, this,
-		&ARunPlayerController::Move);
+		&ACPlayerController::Move);
 	PlayerEnhancedInput->BindAction(InputActions->ChangeSpeedAction, ETriggerEvent::Started, this,
-		&ARunPlayerController::ChangeSpeed);
+		&ACPlayerController::ChangeSpeed);
 	PlayerEnhancedInput->BindAction(InputActions->TurnAction, ETriggerEvent::Started, this,
-		&ARunPlayerController::Turn);
+		&ACPlayerController::Turn);
 	PlayerEnhancedInput->BindAction(InputActions->JumpAction, ETriggerEvent::Started, this,
-		&ARunPlayerController::Jump);
+		&ACPlayerController::Jump);
 	PlayerEnhancedInput->BindAction(InputActions->JumpAction, ETriggerEvent::Completed, this,
-		&ARunPlayerController::StopJump);
+		&ACPlayerController::StopJump);
 	PlayerEnhancedInput->BindAction(InputActions->SlideAction, ETriggerEvent::Started, this,
-		&ARunPlayerController::SlideAction);
+		&ACPlayerController::SlideAction);
 }
 
-void ARunPlayerController::Move(const FInputActionValue& Value)
+void ACPlayerController::Move(const FInputActionValue& Value)
 {
 	const FVector2D MovementVector = Value.Get<FVector2D>();
 	const FRotator YawRotation(0.f, GetControlRotation().Yaw, 0.f);
@@ -53,7 +53,7 @@ void ARunPlayerController::Move(const FInputActionValue& Value)
 	}
 }
 
-void ARunPlayerController::Turn(const FInputActionValue& Value)
+void ACPlayerController::Turn(const FInputActionValue& Value)
 {
 	if (IsValid(RunCharacter) && RunCharacter->bCanCharacterTurn == true)
 	{
@@ -67,25 +67,23 @@ void ARunPlayerController::Turn(const FInputActionValue& Value)
 	}
 }
 
-void ARunPlayerController::Jump(const FInputActionValue& Value)
+void ACPlayerController::Jump(const FInputActionValue& Value)
 {
 	if (IsValid(RunCharacter))
 	{
 		RunCharacter->Jump();
-		UE_LOG(LogTemp, Warning, TEXT("Jump Start"));
 	}
 }
 
-void ARunPlayerController::StopJump(const FInputActionValue& Value)
+void ACPlayerController::StopJump(const FInputActionValue& Value)
 {
 	if (IsValid(RunCharacter))
 	{
 		RunCharacter->StopJumping();
-		UE_LOG(LogTemp, Warning, TEXT("Jump End"));
 	}
 }
 
-void ARunPlayerController::ChangeSpeed(const FInputActionValue& Value)
+void ACPlayerController::ChangeSpeed(const FInputActionValue& Value)
 {
 	if (IsValid(RunCharacter) && RunCharacter->bCanChangeSpeed == true)
 	{
@@ -110,7 +108,7 @@ void ARunPlayerController::ChangeSpeed(const FInputActionValue& Value)
 	}
 }
 
-void ARunPlayerController::SlideAction(const FInputActionValue& Value)
+void ACPlayerController::SlideAction(const FInputActionValue& Value)
 {
 	if (IsValid(RunCharacter))
 	{
@@ -119,7 +117,7 @@ void ARunPlayerController::SlideAction(const FInputActionValue& Value)
 }
 
 
-void ARunPlayerController::Tick(float DeltaSeconds)
+void ACPlayerController::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 
@@ -135,7 +133,7 @@ void ARunPlayerController::Tick(float DeltaSeconds)
 	}
 }
 
-void ARunPlayerController::TurnController(const FRotator& ControlRot)
+void ACPlayerController::TurnController(const FRotator& ControlRot)
 {
 	const FRotator InterpolatedRot = FMath::RInterpTo(ControlRot, DesiredRotation, GetWorld()->GetDeltaSeconds(), 20.f);
 	SetControlRotation(InterpolatedRot);
@@ -147,11 +145,11 @@ void ARunPlayerController::TurnController(const FRotator& ControlRot)
 	}
 }
 
-void ARunPlayerController::BeginPlay()
+void ACPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
-	RunCharacter = Cast<ARunCharacter>(GetCharacter());
+	RunCharacter = Cast<ACCharacter>(GetCharacter());
 	const FInputModeGameOnly GameOnlyInputMode;
 	SetInputMode(GameOnlyInputMode);
 }

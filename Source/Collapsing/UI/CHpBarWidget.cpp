@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "Components/ProgressBar.h"
 #include "CHpBarWidget.h"
+#include "Components/ProgressBar.h"
 #include "Interface/CCharacterWidgetInterface.h"
 
 UCHpBarWidget::UCHpBarWidget(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
@@ -27,7 +27,7 @@ void UCHpBarWidget::NativeConstruct()
 	ensure(HPProgressBar);
 
 	ICCharacterWidgetInterface* CharacterWidget = Cast<ICCharacterWidgetInterface>(OwningActor);
-	if (CharacterWidget)
+	if (CharacterWidget != nullptr)
 	{
 		CharacterWidget->SetupCharacterWidget(this);
 	}

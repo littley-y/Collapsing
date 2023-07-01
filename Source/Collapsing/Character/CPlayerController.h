@@ -6,15 +6,15 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "GameFramework/PlayerController.h"
-#include "RunPlayerController.generated.h"
+#include "CPlayerController.generated.h"
 
 UCLASS()
-class COLLAPSING_API ARunPlayerController : public APlayerController
+class COLLAPSING_API ACPlayerController : public APlayerController
 {
 	GENERATED_BODY()
 
 public:
-	ARunPlayerController(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+	ACPlayerController(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
 	void Move(const FInputActionValue& Value);
 
@@ -31,7 +31,7 @@ protected:
 	TObjectPtr<UInputMappingContext> InputMapping;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input")
-	TObjectPtr<class UInputDataAsset> InputActions;
+	TObjectPtr<class UCInputDataAsset> InputActions;
 
 	virtual void SetupInputComponent() override;
 
@@ -45,7 +45,7 @@ private:
 	FRotator DesiredRotation;
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Pawn", meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<class ARunCharacter> RunCharacter;
+	TObjectPtr<class ACCharacter> RunCharacter;
 
 	void TurnController(const FRotator& ControlRot);
 };											  

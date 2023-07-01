@@ -28,7 +28,5 @@ protected:
 	float MaxHp;
 
 	virtual void NativeConstruct() override;
-
-private:
 	
 };

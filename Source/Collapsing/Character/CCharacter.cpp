@@ -1,6 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "RunCharacter.h"
+#include "CCharacter.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -10,7 +10,7 @@
 #include "Stat/CCharacterStatComponent.h"
 #include "UI/CHpBarWidget.h"
 
-ARunCharacter::ARunCharacter()
+ACCharacter::ACCharacter()
 {
 	bUseControllerRotationYaw = false;
 	bCanCharacterTurn = false;
@@ -21,9 +21,30 @@ ARunCharacter::ARunCharacter()
 	SetCameraAndArm();
 	SetupCharacterMovement();
 	SetStatAndWidget();
+
+	SlideMontage = CreateDefaultSubobject<UAnimMontage>(TEXT("SlideMontage"));
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> SlideMontageRef(
+		TEXT("/Script/Engine.AnimMontage'/Game/Collapsing/Character/Animation/AM_Slide.AM_Slide'"));
+	if (IsValid(SlideMontageRef.Object))
+	{
+		SlideMontage = SlideMontageRef.Object;
+	}
+
+	FallingBackMontage = CreateDefaultSubobject<UAnimMontage>(TEXT("FallingBackMontage"));
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> FallingBackMontageRef(
+		TEXT("/Script/Engine.AnimMontage'/Game/Collapsing/Character/Animation/AM_FallingBack.AM_FallingBack'"));
+	if (IsValid(FallingBackMontageRef.Object))
+	{
+		FallingBackMontage = FallingBackMontageRef.Object;
+	}
 }
 
-void ARunCharacter::EarnHpUpItem() const
+void ACCharacter::Tick(float DeltaSeconds)
+{
+	GetCharacterMovement()->MaxWalkSpeed = FMath::Clamp(GetCharacterHp() * 20.f, 400.f, 1000.f);
+}
+
+void ACCharacter::EarnHpUpItem() const
 {
 	if (IsValid(Stat))
 	{
@@ -35,7 +56,7 @@ void ARunCharacter::EarnHpUpItem() const
 	}
 }
 
-float ARunCharacter::GetCharacterHp() const
+float ACCharacter::GetCharacterHp() const
 {
 	if (IsValid(Stat))
 	{
@@ -44,7 +65,7 @@ float ARunCharacter::GetCharacterHp() const
 	return -1.f;
 }
 
-float ARunCharacter::GetCharacterMaxHp() const
+float ACCharacter::GetCharacterMaxHp() const
 {
 	if (IsValid(Stat))
 	{
@@ -53,14 +74,14 @@ float ARunCharacter::GetCharacterMaxHp() const
 	return -1.f;
 }
 
-void ARunCharacter::SetCameraAndArm()
+void ACCharacter::SetCameraAndArm()
 {
 	CameraArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraArm"));
 	if (!IsValid(CameraArm))
 	{
 		return;
 	}
-	CameraArm->SetupAttachment(GetRootComponent());
+	CameraArm->SetupAttachment(GetMesh());
 
 	CameraArm->bDoCollisionTest = true;
 	CameraArm->bUsePawnControlRotation = true;
@@ -75,7 +96,7 @@ void ARunCharacter::SetCameraAndArm()
 	Camera->SetRelativeRotation(FRotator(-40.f, 0.f, 0.f));
 }
 
-void ARunCharacter::SetupCharacterWidget(UCUserWidget* InUserWidget)
+void ACCharacter::SetupCharacterWidget(UCUserWidget* InUserWidget)
 {
 	UCHpBarWidget* HpBarWidget = Cast<UCHpBarWidget>(InUserWidget);
 	if (IsValid(HpBarWidget))
@@ -83,11 +104,11 @@ void ARunCharacter::SetupCharacterWidget(UCUserWidget* InUserWidget)
 		HpBarWidget->SetMaxHp(Stat->GetMaxHp());
 		HpBarWidget->UpdateHpBar(Stat->GetCurrentHp());
 		Stat->OnHpChanged.AddUObject(HpBarWidget, &UCHpBarWidget::UpdateHpBar);
-		Stat->OnHpZero.AddUObject(this, &ARunCharacter::Death);
+		Stat->OnHpZero.AddUObject(this, &ACCharacter::Death);
 	}
 }
 
-void ARunCharacter::SetupCharacterMovement() const
+void ACCharacter::SetupCharacterMovement() const
 {
 	UCharacterMovementComponent* CMC = GetCharacterMovement();
 	if (IsValid(CMC))
@@ -102,15 +123,7 @@ void ARunCharacter::SetupCharacterMovement() const
 	}
 }
 
-void ARunCharacter::Crouch(bool bClientSimulation)
-{
-}
-
-void ARunCharacter::UnCrouch(bool bClientSimulation)
-{
-}
-
-void ARunCharacter::SetStatAndWidget()
+void ACCharacter::SetStatAndWidget()
 {
 	Stat = CreateDefaultSubobject<UCCharacterStatComponent>(TEXT("Stat"));
 
@@ -126,7 +139,56 @@ void ARunCharacter::SetStatAndWidget()
 	}
 }
 
-void ARunCharacter::Death()
+void ACCharacter::Crouch(bool bClientSimulation)
+{
+	const UCharacterMovementComponent* CMC = GetCharacterMovement();
+	if (IsValid(CMC) && CMC->IsFalling() == false)
+	{
+		UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+		AnimInstance->Montage_Play(SlideMontage, 1.f);
+
+		FOnMontageEnded SlideEndDelegate;
+		SlideEndDelegate.BindUObject(this, &ACCharacter::OnMontageEnded);
+		AnimInstance->Montage_SetEndDelegate(SlideEndDelegate, SlideMontage);
+
+		APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
+		if (IsValid(PlayerController))
+		{
+			PlayerController->DisableInput(PlayerController);
+		}
+	}
+}
+
+void ACCharacter::OnMontageEnded(UAnimMontage* Montage, bool Interrupted)
+{
+	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
+	if (IsValid(PlayerController))
+	{
+		PlayerController->EnableInput(PlayerController);
+	}
+}
+
+void ACCharacter::HitByWall()
+{
+	const UCharacterMovementComponent* CMC = GetCharacterMovement();
+	if (IsValid(CMC) && CMC->IsFalling() == false)
+	{
+		//UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+		//AnimInstance->Montage_Play(FallingBackMontage, 1.f);
+
+		//FOnMontageEnded FallingBackEndDelegate;
+		//FallingBackEndDelegate.BindUObject(this, &ACCharacter::OnMontageEnded);
+		//AnimInstance->Montage_SetEndDelegate(FallingBackEndDelegate, FallingBackMontage);
+
+		APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
+		if (IsValid(PlayerController))
+		{
+			PlayerController->DisableInput(PlayerController);
+		}
+	}
+}
+
+void ACCharacter::Death()
 {
 	if (bIsDead == false)
 	{
@@ -148,62 +210,12 @@ void ARunCharacter::Death()
 			GetMesh()->SetVisibility(false);
 			HpBar->SetVisibility(false);
 
-			CurrentWorld->GetTimerManager().SetTimer(RestartTimerHandle, this, &ARunCharacter::OnDeath, 1.f);
+			CurrentWorld->GetTimerManager().SetTimer(RestartTimerHandle, this, &ACCharacter::OnDeath, 1.f);
 		}
 	}
 }
 
-void ARunCharacter::Tick(float DeltaSeconds)
-{
-	const UCharacterMovementComponent* CMC = GetCharacterMovement();
-	if (IsValid(CMC) && CMC->IsFalling() == false)
-	{
-		UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
-		AnimInstance->Montage_Play(SlideMontage, 1.f);
-
-		FOnMontageEnded SlideEndDelegate;
-		SlideEndDelegate.BindUObject(this, &ARunCharacter::OnMontageEnded);
-		AnimInstance->Montage_SetEndDelegate(SlideEndDelegate, SlideMontage);
-
-		APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
-		if (IsValid(PlayerController))
-		{
-			PlayerController->DisableInput(PlayerController);
-		}
-	}
-}
-
-void ARunCharacter::ChangeCapsuleSize(float InWidth, float InHeight)
-{
-	GetCapsuleComponent()->SetCapsuleSize(InWidth, InHeight);
-}
-
-void ARunCharacter::HitByWall()
-{
-	const UCharacterMovementComponent* CMC = GetCharacterMovement();
-	if (IsValid(CMC))
-	{
-		UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
-		AnimInstance->Montage_Play(FallingBackMontage, 1.f);
-
-		FOnMontageEnded FallingBackEndDelegate;
-		FallingBackEndDelegate.BindUObject(this, &ARunCharacter::OnMontageEnded);
-		AnimInstance->Montage_SetEndDelegate(FallingBackEndDelegate, FallingBackMontage);
-
-		APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
-		if (IsValid(PlayerController))
-		{
-			PlayerController->DisableInput(PlayerController);
-		}
-	}
-}
-
-void ARunCharacter::Tick(float DeltaSeconds)
-{
-	GetCharacterMovement()->MaxWalkSpeed = FMath::Clamp(GetCharacterHp() * 20.f, 400.f, 1000.f);
-}
-
-void ARunCharacter::OnDeath()
+void ACCharacter::OnDeath()
 {
 	bIsDead = false;
 

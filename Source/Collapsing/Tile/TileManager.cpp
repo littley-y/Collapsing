@@ -46,7 +46,8 @@ UTileManager::UTileManager()
 	LoadBPClass(GeometryFloorMap, 'D', "/Game/Collapsing/Tile/Geometry/GA_CDownRampFloor");
 
 	GeneratedFloorArray.SetNum(MaxTileNum + 1);
-	CurrentMapIndex = 0;
+	SpawnTileIndex = 0;
+	DestroyTileIndex = 0;
 }
 
 void UTileManager::LoadBPClass(TMap<uint8, TSubclassOf<AActor>>& TargetMap, uint8 KeyChar, const FString& BPPath)
@@ -62,8 +63,8 @@ void UTileManager::LoadBPClass(TMap<uint8, TSubclassOf<AActor>>& TargetMap, uint
 
 void UTileManager::ManageTile()
 {
-	const TCHAR& MapChar = MapString[CurrentMapIndex % MapString.Len()];
-	const int32 ArrayIndex = CurrentMapIndex % MaxTileNum;
+	const TCHAR& MapChar = MapString[SpawnTileIndex % MapString.Len()];
+	const int32 ArrayIndex = SpawnTileIndex % MaxTileNum;
 
 	DestroyTile(ArrayIndex);
 	SpawnTile(MapChar, ArrayIndex);
@@ -71,7 +72,7 @@ void UTileManager::ManageTile()
 
 void UTileManager::DestroyTile(const int32 ArrayIndex)
 {
-	if (CurrentMapIndex >= MaxTileNum && IsValid(GeneratedFloorArray[ArrayIndex]))
+	if (SpawnTileIndex >= MaxTileNum && IsValid(GeneratedFloorArray[ArrayIndex]))
 	{
 		AActor* CurrTile = GeneratedFloorArray[ArrayIndex];
 		if (IsValid(CurrTile))
@@ -114,7 +115,7 @@ void UTileManager::SpawnTile(const TCHAR& MapChar, const int32 ArrayIndex)
 		TileGenTrans.UpdateVectorXY(TileSize);
 	}
 
-	CurrentMapIndex++;
+	SpawnTileIndex++;
 	UE_LOG(LogTemp, Warning, TEXT("Floor Gen Location : %s, Yaw : %f"), *TileGenTrans.Vector.ToString(), TileGenTrans.Rotator.Yaw)
 }
 

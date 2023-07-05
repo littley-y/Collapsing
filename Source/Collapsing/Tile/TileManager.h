@@ -49,10 +49,11 @@ protected:
 private:
 	FString MapString;
 
-	int32 CurrentMapIndex;
+	int32 SpawnTileIndex;
+	int32 DestroyTileIndex;
 
 	static constexpr float TileSize = 800.f;
-	static constexpr uint8 MaxTileNum = 10;
+	static constexpr uint8 MaxTileNum = 20;
 
 	FTileGeneratorTransform TileGenTrans;
 };

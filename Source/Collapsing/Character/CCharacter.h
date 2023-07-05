@@ -60,23 +60,18 @@ protected:
 
 // Item System
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Sound")
-	TObjectPtr<USoundBase> PickSound;
-
 	void EarnHpUpItem() const;
 
 // Animation System
 public:
-	virtual void Crouch(bool bClientSimulation) override;
-	void OnMontageEnded(UAnimMontage* Montage, bool Interrupted);
+	//UFUNCTION(BlueprintImplementableEvent, Category = "Animation", meta = (DisplayName = "OnHitByWallCpp"))
+	//void K2_OnHitByWall();
 
-	UFUNCTION(BlueprintCallable)
 	void HitByWall();
+	void OnHitByWallEnded(UAnimMontage* Montage, bool Interrupted);
+
 
 protected:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation")
-	TObjectPtr<class UAnimMontage> SlideMontage;
-
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation")
 	TObjectPtr<class UAnimMontage> FallingBackMontage;
 

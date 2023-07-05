@@ -22,14 +22,6 @@ ACCharacter::ACCharacter()
 	SetupCharacterMovement();
 	SetStatAndWidget();
 
-	SlideMontage = CreateDefaultSubobject<UAnimMontage>(TEXT("SlideMontage"));
-	static ConstructorHelpers::FObjectFinder<UAnimMontage> SlideMontageRef(
-		TEXT("/Script/Engine.AnimMontage'/Game/Collapsing/Character/Animation/AM_Slide.AM_Slide'"));
-	if (IsValid(SlideMontageRef.Object))
-	{
-		SlideMontage = SlideMontageRef.Object;
-	}
-
 	FallingBackMontage = CreateDefaultSubobject<UAnimMontage>(TEXT("FallingBackMontage"));
 	static ConstructorHelpers::FObjectFinder<UAnimMontage> FallingBackMontageRef(
 		TEXT("/Script/Engine.AnimMontage'/Game/Collapsing/Character/Animation/AM_FallingBack.AM_FallingBack'"));
@@ -49,10 +41,7 @@ void ACCharacter::EarnHpUpItem() const
 	if (IsValid(Stat))
 	{
 		Stat->SetHp(Stat->GetCurrentHp() + 20.f);
-		if (IsValid(PickSound))
-		{
-			UGameplayStatics::PlaySoundAtLocation(GetWorld(), PickSound, GetActorLocation());
-		}
+
 	}
 }
 
@@ -139,52 +128,28 @@ void ACCharacter::SetStatAndWidget()
 	}
 }
 
-void ACCharacter::Crouch(bool bClientSimulation)
+void ACCharacter::HitByWall()
 {
-	const UCharacterMovementComponent* CMC = GetCharacterMovement();
-	if (IsValid(CMC) && CMC->IsFalling() == false)
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	AnimInstance->Montage_Play(FallingBackMontage, 1.f);
+
+	FOnMontageEnded FallingBackEndDelegate;
+	FallingBackEndDelegate.BindUObject(this, &ACCharacter::OnHitByWallEnded);
+	AnimInstance->Montage_SetEndDelegate(FallingBackEndDelegate, FallingBackMontage);
+
+	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
+	if (IsValid(PlayerController))
 	{
-		UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
-		AnimInstance->Montage_Play(SlideMontage, 1.f);
-
-		FOnMontageEnded SlideEndDelegate;
-		SlideEndDelegate.BindUObject(this, &ACCharacter::OnMontageEnded);
-		AnimInstance->Montage_SetEndDelegate(SlideEndDelegate, SlideMontage);
-
-		APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
-		if (IsValid(PlayerController))
-		{
-			PlayerController->DisableInput(PlayerController);
-		}
+		PlayerController->DisableInput(PlayerController);
 	}
 }
 
-void ACCharacter::OnMontageEnded(UAnimMontage* Montage, bool Interrupted)
+void ACCharacter::OnHitByWallEnded(UAnimMontage* Montage, bool Interrupted)
 {
 	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
 	if (IsValid(PlayerController))
 	{
 		PlayerController->EnableInput(PlayerController);
-	}
-}
-
-void ACCharacter::HitByWall()
-{
-	const UCharacterMovementComponent* CMC = GetCharacterMovement();
-	if (IsValid(CMC) && CMC->IsFalling() == false)
-	{
-		//UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
-		//AnimInstance->Montage_Play(FallingBackMontage, 1.f);
-
-		//FOnMontageEnded FallingBackEndDelegate;
-		//FallingBackEndDelegate.BindUObject(this, &ACCharacter::OnMontageEnded);
-		//AnimInstance->Montage_SetEndDelegate(FallingBackEndDelegate, FallingBackMontage);
-
-		APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
-		if (IsValid(PlayerController))
-		{
-			PlayerController->DisableInput(PlayerController);
-		}
 	}
 }
 

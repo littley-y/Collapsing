@@ -11,7 +11,10 @@ class COLLAPSING_API ACBasicFloor : public AActor
 {
 	GENERATED_BODY()
 	
-public:	
+public:
+	ACBasicFloor();
+
+protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TObjectPtr<USceneComponent> SceneComponent;
 
@@ -26,13 +29,6 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Wall")
 	TArray<TObjectPtr<UStaticMeshComponent>> Walls;
-	
-	ACBasicFloor();
-
-protected:
-	UFUNCTION()
-	void OnWallHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
-			       FVector NormalImpulse, const FHitResult& Hit);
 
 	void SetWall(TObjectPtr<UStaticMeshComponent>& Wall, const int8 Ix);
 

@@ -1,28 +1,51 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "Tile/Item/CHpUpItem.h"
-#include "Character/CCharacter.h"
 
-UCHpUpItem::UCHpUpItem()
+#include "Tile/Item/CHpUpItem.h"
+
+#include "Character/CCharacter.h"
+#include "Kismet/GameplayStatics.h"
+
+// Sets default values
+ACHpUpItem::ACHpUpItem()
 {
+	ItemMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ItemMesh"));
+
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> ItemMeshRef(TEXT("/Engine/BasicShapes/Sphere.Sphere"));
 	if (IsValid(ItemMeshRef.Object))
 	{
-		UStaticMeshComponent::SetStaticMesh(ItemMeshRef.Object);
+		ItemMeshComponent->SetStaticMesh(ItemMeshRef.Object);
 	}
-	SetRelativeScale3D(FVector(0.25f, 0.25f, 0.25f));
+	ItemMeshComponent->SetRelativeScale3D(FVector(0.25f, 0.25f, 0.25f));
+	ItemMeshComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	ItemMeshComponent->SetCollisionProfileName(TEXT("ItemCollision"));
+	ItemMeshComponent->OnComponentBeginOverlap.AddDynamic(this, &ACHpUpItem::OnPlayerItemOverlap);
 
-	OnComponentBeginOverlap.AddDynamic(this, &UCHpUpItem::OnPlayerItemOverlap);
+	ItemMeshComponent->SetSimulatePhysics(true);
+	ItemMeshComponent->SetEnableGravity(false);
 }
 
-void UCHpUpItem::OnPlayerItemOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
-	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
-	const FHitResult& SweepResult)
+
+void ACHpUpItem::OnPlayerItemOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	const ACCharacter* RunCharacter = Cast<ACCharacter>(OtherActor);
 	if (IsValid(RunCharacter) && OtherComp)
 	{
 		RunCharacter->EarnHpUpItem();
-		DestroyComponent();
+		if (IsValid(PickSound))
+		{
+			UGameplayStatics::PlaySoundAtLocation(GetWorld(), PickSound, GetActorLocation());
+		}
+		SetActorHiddenInGame(true);
+		SetLifeSpan(1.f);
 	}
+}
+
+void ACHpUpItem::BeginPlay()
+{
+	Super::BeginPlay();
+
+	const FVector TargetLocation(FMath::FRandRange(-2000.f, 2000.f), FMath::FRandRange(-2000.f, 2000.f),
+	                             FMath::FRandRange(-2000.f, 2000.f));
+	ItemMeshComponent->AddImpulse(TargetLocation);
 }

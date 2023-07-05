@@ -37,6 +37,9 @@ protected:
 	uint8 bIsFalling : 1;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Value")
+	uint8 bIsCrouching : 1;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Value")
 	float CharacterHp;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Value")
@@ -53,5 +56,9 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Pawn", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UCharacterMovementComponent> Movement;
 
+// Animation Notify
+public:
+	UFUNCTION()
+	void AnimNotify_SlideEnd();
 
 };

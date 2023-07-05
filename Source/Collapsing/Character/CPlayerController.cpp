@@ -2,6 +2,7 @@
 
 #include "CPlayerController.h"
 #include "CCharacter.h"
+#include "Animation/AnimSingleNodeInstance.h"
 #include "Data/CInputDataAsset.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -37,7 +38,7 @@ void ACPlayerController::SetupInputComponent()
 	PlayerEnhancedInput->BindAction(InputActions->JumpAction, ETriggerEvent::Completed, this,
 		&ACPlayerController::StopJump);
 	PlayerEnhancedInput->BindAction(InputActions->SlideAction, ETriggerEvent::Started, this,
-		&ACPlayerController::SlideAction);
+		&ACPlayerController::Slide);
 }
 
 void ACPlayerController::Move(const FInputActionValue& Value)
@@ -108,11 +109,11 @@ void ACPlayerController::ChangeSpeed(const FInputActionValue& Value)
 	}
 }
 
-void ACPlayerController::SlideAction(const FInputActionValue& Value)
+void ACPlayerController::Slide(const FInputActionValue& Value)
 {
-	if (IsValid(RunCharacter))
+	if (IsValid(RunCharacter) && RunCharacter->GetCharacterMovement()->IsFalling() == false)
 	{
-		RunCharacter->Crouch(true);
+		RunCharacter->Crouch();
 	}
 }
 

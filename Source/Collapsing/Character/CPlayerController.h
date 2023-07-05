@@ -24,7 +24,8 @@ public:
 	void StopJump(const FInputActionValue& Value);
 
 	void ChangeSpeed(const FInputActionValue& Value);
-	void SlideAction(const FInputActionValue& Value);
+
+	void Slide(const FInputActionValue& Value);
 
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input")

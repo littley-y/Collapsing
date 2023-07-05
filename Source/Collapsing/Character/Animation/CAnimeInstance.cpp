@@ -33,6 +33,12 @@ void UCAnimeInstance::NativeUpdateAnimation(float DeltaSeconds)
 		bIsIdle = GroundSpeed < MovingThreshold;
 		bIsFalling = Movement->IsFalling();
 		bIsJumping = bIsFalling & (Velocity.Z > JumpingThreshold);
+		bIsCrouching = Movement->IsCrouching();
 		CharacterHp = Owner->GetCharacterHp();
 	}
+}
+
+void UCAnimeInstance::AnimNotify_SlideEnd()
+{
+	Owner->UnCrouch();
 }

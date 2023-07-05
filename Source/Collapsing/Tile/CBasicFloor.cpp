@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "CBasicFloor.h"
-#include "Character/CCharacter.h"
+
 #include "Item/CHpUpItem.h"
 
 ACBasicFloor::ACBasicFloor()
@@ -14,19 +14,6 @@ ACBasicFloor::ACBasicFloor()
 	RootComponent = SceneComponent;
 	CreateFloorAndCeiling();
 	CreateWalls();
-
-	// Obstacle
-
-	TArray<FName> SocketNames = Walls[0]->GetAllSocketNames();
-	for (auto& SocketName : SocketNames)
-	{
-		FString ObstacleName = FString::Printf(TEXT("Left%s"), *SocketName.ToString());
-		UStaticMeshComponent* CurrObstacle = CreateDefaultSubobject<UStaticMeshComponent>(*ObstacleName);
-		CurrObstacle->SetupAttachment(Walls[0], SocketName);
-		CurrObstacle->SetCollisionProfileName(TEXT("BlockNotCamera"));
-		Obstacles.Add(CurrObstacle);
-	}
-
 }
 
 void ACBasicFloor::CreateFloorAndCeiling()
@@ -55,6 +42,16 @@ void ACBasicFloor::CreateWalls()
 	{
 		SetWall(Walls[Ix], Ix);
 	}
+
+	TArray<FName> SocketNames = Walls[0]->GetAllSocketNames();
+	for (auto& SocketName : SocketNames)
+	{
+		FString ObstacleName = FString::Printf(TEXT("Left%s"), *SocketName.ToString());
+		UStaticMeshComponent* CurrObstacle = CreateDefaultSubobject<UStaticMeshComponent>(*ObstacleName);
+		CurrObstacle->SetupAttachment(Walls[0], SocketName);
+		CurrObstacle->SetCollisionProfileName(TEXT("BlockNotCamera"));
+		Obstacles.Add(CurrObstacle);
+	}
 }
 
 void ACBasicFloor::SetWall(TObjectPtr<UStaticMeshComponent>& Wall, const int8 Ix)
@@ -70,7 +67,6 @@ void ACBasicFloor::SetWall(TObjectPtr<UStaticMeshComponent>& Wall, const int8 Ix
 	Wall->SetupAttachment(FloorMesh);
 	Wall->SetCollisionProfileName("BlockAll");
 	Wall->SetRelativeLocation(FVector(0.f, 0.f, -20.f));
-	Wall->OnComponentHit.AddDynamic(this, &ACBasicFloor::OnWallHit);
 
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> WallMeshRef(TEXT("/Game/_GameAssets/Meshes/Wall_400x200"));
 	if (IsValid(WallMeshRef.Object))
@@ -88,26 +84,12 @@ void ACBasicFloor::BeginPlay()
 {
 	Super::BeginPlay();
 
-	UCHpUpItem* HpUpItem = NewObject<UCHpUpItem>(this, UCHpUpItem::StaticClass(), TEXT("HpUpItem"));
+	ACHpUpItem* HpUpItem = GetWorld()->SpawnActorDeferred<ACHpUpItem>(ACHpUpItem::StaticClass(), GetActorTransform());
+
 	if (IsValid(HpUpItem))
 	{
-		HpUpItem->RegisterComponent();
 		HpUpItem->AttachToComponent(FloorMesh, FAttachmentTransformRules::KeepRelativeTransform);
-		HpUpItem->SetRelativeLocation(FVector(200.f, FMath::FRandRange(100.f, 300.f), FMath::FRandRange(50.f, 150.f)));
-		HpUpItem->SetCollisionProfileName(TEXT("OverlapOnlyPawn"));
-	}
-}
-
-void ACBasicFloor::OnWallHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
-	FVector NormalImpulse, const FHitResult& Hit)
-{
-	ACCharacter* RunCharacter = Cast<ACCharacter>(OtherActor);
-	if (IsValid(RunCharacter))
-	{
-		const float Dot = FVector::DotProduct(Hit.Normal, RunCharacter->GetActorForwardVector());
-		if (Dot > 0.99f && Dot < 1.01f)
-		{
-			RunCharacter->HitByWall();
-		}
+		HpUpItem->SetActorRelativeLocation(FVector(200.f, FMath::FRandRange(100.f, 300.f), FMath::FRandRange(50.f, 150.f)));
+		HpUpItem->FinishSpawning(GetActorTransform());
 	}
 }

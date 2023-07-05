@@ -30,6 +30,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Wall")
 	TArray<TObjectPtr<UStaticMeshComponent>> Walls;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Item)
+	TSubclassOf<class ACHpUpItem> BP_HpUpItem;
+
 	void SetWall(TObjectPtr<UStaticMeshComponent>& Wall, const int8 Ix);
 
 	void CreateFloorAndCeiling();

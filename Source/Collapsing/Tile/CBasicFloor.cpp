@@ -27,6 +27,12 @@ void ACBasicFloor::CreateFloorAndCeiling()
 	CeilingMesh->SetupAttachment(FloorMesh);
 	CeilingMesh->SetRelativeLocation(FVector(0.f, 0.f, 180.f));
 
+	static ConstructorHelpers::FClassFinder<AActor> HpUpItemRef(TEXT("/Game/Collapsing/Tile/Item/BP_CHpUpItem"));
+	if (IsValid(HpUpItemRef.Class))
+	{
+		BP_HpUpItem = HpUpItemRef.Class;
+	}
+
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> FloorMeshRef(TEXT("/Game/_GameAssets/Meshes/Floor_400x400"));
 	if (IsValid(FloorMeshRef.Object))
 	{
@@ -84,12 +90,12 @@ void ACBasicFloor::BeginPlay()
 {
 	Super::BeginPlay();
 
-	ACHpUpItem* HpUpItem = GetWorld()->SpawnActorDeferred<ACHpUpItem>(ACHpUpItem::StaticClass(), GetActorTransform());
+	AActor* HpUpItem = GetWorld()->SpawnActorDeferred<AActor>(BP_HpUpItem, GetActorTransform());
 
 	if (IsValid(HpUpItem))
 	{
 		HpUpItem->AttachToComponent(FloorMesh, FAttachmentTransformRules::KeepRelativeTransform);
 		HpUpItem->SetActorRelativeLocation(FVector(200.f, FMath::FRandRange(100.f, 300.f), FMath::FRandRange(50.f, 150.f)));
-		HpUpItem->FinishSpawning(GetActorTransform());
 	}
+	HpUpItem->FinishSpawning(GetActorTransform());
 }

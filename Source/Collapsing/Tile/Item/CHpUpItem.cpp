@@ -6,7 +6,6 @@
 #include "Character/CCharacter.h"
 #include "Kismet/GameplayStatics.h"
 
-// Sets default values
 ACHpUpItem::ACHpUpItem()
 {
 	ItemMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ItemMesh"));
@@ -17,11 +16,7 @@ ACHpUpItem::ACHpUpItem()
 		ItemMeshComponent->SetStaticMesh(ItemMeshRef.Object);
 	}
 	ItemMeshComponent->SetRelativeScale3D(FVector(0.25f, 0.25f, 0.25f));
-	ItemMeshComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-	ItemMeshComponent->SetCollisionProfileName(TEXT("ItemCollision"));
 	ItemMeshComponent->OnComponentBeginOverlap.AddDynamic(this, &ACHpUpItem::OnPlayerItemOverlap);
-
-	ItemMeshComponent->SetSimulatePhysics(true);
 	ItemMeshComponent->SetEnableGravity(false);
 }
 
@@ -45,7 +40,11 @@ void ACHpUpItem::BeginPlay()
 {
 	Super::BeginPlay();
 
-	const FVector TargetLocation(FMath::FRandRange(-2000.f, 2000.f), FMath::FRandRange(-2000.f, 2000.f),
-	                             FMath::FRandRange(-2000.f, 2000.f));
+	ItemMeshComponent->SetSimulatePhysics(true);
+	ItemMeshComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	ItemMeshComponent->SetCollisionProfileName(TEXT("ItemCollision"));
+
+	const FVector TargetLocation(FMath::FRandRange(2000.f, 4000.f), FMath::FRandRange(2000.f, 4000.f),
+	                             FMath::FRandRange(2000.f, 4000.f));
 	ItemMeshComponent->AddImpulse(TargetLocation);
 }

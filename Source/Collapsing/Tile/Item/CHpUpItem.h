@@ -20,10 +20,10 @@ public:
 
 	FORCEINLINE UStaticMeshComponent* GetItem() const { return ItemMeshComponent; }
 
+protected:
 	virtual void BeginPlay() override;
 
-protected:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Item)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Item)
 	TObjectPtr<UStaticMeshComponent> ItemMeshComponent;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Sound")

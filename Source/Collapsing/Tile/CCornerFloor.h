@@ -24,7 +24,7 @@ public:
 
 	UFUNCTION()
 	void OnWallHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
-			       FVector NormalImpulse, const FHitResult& Hit);
+	               FVector NormalImpulse, const FHitResult& Hit);
 
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "TriggerBox", meta = (AllowPrivateAccess = "true"))

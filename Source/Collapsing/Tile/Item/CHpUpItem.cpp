@@ -9,15 +9,16 @@
 ACHpUpItem::ACHpUpItem()
 {
 	ItemMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ItemMesh"));
+	SetRootComponent(ItemMeshComponent);
+
+	ItemMeshComponent->SetRelativeScale3D(FVector(0.25f, 0.25f, 0.25f));
+	ItemMeshComponent->OnComponentBeginOverlap.AddDynamic(this, &ACHpUpItem::OnPlayerItemOverlap);
 
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> ItemMeshRef(TEXT("/Engine/BasicShapes/Sphere.Sphere"));
 	if (IsValid(ItemMeshRef.Object))
 	{
 		ItemMeshComponent->SetStaticMesh(ItemMeshRef.Object);
 	}
-	ItemMeshComponent->SetRelativeScale3D(FVector(0.25f, 0.25f, 0.25f));
-	ItemMeshComponent->OnComponentBeginOverlap.AddDynamic(this, &ACHpUpItem::OnPlayerItemOverlap);
-	ItemMeshComponent->SetEnableGravity(false);
 }
 
 
@@ -41,10 +42,13 @@ void ACHpUpItem::BeginPlay()
 	Super::BeginPlay();
 
 	ItemMeshComponent->SetSimulatePhysics(true);
+	ItemMeshComponent->SetEnableGravity(false);
 	ItemMeshComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	ItemMeshComponent->SetCollisionProfileName(TEXT("ItemCollision"));
 
-	const FVector TargetLocation(FMath::FRandRange(2000.f, 4000.f), FMath::FRandRange(2000.f, 4000.f),
-	                             FMath::FRandRange(2000.f, 4000.f));
+	const float X = FMath::RandBool() ? FMath::FRandRange(2000.f, 4000.f) : FMath::FRandRange(-4000.f, -2000.f);
+	const float Y = FMath::RandBool() ? FMath::FRandRange(2000.f, 4000.f) : FMath::FRandRange(-4000.f, -2000.f);
+	const float Z = FMath::RandBool() ? FMath::FRandRange(2000.f, 4000.f) : FMath::FRandRange(-4000.f, -2000.f);
+	const FVector TargetLocation(X, Y, Z);
 	ItemMeshComponent->AddImpulse(TargetLocation);
 }

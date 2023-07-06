@@ -132,6 +132,7 @@ void ACCharacter::HitByWall()
 {
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	AnimInstance->Montage_Play(FallingBackMontage, 1.f);
+	GetCharacterMovement()->SetMovementMode(MOVE_None);
 
 	FOnMontageEnded FallingBackEndDelegate;
 	FallingBackEndDelegate.BindUObject(this, &ACCharacter::OnHitByWallEnded);
@@ -147,6 +148,7 @@ void ACCharacter::HitByWall()
 void ACCharacter::OnHitByWallEnded(UAnimMontage* Montage, bool Interrupted)
 {
 	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
+	GetCharacterMovement()->SetMovementMode(MOVE_Walking);
 	if (IsValid(PlayerController))
 	{
 		PlayerController->EnableInput(PlayerController);

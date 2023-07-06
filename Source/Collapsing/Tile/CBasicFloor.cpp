@@ -90,12 +90,23 @@ void ACBasicFloor::BeginPlay()
 {
 	Super::BeginPlay();
 
-	AActor* HpUpItem = GetWorld()->SpawnActorDeferred<AActor>(BP_HpUpItem, GetActorTransform());
+	SpawnedHpUpItem = GetWorld()->SpawnActorDeferred<AActor>(BP_HpUpItem, GetActorTransform());
 
-	if (IsValid(HpUpItem))
+	if (IsValid(SpawnedHpUpItem))
 	{
-		HpUpItem->AttachToComponent(FloorMesh, FAttachmentTransformRules::KeepRelativeTransform);
-		HpUpItem->SetActorRelativeLocation(FVector(200.f, FMath::FRandRange(100.f, 300.f), FMath::FRandRange(50.f, 150.f)));
+		SpawnedHpUpItem->AttachToComponent(FloorMesh, FAttachmentTransformRules::KeepRelativeTransform);
+		SpawnedHpUpItem->SetActorRelativeLocation(FVector(200.f, FMath::FRandRange(100.f, 300.f), FMath::FRandRange(50.f, 150.f)));
 	}
-	HpUpItem->FinishSpawning(GetActorTransform());
+	SpawnedHpUpItem->FinishSpawning(GetActorTransform());
+}
+
+void ACBasicFloor::Destroyed()
+{
+	Super::Destroyed();
+
+	if (IsValid(SpawnedHpUpItem))
+	{
+		SpawnedHpUpItem->Destroy();
+	}
+	  
 }

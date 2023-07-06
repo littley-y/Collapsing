@@ -15,6 +15,9 @@ public:
 	ACBasicFloor();
 
 protected:
+	virtual void BeginPlay() override;
+	virtual void Destroyed() override;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TObjectPtr<USceneComponent> SceneComponent;
 
@@ -33,12 +36,14 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Item)
 	TSubclassOf<class ACHpUpItem> BP_HpUpItem;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Item)
+	TObjectPtr<AActor> SpawnedHpUpItem;
+
 	void SetWall(TObjectPtr<UStaticMeshComponent>& Wall, const int8 Ix);
 
 	void CreateFloorAndCeiling();
 	void CreateWalls();
 
-	virtual void BeginPlay() override;
 
 };
 

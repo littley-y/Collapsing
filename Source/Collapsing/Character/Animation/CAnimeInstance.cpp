@@ -41,4 +41,6 @@ void UCAnimeInstance::NativeUpdateAnimation(float DeltaSeconds)
 void UCAnimeInstance::AnimNotify_SlideEnd()
 {
 	Owner->UnCrouch();
+	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
+	PlayerController->EnableInput(PlayerController);
 }

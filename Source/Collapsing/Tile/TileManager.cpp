@@ -66,7 +66,7 @@ void UTileManager::ManageTile()
 	const TCHAR& MapChar = MapString[SpawnTileIndex % MapString.Len()];
 	const int32 ArrayIndex = SpawnTileIndex % MaxTileNum;
 
-	DestroyTile(ArrayIndex);
+	//DestroyTile(ArrayIndex);
 	SpawnTile(MapChar, ArrayIndex);
 }
 

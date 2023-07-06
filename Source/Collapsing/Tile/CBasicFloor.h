@@ -18,25 +18,25 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void Destroyed() override;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	TObjectPtr<USceneComponent> SceneComponent;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Floor")
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Floor")
 	TObjectPtr<UStaticMeshComponent> FloorMesh;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Ceiling")
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Ceiling")
 	TObjectPtr<UStaticMeshComponent> CeilingMesh;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Obstacle")
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Obstacle")
 	TArray<TObjectPtr<UStaticMeshComponent>> Obstacles;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Wall")
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Wall")
 	TArray<TObjectPtr<UStaticMeshComponent>> Walls;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Item)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Item)
 	TSubclassOf<class ACHpUpItem> BP_HpUpItem;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Item)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Item)
 	TObjectPtr<AActor> SpawnedHpUpItem;
 
 	void SetWall(TObjectPtr<UStaticMeshComponent>& Wall, const int8 Ix);

@@ -113,6 +113,7 @@ void ACPlayerController::Slide(const FInputActionValue& Value)
 {
 	if (IsValid(RunCharacter) && RunCharacter->GetCharacterMovement()->IsFalling() == false)
 	{
+		DisableInput(this);
 		RunCharacter->Crouch();
 	}
 }

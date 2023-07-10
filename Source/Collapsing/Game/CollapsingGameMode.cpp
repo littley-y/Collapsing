@@ -6,7 +6,7 @@
 ACollapsingGameMode::ACollapsingGameMode()
 {
 	PrimaryActorTick.bCanEverTick = true;
-	TileGenerator = CreateDefaultSubobject<UTileManager>(TEXT("TileGenerator"));
+	TileManager = CreateDefaultSubobject<UTileManager>(TEXT("TileManager"));
 
 	static ConstructorHelpers::FClassFinder<APawn> CollapsingPawnRef(
 		TEXT("/Game/Collapsing/Character/BP_CCharacter.BP_CCharacter_C"));
@@ -22,7 +22,8 @@ ACollapsingGameMode::ACollapsingGameMode()
 		PlayerControllerClass = CollapsingControllerRef.Class;
 	}
 
-	SetTileGenerateTimer(1.6f);
+
+	DestroyDelay = 4.f;
 }
 
 void ACollapsingGameMode::SetMapBasicString() const
@@ -33,37 +34,47 @@ void ACollapsingGameMode::SetMapBasicString() const
 	check(!TempMapString.IsEmpty());
 
 	const FString MapString(TempMapString);
-	TileGenerator->SetMapString(MapString);
+	TileManager->SetMapString(MapString);
 	UE_LOG(LogTemp, Warning, TEXT("Map Loaded : %s"), *MapString);
 }
 
-void ACollapsingGameMode::SetTileGenerateTimer(const float TargetTime)
-{
-	TileGenerateTime = TargetTime;
-}
+//void ACollapsingGameMode::SetTileGenerateTimer(const float TargetTime)
+//{
+//	TileGenerateTime = TargetTime;
+//}
 
 void ACollapsingGameMode::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (IsValid(TileGenerator))
+	if (IsValid(TileManager))
 	{
 		SetMapBasicString();
-		TileGenerator->InitMaps();
+		TileManager->InitMaps();
 	}
 
 	const UWorld* CurrentWorld = GetWorld();
 	if (IsValid(CurrentWorld))
 	{
-		CurrentWorld->GetTimerManager().SetTimer(TileGenerateTimerHandle, this, &ACollapsingGameMode::CallTileManager,
-			TileGenerateTime, true, 4.f);
+		CurrentWorld->GetTimerManager().SetTimer(SpawnTileTimerHandle, this, &ACollapsingGameMode::SetTileGenerate,
+			TileSpawnTime, true);
+		CurrentWorld->GetTimerManager().SetTimer(DestroyTileTimerHandle, this, &ACollapsingGameMode::SetTileDestroy,
+			TileDestroyTime, true, DestroyDelay);
 	}
 }
 
-void ACollapsingGameMode::CallTileManager() const
+void ACollapsingGameMode::SetTileGenerate() const
 {
-	if (IsValid(TileGenerator))
+	if (IsValid(TileManager))
 	{
-		TileGenerator->ManageTile();
+		TileManager->SpawnTile();
+	}
+}
+
+void ACollapsingGameMode::SetTileDestroy() const
+{
+	if (IsValid(TileManager))
+	{
+		TileManager->DestroyTile();
 	}
 }

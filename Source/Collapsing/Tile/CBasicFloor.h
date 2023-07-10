@@ -14,10 +14,10 @@ class COLLAPSING_API ACBasicFloor : public AActor
 public:
 	ACBasicFloor();
 
-protected:
-	virtual void BeginPlay() override;
-	virtual void Destroyed() override;
+	void SpawnItem();
+	void DestroyItem();
 
+protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	TObjectPtr<USceneComponent> SceneComponent;
 
@@ -43,7 +43,5 @@ protected:
 
 	void CreateFloorAndCeiling();
 	void CreateWalls();
-
-
 };
 

@@ -13,25 +13,35 @@ class COLLAPSING_API ACollapsingGameMode : public AGameModeBase
 
 public:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly)
-	TObjectPtr<class UTileManager> TileGenerator;
+	TObjectPtr<class UTileManager> TileManager;
 
 	ACollapsingGameMode();
 
 	void SetMapBasicString() const;
 
-	void SetTileGenerateTimer(const float TargetTime);
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Timer, meta = (AllowPrivateAccess = "true"))
+	float TileSpawnTime;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Timer, meta = (AllowPrivateAccess = "true"))
+	float TileDestroyTime;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Timer, meta = (AllowPrivateAccess = "true"))
+	float DestroyDelay;
 
 private:
-	float TileGenerateTime;
+	UPROPERTY()
+	FTimerHandle SpawnTileTimerHandle;
 
 	UPROPERTY()
-	FTimerHandle TileGenerateTimerHandle;
+	FTimerHandle DestroyTileTimerHandle;
 
 	UPROPERTY()
 	FTimerHandle CollapsedTimerHandle;
 
 	virtual void BeginPlay() override;
 
-	void CallTileManager() const;
+	void SetTileGenerate() const;
+	void SetTileDestroy() const;
 
 };

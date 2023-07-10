@@ -10,12 +10,25 @@ struct FTileGeneratorTransform
 {
 	GENERATED_BODY()
 
+public:
 	FVector Vector;
 	FRotator Rotator;
 
 	FTileGeneratorTransform() : Vector(-800.f, 0.f, 0.f), Rotator(0.f, 0.f, 0.f) {}
 
 	void UpdateVectorXY(const float InValue);
+};
+
+USTRUCT()
+struct FPoolingTile
+{
+	GENERATED_BODY()
+
+	TArray<TObjectPtr<class ACBasicFloor>> PoolingTiles;
+	int SpawnIndex;
+	int DestroyIndex;
+
+	FPoolingTile() : PoolingTiles(), SpawnIndex(0), DestroyIndex(0) {}
 };
 
 UCLASS()
@@ -32,9 +45,8 @@ public:
 
 	void InitMaps();
 
-	void ManageTile();
-	void DestroyTile(const int32 ArrayIndex);
-	void SpawnTile(const TCHAR& MapChar, const int32 ArrayIndex);
+	void SpawnTile();
+	void DestroyTile();
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
@@ -43,17 +55,18 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TMap<uint8, TSubclassOf<AActor>> GeometryFloorMap;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	TArray<TObjectPtr<AActor>> GeneratedFloorArray;
+	TMap<uint8, FPoolingTile> FloorTilePool;
 
 private:
 	FString MapString;
 
 	int32 SpawnTileIndex;
 	int32 DestroyTileIndex;
+	FVector StartPosition;
 
-	static constexpr float TileSize = 800.f;
-	static constexpr uint8 MaxTileNum = 20;
+
+	float TileSize;
+	uint8 MaxTileNum;
 
 	FTileGeneratorTransform TileGenTrans;
 };

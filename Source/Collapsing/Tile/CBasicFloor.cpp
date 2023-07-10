@@ -11,7 +11,7 @@ ACBasicFloor::ACBasicFloor()
 	SceneComponent = CreateDefaultSubobject<USceneComponent>(TEXT("Scene"));
 	check(SceneComponent)
 
-	RootComponent = SceneComponent;
+		RootComponent = SceneComponent;
 	CreateFloorAndCeiling();
 	CreateWalls();
 }
@@ -60,6 +60,26 @@ void ACBasicFloor::CreateWalls()
 	}
 }
 
+void ACBasicFloor::SpawnItem()
+{
+	SpawnedHpUpItem = GetWorld()->SpawnActorDeferred<AActor>(BP_HpUpItem, GetActorTransform());
+
+	if (IsValid(SpawnedHpUpItem))
+	{
+		SpawnedHpUpItem->AttachToComponent(FloorMesh, FAttachmentTransformRules::KeepRelativeTransform);
+		SpawnedHpUpItem->SetActorRelativeLocation(FVector(200.f, FMath::FRandRange(100.f, 300.f), FMath::FRandRange(50.f, 150.f)));
+	}
+	SpawnedHpUpItem->FinishSpawning(GetActorTransform());
+}
+
+void ACBasicFloor::DestroyItem()
+{
+	if (IsValid(SpawnedHpUpItem))
+	{
+		SpawnedHpUpItem->Destroy();
+	}
+}
+
 void ACBasicFloor::SetWall(TObjectPtr<UStaticMeshComponent>& Wall, const int8 Ix)
 {
 	FString MeshName(TEXT("WallMesh"));
@@ -84,29 +104,4 @@ void ACBasicFloor::SetWall(TObjectPtr<UStaticMeshComponent>& Wall, const int8 Ix
 	{
 		Walls[Ix]->SetRelativeLocation(FVector(0.f, 400.f, -20.f));
 	}
-}
-
-void ACBasicFloor::BeginPlay()
-{
-	Super::BeginPlay();
-
-	SpawnedHpUpItem = GetWorld()->SpawnActorDeferred<AActor>(BP_HpUpItem, GetActorTransform());
-
-	if (IsValid(SpawnedHpUpItem))
-	{
-		SpawnedHpUpItem->AttachToComponent(FloorMesh, FAttachmentTransformRules::KeepRelativeTransform);
-		SpawnedHpUpItem->SetActorRelativeLocation(FVector(200.f, FMath::FRandRange(100.f, 300.f), FMath::FRandRange(50.f, 150.f)));
-	}
-	SpawnedHpUpItem->FinishSpawning(GetActorTransform());
-}
-
-void ACBasicFloor::Destroyed()
-{
-	Super::Destroyed();
-
-	if (IsValid(SpawnedHpUpItem))
-	{
-		SpawnedHpUpItem->Destroy();
-	}
-	  
 }

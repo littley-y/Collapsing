@@ -9,9 +9,9 @@ ACBasicFloor::ACBasicFloor()
 	PrimaryActorTick.bCanEverTick = false;
 
 	SceneComponent = CreateDefaultSubobject<USceneComponent>(TEXT("Scene"));
-	check(SceneComponent)
+	check(SceneComponent);
 
-		RootComponent = SceneComponent;
+	RootComponent = SceneComponent;
 	CreateFloorAndCeiling();
 	CreateWalls();
 }
@@ -60,10 +60,12 @@ void ACBasicFloor::CreateWalls()
 	}
 }
 
-void ACBasicFloor::SpawnItem()
+void ACBasicFloor::ActiveFloor()
 {
-	SpawnedHpUpItem = GetWorld()->SpawnActorDeferred<AActor>(BP_HpUpItem, GetActorTransform());
+	SetActorHiddenInGame(false);
+	SetActorEnableCollision(true);
 
+	SpawnedHpUpItem = GetWorld()->SpawnActorDeferred<AActor>(BP_HpUpItem, GetActorTransform());
 	if (IsValid(SpawnedHpUpItem))
 	{
 		SpawnedHpUpItem->AttachToComponent(FloorMesh, FAttachmentTransformRules::KeepRelativeTransform);
@@ -72,12 +74,22 @@ void ACBasicFloor::SpawnItem()
 	SpawnedHpUpItem->FinishSpawning(GetActorTransform());
 }
 
-void ACBasicFloor::DestroyItem()
+void ACBasicFloor::DeactiveFloor()
 {
+	SetActorHiddenInGame(true);
 	if (IsValid(SpawnedHpUpItem))
 	{
 		SpawnedHpUpItem->Destroy();
 	}
+
+	FTimerHandle DestroyTimerHandle;
+	const float DestroyTime = 0.1f;
+
+	GetWorld()->GetTimerManager().SetTimer(DestroyTimerHandle, FTimerDelegate::CreateLambda([&]()
+		{
+			SetActorEnableCollision(false);
+			GetWorld()->GetTimerManager().ClearTimer(DestroyTimerHandle);
+		}), DestroyTime, false);
 }
 
 void ACBasicFloor::SetWall(TObjectPtr<UStaticMeshComponent>& Wall, const int8 Ix)

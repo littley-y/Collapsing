@@ -22,7 +22,8 @@ ACollapsingGameMode::ACollapsingGameMode()
 		PlayerControllerClass = CollapsingControllerRef.Class;
 	}
 
-
+	TileSpawnTime = 1.6f;
+	TileDestroyTime = 0.8f;
 	DestroyDelay = 4.f;
 }
 

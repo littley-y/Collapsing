@@ -16,4 +16,5 @@ class COLLAPSING_API ACGeometryCollectionActor : public AGeometryCollectionActor
 
 public:
 	ACGeometryCollectionActor();
+
 };

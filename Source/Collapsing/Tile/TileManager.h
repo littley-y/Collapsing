@@ -64,7 +64,6 @@ private:
 	int32 DestroyTileIndex;
 	FVector StartPosition;
 
-
 	float TileSize;
 	uint8 MaxTileNum;
 

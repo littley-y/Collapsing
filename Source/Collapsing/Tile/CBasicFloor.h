@@ -14,8 +14,8 @@ class COLLAPSING_API ACBasicFloor : public AActor
 public:
 	ACBasicFloor();
 
-	void ActiveFloor();
-	void DeactiveFloor();
+	void ActivateFloor();
+	void DeactivateFloor();
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)

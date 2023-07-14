@@ -51,6 +51,13 @@ UTileManager::UTileManager()
 	LoadBPClass(GeometryFloorMap, 'R', "/Game/Collapsing/Tile/Geometry/GA_CRightCornerFloor");
 	LoadBPClass(GeometryFloorMap, 'U', "/Game/Collapsing/Tile/Geometry/GA_CUpRampFloor");
 	LoadBPClass(GeometryFloorMap, 'D', "/Game/Collapsing/Tile/Geometry/GA_CDownRampFloor");
+
+	static ConstructorHelpers::FClassFinder<AActor> InitTileRef(
+		TEXT("/Script/Engine.Blueprint'/Game/Collapsing/Tile/BP_CInitTIle.BP_CInitTIle_C'"));
+	if (InitTileRef.Succeeded())
+	{
+		InitTileClass = InitTileRef.Class;
+	}
 }
 
 void UTileManager::LoadBPClass(TMap<uint8, TSubclassOf<AActor>>& TargetMap, uint8 KeyChar, const FString& BPPath)
@@ -66,15 +73,19 @@ void UTileManager::LoadBPClass(TMap<uint8, TSubclassOf<AActor>>& TargetMap, uint
 
 void UTileManager::InitMaps()
 {
-	int TileNames[] = { '0', 'L', 'R', 'S', 'B', 'U', 'D' };
-	for (const auto& TileName : TileNames)
+	const FVector InitTileLocation = { -820.f, 0.f, -40.f };
+	InitTilePtr = UObject::GetWorld()->SpawnActor<AActor>(InitTileClass, InitTileLocation, FRotator::ZeroRotator);
+
+	int TileTypes[] = { '0', 'L', 'R', 'S', 'B', 'U', 'D' };
+	for (const auto& TileType : TileTypes)
 	{
-		FloorTilePool.Add(TileName);
-		TArray<TObjectPtr<ACBasicFloor>>& CurrPoolingTiles = FloorTilePool[TileName].PoolingTiles;
+		FloorTilePool.Add(TileType);
+		TArray<TObjectPtr<ACBasicFloor>>& CurrPoolingTiles = FloorTilePool[TileType].PoolingTiles;
 		CurrPoolingTiles.SetNum(MaxTileNum);
 		for (size_t i = 0; i < MaxTileNum; i++)
 		{
-			CurrPoolingTiles[i] = GetWorld()->SpawnActor<ACBasicFloor>(BPFloorMap[TileName], StartPosition, FRotator::ZeroRotator);
+			CurrPoolingTiles[i] = GetWorld()->SpawnActor<ACBasicFloor>(BPFloorMap[TileType], StartPosition,
+				FRotator::ZeroRotator);
 			CurrPoolingTiles[i]->SetActorHiddenInGame(true);
 		}
 	}
@@ -98,7 +109,7 @@ void UTileManager::SpawnTile()
 	}
 
 	CurrTile->SetActorLocationAndRotation(TileGenTrans.Vector, TileGenTrans.Rotator);
-	CurrTile->ActiveFloor();
+	CurrTile->ActivateFloor();
 
 	ArrayIndex = (ArrayIndex + 1) % MaxTileNum;
 	SpawnTileIndex++;
@@ -130,24 +141,28 @@ void UTileManager::DestroyTile()
 {
 	const TCHAR MapChar = MapString[DestroyTileIndex % MapString.Len()];
 	int32& ArrayIndex = FloorTilePool[MapChar].DestroyIndex;
-
-	ACBasicFloor* CurrTile = FloorTilePool[MapChar].PoolingTiles[ArrayIndex];
-	if (IsValid(CurrTile) == false)
+	ACBasicFloor* TargetTile = FloorTilePool[MapChar].PoolingTiles[ArrayIndex];
+	if (IsValid(TargetTile) == false)
 	{
 		return;
 	}
 
-	// 같은 위치에 액터 소환하면서 붕괴 효과 주기
-	TCHAR CurrChar = CurrTile->GetName()[4];
-	if (CurrChar != 'L' && CurrChar != 'R' && CurrChar != 'U' && CurrChar != 'D')
+	if (DestroyTileIndex == 0 && IsValid(InitTilePtr))
 	{
-		CurrChar = '0';
+		InitTilePtr->Destroy();
 	}
-	FTransform CurrTransform(CurrTile->GetActorTransform());
-	AActor* DestroyingFloor = GetWorld()->SpawnActor<AActor>(GeometryFloorMap[CurrChar], CurrTransform);
+
+	// 같은 위치에 액터 소환하면서 붕괴 효과 주기
+	TCHAR TileType = TargetTile->GetName()[4];
+	if (TileType != 'L' && TileType != 'R' && TileType != 'U' && TileType != 'D')
+	{
+		TileType = '0';
+	}
+	const FTransform CurrTransform = TargetTile->GetActorTransform();
+	AActor* DestroyingFloor = GetWorld()->SpawnActor<AActor>(GeometryFloorMap[TileType], CurrTransform);
 	DestroyingFloor->SetLifeSpan(1.f);
 
-	CurrTile->DeactiveFloor();
+	TargetTile->DeactivateFloor();
 	ArrayIndex = (ArrayIndex + 1) % MaxTileNum;
 	DestroyTileIndex++;
 }

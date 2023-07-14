@@ -60,7 +60,7 @@ void ACBasicFloor::CreateWalls()
 	}
 }
 
-void ACBasicFloor::ActiveFloor()
+void ACBasicFloor::ActivateFloor()
 {
 	SetActorHiddenInGame(false);
 	SetActorEnableCollision(true);
@@ -74,7 +74,7 @@ void ACBasicFloor::ActiveFloor()
 	SpawnedHpUpItem->FinishSpawning(GetActorTransform());
 }
 
-void ACBasicFloor::DeactiveFloor()
+void ACBasicFloor::DeactivateFloor()
 {
 	SetActorHiddenInGame(true);
 	if (IsValid(SpawnedHpUpItem))
@@ -83,7 +83,7 @@ void ACBasicFloor::DeactiveFloor()
 	}
 
 	FTimerHandle DestroyTimerHandle;
-	const float DestroyTime = 0.1f;
+	constexpr float DestroyTime = 0.1f;
 
 	GetWorld()->GetTimerManager().SetTimer(DestroyTimerHandle, FTimerDelegate::CreateLambda([&]()
 		{

@@ -10,7 +10,6 @@ struct FTileGeneratorTransform
 {
 	GENERATED_BODY()
 
-public:
 	FVector Vector;
 	FRotator Rotator;
 
@@ -28,7 +27,7 @@ struct FPoolingTile
 	int SpawnIndex;
 	int DestroyIndex;
 
-	FPoolingTile() : PoolingTiles(), SpawnIndex(0), DestroyIndex(0) {}
+	FPoolingTile() : SpawnIndex(0), DestroyIndex(0) {}
 };
 
 UCLASS()
@@ -49,23 +48,28 @@ public:
 	void DestroyTile();
 
 protected:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UPROPERTY()
 	TMap<uint8, TSubclassOf<AActor>> BPFloorMap;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UPROPERTY()
 	TMap<uint8, TSubclassOf<AActor>> GeometryFloorMap;
 
+	UPROPERTY()
 	TMap<uint8, FPoolingTile> FloorTilePool;
+
+	UPROPERTY()
+	TObjectPtr<AActor> InitTilePtr;
+
+	UPROPERTY()
+	TSubclassOf<AActor> InitTileClass;
 
 private:
 	FString MapString;
+	FTileGeneratorTransform TileGenTrans;
+	FVector StartPosition;
+	float TileSize;
 
+	uint8 MaxTileNum;
 	int32 SpawnTileIndex;
 	int32 DestroyTileIndex;
-	FVector StartPosition;
-
-	float TileSize;
-	uint8 MaxTileNum;
-
-	FTileGeneratorTransform TileGenTrans;
 };

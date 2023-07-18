@@ -24,24 +24,36 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Floor")
 	TObjectPtr<UStaticMeshComponent> FloorMesh;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Ceiling")
-	TObjectPtr<UStaticMeshComponent> CeilingMesh;
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Obstacle")
 	TArray<TObjectPtr<UStaticMeshComponent>> Obstacles;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Wall")
 	TArray<TObjectPtr<UStaticMeshComponent>> Walls;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Ceiling")
+	TObjectPtr<UStaticMeshComponent> CeilingMesh;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Ceiling")
+	TObjectPtr<class UPointLightComponent> CeilingLight;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Ceiling")
+	TObjectPtr<UStaticMeshComponent> CeilingLightMesh;
+
+// Item Section
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Item)
 	TSubclassOf<class ACHpUpItem> BP_HpUpItem;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Item)
 	TObjectPtr<AActor> SpawnedHpUpItem;
 
-	void SetWall(TObjectPtr<UStaticMeshComponent>& Wall, const int8 Ix);
+protected:
+	virtual void BeginPlay() override;
 
-	void CreateFloorAndCeiling();
+	void CreateCeiling();
+
+	void CreateFloor();
+
 	void CreateWalls();
+	void SetWall(TObjectPtr<UStaticMeshComponent>& Wall, const int8 Ix);
 };
 

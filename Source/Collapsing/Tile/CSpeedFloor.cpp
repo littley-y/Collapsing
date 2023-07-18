@@ -7,7 +7,7 @@
 ACSpeedFloor::ACSpeedFloor()
 {
 	ArrowMesh = CreateDefaultSubobject<UStaticMesh>(TEXT("ArrowMesh"));
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> ArrowMeshRef(TEXT("/Script/Engine.StaticMesh'/Game/_GameAssets/Meshes/SM_Arrows.SM_Arrows'"));
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> ArrowMeshRef(TEXT("/Script/Engine.StaticMesh'/Game/_GameAssets/Meshes/Items/SM_Arrows.SM_Arrows'"));
 	if (ArrowMeshRef.Succeeded())
 	{
 		ArrowMesh = ArrowMeshRef.Object;
@@ -27,8 +27,8 @@ ACSpeedFloor::ACSpeedFloor()
 	{
 		if (UpArrowMesh.IsPending())
 		{
-			//UpArrowMesh.LoadSynchronous();
-			//DownArrowMesh.LoadSynchronous();
+			UpArrowMesh.LoadSynchronous();
+			DownArrowMesh.LoadSynchronous();
 		}
 		UpArrowMesh->SetStaticMesh(ArrowMesh);
 		DownArrowMesh->SetStaticMesh(ArrowMesh);

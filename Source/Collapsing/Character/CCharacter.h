@@ -30,8 +30,8 @@ private:
 
 // Movement System
 public:
-	virtual void ChangeTurnStatus(bool InStatus) override;
-	FORCEINLINE bool GetTurnStatus() { return bCanCharacterTurn; }
+	virtual void SetTurnStatus(bool InStatus) override;
+	virtual bool GetTurnStatus() const override { return bCanCharacterTurn; }
 
 protected:
 	bool bCanCharacterTurn;
@@ -61,8 +61,8 @@ protected:
 
 // Stat System
 public:
-	void ApplyDamage(const float InDamage);
-	void EarnHpUpItem() const;
+	void ApplyDamage(const float InDamage) const;
+	virtual void EarnHpUpItem() override;
 	
 	virtual void HitBySomething() override;
 
@@ -77,7 +77,7 @@ public:
 	TObjectPtr<USoundBase> DeathSound;
 	
 	UFUNCTION(BlueprintCallable)
-	void Death();
+	virtual void Death() override;
 
 protected:
 	UPROPERTY()

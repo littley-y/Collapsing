@@ -24,7 +24,7 @@ struct FTilePool
 	GENERATED_BODY()
 
 	UPROPERTY()
-	TArray<TWeakObjectPtr<class ACBasicFloor>> PoolingTiles;
+	TArray<TObjectPtr<class ACBasicFloor>> PoolingTiles;
 
 	uint32 SpawnedIndex;
 	uint32 DestroyedIndex;
@@ -40,11 +40,11 @@ class COLLAPSING_API UTileManager : public UObject
 public:
 	UTileManager();
 
-	void SetMapString(const FString& InMapString) { MapString = InMapString; }
+	void SetMapString(const FString& InMapString);
 
 	static void LoadBPClass(TMap<uint32, TSubclassOf<AActor>>& TargetMap, uint32 KeyChar, const FString& BPPath);
 
-	void InitMaps(const FVector InStartPosition, const uint32 InMaxTileNum);
+	void InitMaps(const FVector& InStartPosition, const int32 InMaxTileNum);
 
 	void SpawnTile();
 	void DestroyTile();
@@ -67,11 +67,14 @@ protected:
 
 private:
 	FString MapString;
+
 	FTileGeneratorTransform TileGenTrans;
+
 	FVector StartPosition;
-	uint32 MaxTileNum;
+	int32 MaxTileNum;
 
 	uint32 TargetSpawnIndex;
 	uint32 TargetDestroyIndex;
 	float TileSize;
+	bool bIsSynced;
 };

@@ -2,7 +2,6 @@
 
 #include "CPlayerController.h"
 #include "CCharacter.h"
-#include "Animation/AnimSingleNodeInstance.h"
 #include "Data/CInputDataAsset.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -61,7 +60,7 @@ void ACPlayerController::Turn(const FInputActionValue& Value)
 		const float TurnAxisFloat = Value.Get<float>();
 		DesiredRotation = GetControlRotation();
 		DesiredRotation.Yaw += TurnAxisFloat * 90;
-		RunCharacter->ChangeTurnStatus(false);
+		RunCharacter->SetTurnStatus(false);
 		bControllerCanTurn = true;
 
 		UE_LOG(LogTemp, Warning, TEXT("Set DesiredRotation : %s"), *DesiredRotation.ToString());
@@ -99,7 +98,7 @@ void ACPlayerController::ChangeSpeed(const FInputActionValue& Value)
 
 		if (CharacterSpeed > 0.f)
 		{
-			RunCharacter->ChangeTurnStatus(false);
+			RunCharacter->SetTurnStatus(false);
 			UE_LOG(LogTemp, Warning, TEXT("현재 속도 %f"), CharacterSpeed)
 		}
 		else
@@ -126,7 +125,7 @@ void ACPlayerController::Tick(float DeltaSeconds)
 	if (IsValid(RunCharacter) && RunCharacter->bIsDead == false)
 	{
 		const FRotator ControlRot = GetControlRotation();
-		RunCharacter->AddMovementInput(ControlRot.Vector()); // 캐릭터가 자동으로 앞으로 이동하도록
+		RunCharacter->AddMovementInput(ControlRot.Vector());
 
 		if (bControllerCanTurn == true)
 		{

@@ -27,7 +27,7 @@ void ACCharacter::Tick(float DeltaSeconds)
 	GetCharacterMovement()->MaxWalkSpeed = FMath::Clamp(GetCharacterHp() * 20.f, 400.f, 1000.f);
 }
 
-void ACCharacter::ApplyDamage(const float InDamage)
+void ACCharacter::ApplyDamage(const float InDamage) const
 {
 	if (IsValid(Stat))
 	{
@@ -35,7 +35,7 @@ void ACCharacter::ApplyDamage(const float InDamage)
 	}
 }
 
-void ACCharacter::EarnHpUpItem() const
+void ACCharacter::EarnHpUpItem()
 {
 	if (IsValid(Stat))
 	{
@@ -106,7 +106,7 @@ void ACCharacter::SetupCharacterWidget(UCUserWidget* InUserWidget)
 	}
 }
 
-void ACCharacter::ChangeTurnStatus(bool InStatus)
+void ACCharacter::SetTurnStatus(const bool InStatus)
 {
 	bCanCharacterTurn = InStatus;
 }

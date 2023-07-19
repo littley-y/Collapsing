@@ -55,6 +55,11 @@ UTileManager::UTileManager()
 	}
 }
 
+void UTileManager::SetMapString(const FString& InMapString)
+{
+	MapString = *InMapString;
+}
+
 void UTileManager::LoadBPClass(TMap<uint32, TSubclassOf<AActor>>& TargetMap, uint32 KeyChar, const FString& BPPath)
 {
 	ConstructorHelpers::FClassFinder<AActor> BPFloor(*BPPath);
@@ -66,12 +71,13 @@ void UTileManager::LoadBPClass(TMap<uint32, TSubclassOf<AActor>>& TargetMap, uin
 	}
 }
 
-void UTileManager::InitMaps(const FVector InStartPosition, const uint32 InMaxTileNum)
-{	
+void UTileManager::InitMaps(const FVector& InStartPosition, const int32 InMaxTileNum)
+{
 	StartPosition = InStartPosition;
 	MaxTileNum = InMaxTileNum;
 	TargetSpawnIndex = 0;
 	TargetDestroyIndex = 0;
+	bIsSynced = false;
 
 	const FVector InitTileLocation = { -820.f, 0.f, -40.f };
 	InitTilePtr = UObject::GetWorld()->SpawnActor<AActor>(InitTileClass, InitTileLocation, FRotator::ZeroRotator);
@@ -89,36 +95,27 @@ void UTileManager::InitMaps(const FVector InStartPosition, const uint32 InMaxTil
 			CurrPoolingTiles[i]->SetActorHiddenInGame(true);
 			CurrPoolingTiles[i]->SetActorEnableCollision(false);
 		}
+		BPFloorMap.Remove(TileType);
 	}
 
 	for (int32 It = 0; It != MaxTileNum / 2; ++It)
 	{
 		SpawnTile();
 	}
-	UE_LOG(LogTemp, Warning, TEXT("Init Tiles Generated : %d"), MaxTileNum / 2)
+	UE_LOG(LogTemp, Warning, TEXT("Init Tiles Generated : %d"), MaxTileNum / 2);
 }
 
 void UTileManager::SpawnTile()
 {
-	if (TargetSpawnIndex - TargetDestroyIndex == MaxTileNum)
-	{
-		ACollapsingGameMode* MyGameMode = Cast<ACollapsingGameMode>(GetWorld()->GetAuthGameMode());
-		if (IsValid(MyGameMode))
-		{
-			MyGameMode->SyncTimer();
-		}
-		return;
-	}
-
 	const TCHAR MapChar = MapString[TargetSpawnIndex % MapString.Len()];
-	if (MapChar != '0' && MapChar != 'L' && MapChar != 'R' && MapChar != 'U' && MapChar != 'D')
+	if (MapChar != '0' && MapChar != 'L' && MapChar != 'R' && MapChar != 'U' && MapChar != 'D' && MapChar != 'B')
 	{
 		return;
 	}
 
-	auto& SelectedTile = FloorTilePool[MapChar];
-	uint32& TargetIndex = SelectedTile.SpawnedIndex;
-	ACBasicFloor* TargetTile = SelectedTile.PoolingTiles[TargetIndex].Get();
+	FTilePool& SelectedTilePool = FloorTilePool[MapChar];
+	uint32& TargetIndex = SelectedTilePool.SpawnedIndex;
+	ACBasicFloor* TargetTile = SelectedTilePool.PoolingTiles[TargetIndex];
 	if (IsValid(TargetTile) == false)
 	{
 		return;
@@ -154,20 +151,29 @@ void UTileManager::SpawnTile()
 		return;
 	}
 
+	if (bIsSynced == false && TargetSpawnIndex - TargetDestroyIndex == MaxTileNum)
+	{
+		ICSyncTimerInterface* GameModeSyncTimerInterface = Cast<ICSyncTimerInterface>(GetWorld()->GetAuthGameMode());
+		if (GameModeSyncTimerInterface != nullptr)
+		{
+			GameModeSyncTimerInterface->SyncTimer();
+			bIsSynced = true;
+		}
+	}
 	UE_LOG(LogTemp, Warning, TEXT("Curr Indexs : %d %d"), TargetSpawnIndex, TargetDestroyIndex)
 }
 
 void UTileManager::DestroyTile()
 {
 	const TCHAR MapChar = MapString[TargetDestroyIndex % MapString.Len()];
-	if (MapChar != '0' && MapChar != 'L' && MapChar != 'R' && MapChar != 'U' && MapChar != 'D')
+	if (MapChar != '0' && MapChar != 'L' && MapChar != 'R' && MapChar != 'U' && MapChar != 'D' && MapChar != 'B')
 	{
 		return;
 	}
 
-	auto& SelectedTile = FloorTilePool[MapChar];
-	uint32& TargetIndex = SelectedTile.DestroyedIndex;
-	ACBasicFloor* TargetTile = SelectedTile.PoolingTiles[TargetIndex].Get();
+	FTilePool& SelectedTilePool = FloorTilePool[MapChar];
+	uint32& TargetIndex = SelectedTilePool.DestroyedIndex;
+	ACBasicFloor* TargetTile = SelectedTilePool.PoolingTiles[TargetIndex];
 	if (IsValid(TargetTile) == false)
 	{
 		return;
@@ -175,17 +181,11 @@ void UTileManager::DestroyTile()
 
 	if (TargetDestroyIndex == 0 && IsValid(InitTilePtr))
 	{
-		InitTilePtr->Destroy();
+		InitTilePtr->SetLifeSpan(0.1f);
 	}
 
-	// 같은 위치에 액터 소환하면서 붕괴 효과 주기
-	TCHAR TileType = TargetTile->GetName()[4];
-	if (TileType == 'B')
-	{
-		TileType = '0';
-	}
 	const FTransform CurrTransform = TargetTile->GetActorTransform();
-	AActor* DestroyingFloor = GetWorld()->SpawnActor<AActor>(GeometryFloorMap[TileType], CurrTransform);
+	AActor* DestroyingFloor = GetWorld()->SpawnActor<AActor>(GeometryFloorMap[MapChar], CurrTransform);
 	DestroyingFloor->SetLifeSpan(1.f);
 
 	TargetTile->DeactivateFloor();

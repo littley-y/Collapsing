@@ -8,20 +8,21 @@
 #include "CollapsingGameMode.generated.h"
 
 UCLASS()
-class COLLAPSING_API ACollapsingGameMode : public AGameModeBase
+class COLLAPSING_API ACollapsingGameMode : public AGameModeBase, public ICSyncTimerInterface
 {
 	GENERATED_BODY()
 
 public:
-	TObjectPtr<class UTileManager> TileManager;
-
 	ACollapsingGameMode();
 
-	void SetMapBasicString() const;
+	void SetMapBasicString();
 
-	void SyncTimer();
+	virtual void SyncTimer() override;
 
 protected:
+	UPROPERTY()
+	TObjectPtr<class UTileManager> TileManager;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = TileManagerSetting, meta = (AllowPrivateAccess = "true"))
 	float TileSpawnTime;
 
@@ -32,12 +33,15 @@ protected:
 	float DestroyDelay;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = TileManagerSetting, meta = (AllowPrivateAccess = "true"))
-	FVector StartPosition;
+	int32 MaxTileNum;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = TileManagerSetting, meta = (AllowPrivateAccess = "true"))
-	uint8 MaxTileNum;
+	FVector StartPosition;
 
 private:
+	UPROPERTY()
+	FString MapString;
+
 	UPROPERTY()
 	FTimerHandle SpawnTileTimerHandle;
 

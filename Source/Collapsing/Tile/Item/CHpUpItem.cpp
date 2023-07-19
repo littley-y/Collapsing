@@ -2,8 +2,8 @@
 
 
 #include "Tile/Item/CHpUpItem.h"
-#include "Character/CCharacter.h"
 #include "Kismet/GameplayStatics.h"
+#include "Interface/CCharacterInteractionInterface.h"
 
 ACHpUpItem::ACHpUpItem()
 {
@@ -23,8 +23,8 @@ ACHpUpItem::ACHpUpItem()
 
 void ACHpUpItem::OnPlayerItemOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	const ACCharacter* RunCharacter = Cast<ACCharacter>(OtherActor);
-	if (IsValid(RunCharacter) && OtherComp)
+	ICCharacterInteractionInterface* RunCharacter = Cast<ICCharacterInteractionInterface>(OtherActor);
+	if (RunCharacter != nullptr && OtherComp != nullptr)
 	{
 		RunCharacter->EarnHpUpItem();
 		if (IsValid(PickSound))

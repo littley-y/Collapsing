@@ -24,12 +24,18 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Floor")
 	TObjectPtr<UStaticMeshComponent> FloorMesh;
 
+// Wall Section
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Wall")
 	TObjectPtr<UStaticMeshComponent> LeftWall;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Wall")
 	TObjectPtr<UStaticMeshComponent> RightWall;
 
+	UFUNCTION()
+	void OnWallHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
+	               FVector NormalImpulse, const FHitResult& Hit);
+
+// Ceiling Section
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Ceiling")
 	TObjectPtr<UStaticMeshComponent> CeilingMesh;
 
@@ -40,10 +46,10 @@ protected:
 	TObjectPtr<UStaticMeshComponent> CeilingLightMesh;
 
 // Item Section
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Item)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Item")
 	TSubclassOf<class ACHpUpItem> BP_HpUpItem;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Item)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Item")
 	TObjectPtr<AActor> SpawnedHpUpItem;
 
 protected:

@@ -25,7 +25,7 @@ ACollapsingGameMode::ACollapsingGameMode()
 	TileSpawnTime = 1.6f;
 	TileDestroyTime = 0.8f;
 	DestroyDelay = 4.f;
-	MaxTileNum = 40;
+	MaxTileNum = 20;
 	StartPosition = { -1000.f, 0.f, 1000.f };
 }
 
@@ -42,6 +42,9 @@ void ACollapsingGameMode::BeginPlay()
 	const UWorld* CurrentWorld = GetWorld();
 	if (IsValid(CurrentWorld))
 	{
+		TileDestroyTime = FMath::Clamp(TileDestroyTime, 0.5f, 2.f);
+		TileSpawnTime = FMath::Clamp(TileSpawnTime, 0.5f, TileDestroyTime);
+
 		CurrentWorld->GetTimerManager().SetTimer(SpawnTileTimerHandle, this, &ACollapsingGameMode::SetTileGenerate,
 			TileSpawnTime, true);
 		CurrentWorld->GetTimerManager().SetTimer(DestroyTileTimerHandle, this, &ACollapsingGameMode::SetTileDestroy,
@@ -49,14 +52,12 @@ void ACollapsingGameMode::BeginPlay()
 	}
 }
 
-void ACollapsingGameMode::SetMapBasicString() const
+void ACollapsingGameMode::SetMapBasicString()
 {
-	FString TempMapString;
 	const FString FileString(TEXT("/Collapsing/Data/TextMaps/BasicMap.txt"));
-	FFileHelper::LoadFileToString(TempMapString, *(FPaths::Combine(FPaths::GameSourceDir(), FileString)));
-	check(!TempMapString.IsEmpty());
+	FFileHelper::LoadFileToString(MapString, *(FPaths::Combine(FPaths::GameSourceDir(), FileString)));
+	check(!MapString.IsEmpty());
 
-	const FString MapString(TempMapString);
 	TileManager->SetMapString(MapString);
 	UE_LOG(LogTemp, Warning, TEXT("Map Loaded : %s"), *MapString);
 }

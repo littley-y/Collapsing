@@ -2,6 +2,7 @@
 
 #include "CBasicFloor.h"
 #include "Components/PointLightComponent.h"
+#include "Interface/CCharacterInteractionInterface.h"
 #include "Item/CHpUpItem.h"
 
 ACBasicFloor::ACBasicFloor()
@@ -71,6 +72,8 @@ void ACBasicFloor::CreateWalls()
 		RightWall->SetMaterial(0, WallMaterialRef.Object);
 	}
 
+	LeftWall->OnComponentHit.AddDynamic(this, &ACBasicFloor::OnWallHit);
+	RightWall->OnComponentHit.AddDynamic(this, &ACBasicFloor::OnWallHit);
 }
 
 void ACBasicFloor::BeginPlay()
@@ -106,8 +109,11 @@ void ACBasicFloor::CreateCeiling()
 
 	CeilingLight = CreateDefaultSubobject<UPointLightComponent>(TEXT("CeilingLight"));
 	CeilingLight->SetupAttachment(CeilingLightMesh);
-	CeilingLight->SetRelativeLocation({ 0.f, 0.f, -40.f });
-	CeilingLight->SetIntensity(1000.f);
+	CeilingLight->SetRelativeLocation({ 0.f, 0.f, -50.f });
+	
+	CeilingLight->SetIntensity(5000.f);
+	CeilingLight->SetUseTemperature(true);
+	CeilingLight->SetTemperature(5500.f);
 }
 
 
@@ -144,3 +150,23 @@ void ACBasicFloor::DeactivateFloor()
 		}), DestroyTime, false);
 }
 
+void ACBasicFloor::OnWallHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
+	FVector NormalImpulse, const FHitResult& Hit)
+{
+	ICCharacterInteractionInterface* RunCharacter = Cast<ICCharacterInteractionInterface>(OtherActor);
+	if (RunCharacter != nullptr)
+	{
+		const float Dot = FVector::DotProduct(Hit.Normal, OtherActor->GetActorForwardVector());
+		if (Dot > 0.99f && Dot < 1.01f)
+		{
+			if (RunCharacter->GetTurnStatus() == true)
+			{
+				RunCharacter->HitBySomething();
+			}
+			else
+			{
+				RunCharacter->Death();
+			}
+		}
+	}
+}

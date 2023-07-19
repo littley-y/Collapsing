@@ -26,7 +26,7 @@ public:
 
 	void SetHp(float NewHp);
 	
-	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 protected:
 	UPROPERTY(VisibleInstanceOnly, Category = Stat)

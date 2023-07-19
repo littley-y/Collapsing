@@ -1,15 +1,15 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #include "CCornerFloor.h"
-#include "Collapsing/Character/CCharacter.h"
 #include "Components/BoxComponent.h"
+#include "Interface/CCharacterInteractionInterface.h"
 
 ACCornerFloor::ACCornerFloor()
 {
 	SetTurnZone();
 
-	Walls[0]->OnComponentHit.AddDynamic(this, &ACCornerFloor::OnWallHit);
-	Walls[1]->OnComponentHit.AddDynamic(this, &ACCornerFloor::OnWallHit);
+	LeftWall->OnComponentHit.AddDynamic(this, &ACCornerFloor::OnWallHit);
+	RightWall->OnComponentHit.AddDynamic(this, &ACCornerFloor::OnWallHit);
 }
 
 void ACCornerFloor::SetTurnZone()
@@ -30,33 +30,33 @@ void ACCornerFloor::SetTurnZone()
 void ACCornerFloor::OnPlayerTurnOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	ACCharacter* RunCharacter = Cast<ACCharacter>(OtherActor);
-	if (IsValid(RunCharacter) && OtherComp)
+	ICCharacterInteractionInterface* RunCharacter = Cast<ICCharacterInteractionInterface>(OtherActor);
+	if (RunCharacter != nullptr && OtherComp)
 	{
-		RunCharacter->bCanCharacterTurn = true;
+		RunCharacter->ChangeTurnStatus(true);
 	}
 }
 
 void ACCornerFloor::OnPlayerEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	ACCharacter* RunCharacter = Cast<ACCharacter>(OtherActor);
-	if (IsValid(RunCharacter) && OtherComp)
+	ICCharacterInteractionInterface* RunCharacter = Cast<ICCharacterInteractionInterface>(OtherActor);
+	if (RunCharacter != nullptr && OtherComp)
 	{
-		RunCharacter->bCanCharacterTurn = false;
+		RunCharacter->ChangeTurnStatus(false);
 	}
 }
 
 void ACCornerFloor::OnWallHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
 	FVector NormalImpulse, const FHitResult& Hit)
 {
-	ACCharacter* RunCharacter = Cast<ACCharacter>(OtherActor);
-	if (IsValid(RunCharacter))
+	ICCharacterInteractionInterface* RunCharacter = Cast<ICCharacterInteractionInterface>(OtherActor);
+	if (RunCharacter != nullptr)
 	{
-		const float Dot = FVector::DotProduct(Hit.Normal, RunCharacter->GetActorForwardVector());
+		const float Dot = FVector::DotProduct(Hit.Normal, OtherActor->GetActorForwardVector());
 		if (Dot > 0.99f && Dot < 1.01f)
 		{
-			RunCharacter->HitByWall();
+			RunCharacter->HitBySomething();
 		}
 	}
 }

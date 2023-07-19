@@ -15,20 +15,11 @@ ACCharacter::ACCharacter()
 	bUseControllerRotationYaw = false;
 	bCanCharacterTurn = false;
 	bIsDead = false;
-	bCanChangeSpeed = false;
 
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.f);
 	SetCameraAndArm();
 	SetupCharacterMovement();
 	SetStatAndWidget();
-
-	FallingBackMontage = CreateDefaultSubobject<UAnimMontage>(TEXT("FallingBackMontage"));
-	static ConstructorHelpers::FObjectFinder<UAnimMontage> FallingBackMontageRef(
-		TEXT("/Script/Engine.AnimMontage'/Game/Collapsing/Character/Animation/AM_FallingBack.AM_FallingBack'"));
-	if (IsValid(FallingBackMontageRef.Object))
-	{
-		FallingBackMontage = FallingBackMontageRef.Object;
-	}
 }
 
 void ACCharacter::Tick(float DeltaSeconds)
@@ -36,13 +27,31 @@ void ACCharacter::Tick(float DeltaSeconds)
 	GetCharacterMovement()->MaxWalkSpeed = FMath::Clamp(GetCharacterHp() * 20.f, 400.f, 1000.f);
 }
 
+void ACCharacter::ApplyDamage(const float InDamage)
+{
+	if (IsValid(Stat))
+	{
+		Stat->ApplyDamage(InDamage);
+	}
+}
+
 void ACCharacter::EarnHpUpItem() const
 {
 	if (IsValid(Stat))
 	{
 		Stat->SetHp(Stat->GetCurrentHp() + 20.f);
-
 	}
+}
+
+void ACCharacter::HitBySomething()
+{
+	FVector LaunchVector = GetActorForwardVector() * -1000;
+	LaunchVector.Z += 300.f;
+	UE_LOG(LogTemp, Warning, TEXT("Launch Vector : %s"), *LaunchVector.ToString());
+
+	LaunchCharacter(LaunchVector, true, true);
+	ApplyDamage(10.f);
+	UnCrouch();
 }
 
 float ACCharacter::GetCharacterHp() const
@@ -97,6 +106,11 @@ void ACCharacter::SetupCharacterWidget(UCUserWidget* InUserWidget)
 	}
 }
 
+void ACCharacter::ChangeTurnStatus(bool InStatus)
+{
+	bCanCharacterTurn = InStatus;
+}
+
 void ACCharacter::SetupCharacterMovement() const
 {
 	UCharacterMovementComponent* CMC = GetCharacterMovement();
@@ -125,33 +139,6 @@ void ACCharacter::SetStatAndWidget()
 		HpBar->SetWidgetSpace(EWidgetSpace::Screen);
 		HpBar->SetDrawSize(FVector2D(150.f, 10.f));
 		HpBar->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	}
-}
-
-void ACCharacter::HitByWall()
-{
-	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
-	AnimInstance->Montage_Play(FallingBackMontage, 1.f);
-	GetCharacterMovement()->SetMovementMode(MOVE_None);
-
-	FOnMontageEnded FallingBackEndDelegate;
-	FallingBackEndDelegate.BindUObject(this, &ACCharacter::OnHitByWallEnded);
-	AnimInstance->Montage_SetEndDelegate(FallingBackEndDelegate, FallingBackMontage);
-
-	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
-	if (IsValid(PlayerController))
-	{
-		PlayerController->DisableInput(PlayerController);
-	}
-}
-
-void ACCharacter::OnHitByWallEnded(UAnimMontage* Montage, bool Interrupted)
-{
-	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
-	GetCharacterMovement()->SetMovementMode(MOVE_Walking);
-	if (IsValid(PlayerController))
-	{
-		PlayerController->EnableInput(PlayerController);
 	}
 }
 

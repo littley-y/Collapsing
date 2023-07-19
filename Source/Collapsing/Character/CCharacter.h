@@ -5,11 +5,11 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Interface/CCharacterWidgetInterface.h"
+#include "Interface/CCharacterInteractionInterface.h"
 #include "CCharacter.generated.h"
 
-
 UCLASS()
-class COLLAPSING_API ACCharacter : public ACharacter, public ICCharacterWidgetInterface
+class COLLAPSING_API ACCharacter : public ACharacter, public ICCharacterWidgetInterface, public ICCharacterInteractionInterface
 {
 	GENERATED_BODY()
 
@@ -30,11 +30,12 @@ private:
 
 // Movement System
 public:
-	bool bCanCharacterTurn;
-
-	bool bCanChangeSpeed;
+	virtual void ChangeTurnStatus(bool InStatus) override;
+	FORCEINLINE bool GetTurnStatus() { return bCanCharacterTurn; }
 
 protected:
+	bool bCanCharacterTurn;
+
 	void SetupCharacterMovement() const;
 
 // Stat System
@@ -58,22 +59,12 @@ protected:
 
 	void SetStatAndWidget();
 
-// Item System
+// Stat System
 public:
+	void ApplyDamage(const float InDamage);
 	void EarnHpUpItem() const;
-
-// Animation System
-public:
-	//UFUNCTION(BlueprintImplementableEvent, Category = "Animation", meta = (DisplayName = "OnHitByWallCpp"))
-	//void K2_OnHitByWall();
-
-	void HitByWall();
-	void OnHitByWallEnded(UAnimMontage* Montage, bool Interrupted);
-
-
-protected:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation")
-	TObjectPtr<class UAnimMontage> FallingBackMontage;
+	
+	virtual void HitBySomething() override;
 
 // Death System
 public:

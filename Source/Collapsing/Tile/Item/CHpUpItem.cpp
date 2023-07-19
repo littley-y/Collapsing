@@ -2,7 +2,6 @@
 
 
 #include "Tile/Item/CHpUpItem.h"
-
 #include "Character/CCharacter.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -46,9 +45,9 @@ void ACHpUpItem::BeginPlay()
 	ItemMeshComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	ItemMeshComponent->SetCollisionProfileName(TEXT("ItemCollision"));
 
-	const float X = FMath::RandBool() ? FMath::FRandRange(2000.f, 4000.f) : FMath::FRandRange(-4000.f, -2000.f);
-	const float Y = FMath::RandBool() ? FMath::FRandRange(2000.f, 4000.f) : FMath::FRandRange(-4000.f, -2000.f);
-	const float Z = FMath::RandBool() ? FMath::FRandRange(2000.f, 4000.f) : FMath::FRandRange(-4000.f, -2000.f);
+	const float X = FMath::RandBool() ? FMath::FRandRange(3000, 6000.f) : FMath::FRandRange(-6000.f, -3000);
+	const float Y = FMath::RandBool() ? FMath::FRandRange(3000, 6000.f) : FMath::FRandRange(-6000.f, -3000);
+	const float Z = FMath::RandBool() ? FMath::FRandRange(3000, 6000.f) : FMath::FRandRange(-6000.f, -3000);
 	const FVector TargetLocation(X, Y, Z);
 	ItemMeshComponent->AddImpulse(TargetLocation);
 }

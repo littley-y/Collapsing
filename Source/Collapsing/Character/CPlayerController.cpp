@@ -56,12 +56,12 @@ void ACPlayerController::Move(const FInputActionValue& Value)
 
 void ACPlayerController::Turn(const FInputActionValue& Value)
 {
-	if (IsValid(RunCharacter) && RunCharacter->bCanCharacterTurn == true)
+	if (IsValid(RunCharacter) && RunCharacter->GetTurnStatus() == true)
 	{
 		const float TurnAxisFloat = Value.Get<float>();
 		DesiredRotation = GetControlRotation();
 		DesiredRotation.Yaw += TurnAxisFloat * 90;
-		RunCharacter->bCanCharacterTurn = false;
+		RunCharacter->ChangeTurnStatus(false);
 		bControllerCanTurn = true;
 
 		UE_LOG(LogTemp, Warning, TEXT("Set DesiredRotation : %s"), *DesiredRotation.ToString());
@@ -86,7 +86,7 @@ void ACPlayerController::StopJump(const FInputActionValue& Value)
 
 void ACPlayerController::ChangeSpeed(const FInputActionValue& Value)
 {
-	if (IsValid(RunCharacter) && RunCharacter->bCanChangeSpeed == true)
+	if (IsValid(RunCharacter) && RunCharacter->GetTurnStatus() == true)
 	{
 		float& CharacterSpeed = RunCharacter->GetCharacterMovement()->MaxWalkSpeed;
 		if (CharacterSpeed > 1600.f)
@@ -99,7 +99,7 @@ void ACPlayerController::ChangeSpeed(const FInputActionValue& Value)
 
 		if (CharacterSpeed > 0.f)
 		{
-			RunCharacter->bCanChangeSpeed = false;
+			RunCharacter->ChangeTurnStatus(false);
 			UE_LOG(LogTemp, Warning, TEXT("현재 속도 %f"), CharacterSpeed)
 		}
 		else

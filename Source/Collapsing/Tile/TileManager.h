@@ -19,15 +19,17 @@ struct FTileGeneratorTransform
 };
 
 USTRUCT()
-struct FPoolingTile
+struct FTilePool
 {
 	GENERATED_BODY()
 
-	TArray<TObjectPtr<class ACBasicFloor>> PoolingTiles;
-	int SpawnIndex;
-	int DestroyIndex;
+	UPROPERTY()
+	TArray<TWeakObjectPtr<class ACBasicFloor>> PoolingTiles;
 
-	FPoolingTile() : SpawnIndex(0), DestroyIndex(0) {}
+	uint32 SpawnedIndex;
+	uint32 DestroyedIndex;
+
+	FTilePool() : SpawnedIndex(0), DestroyedIndex(0) {}
 };
 
 UCLASS()
@@ -40,22 +42,19 @@ public:
 
 	void SetMapString(const FString& InMapString) { MapString = InMapString; }
 
-	static void LoadBPClass(TMap<uint8, TSubclassOf<AActor>>& TargetMap, uint8 KeyChar, const FString& BPPath);
+	static void LoadBPClass(TMap<uint32, TSubclassOf<AActor>>& TargetMap, uint32 KeyChar, const FString& BPPath);
 
-	void InitMaps();
+	void InitMaps(const FVector InStartPosition, const uint32 InMaxTileNum);
 
 	void SpawnTile();
 	void DestroyTile();
 
 protected:
 	UPROPERTY()
-	TMap<uint8, TSubclassOf<AActor>> BPFloorMap;
+	TMap<uint32, TSubclassOf<AActor>> BPFloorMap;
 
 	UPROPERTY()
-	TMap<uint8, TSubclassOf<AActor>> GeometryFloorMap;
-
-	UPROPERTY()
-	TMap<uint8, FPoolingTile> FloorTilePool;
+	TMap<uint32, TSubclassOf<AActor>> GeometryFloorMap;
 
 	UPROPERTY()
 	TObjectPtr<AActor> InitTilePtr;
@@ -63,13 +62,16 @@ protected:
 	UPROPERTY()
 	TSubclassOf<AActor> InitTileClass;
 
+	UPROPERTY()
+	TMap<uint32, FTilePool> FloorTilePool;
+
 private:
 	FString MapString;
 	FTileGeneratorTransform TileGenTrans;
 	FVector StartPosition;
-	float TileSize;
+	uint32 MaxTileNum;
 
-	uint8 MaxTileNum;
-	int32 SpawnTileIndex;
-	int32 DestroyTileIndex;
+	uint32 TargetSpawnIndex;
+	uint32 TargetDestroyIndex;
+	float TileSize;
 };

@@ -25,6 +25,28 @@ ACollapsingGameMode::ACollapsingGameMode()
 	TileSpawnTime = 1.6f;
 	TileDestroyTime = 0.8f;
 	DestroyDelay = 4.f;
+	MaxTileNum = 40;
+	StartPosition = { -1000.f, 0.f, 1000.f };
+}
+
+void ACollapsingGameMode::BeginPlay()
+{
+	Super::BeginPlay();
+
+	if (IsValid(TileManager))
+	{
+		SetMapBasicString();
+		TileManager->InitMaps(StartPosition, MaxTileNum);
+	}
+
+	const UWorld* CurrentWorld = GetWorld();
+	if (IsValid(CurrentWorld))
+	{
+		CurrentWorld->GetTimerManager().SetTimer(SpawnTileTimerHandle, this, &ACollapsingGameMode::SetTileGenerate,
+			TileSpawnTime, true);
+		CurrentWorld->GetTimerManager().SetTimer(DestroyTileTimerHandle, this, &ACollapsingGameMode::SetTileDestroy,
+			TileDestroyTime, true, DestroyDelay);
+	}
 }
 
 void ACollapsingGameMode::SetMapBasicString() const
@@ -39,29 +61,11 @@ void ACollapsingGameMode::SetMapBasicString() const
 	UE_LOG(LogTemp, Warning, TEXT("Map Loaded : %s"), *MapString);
 }
 
-//void ACollapsingGameMode::SetTileGenerateTimer(const float TargetTime)
-//{
-//	TileGenerateTime = TargetTime;
-//}
-
-void ACollapsingGameMode::BeginPlay()
+void ACollapsingGameMode::SyncTimer()
 {
-	Super::BeginPlay();
-
-	if (IsValid(TileManager))
-	{
-		SetMapBasicString();
-		TileManager->InitMaps();
-	}
-
-	const UWorld* CurrentWorld = GetWorld();
-	if (IsValid(CurrentWorld))
-	{
-		CurrentWorld->GetTimerManager().SetTimer(SpawnTileTimerHandle, this, &ACollapsingGameMode::SetTileGenerate,
-			TileSpawnTime, true);
-		CurrentWorld->GetTimerManager().SetTimer(DestroyTileTimerHandle, this, &ACollapsingGameMode::SetTileDestroy,
-			TileDestroyTime, true, DestroyDelay);
-	}
+	UE_LOG(LogTemp, Warning, TEXT("Sync Timer"));
+	GetWorldTimerManager().ClearTimer(SpawnTileTimerHandle);
+	GetWorldTimerManager().SetTimer(SpawnTileTimerHandle, this, &ACollapsingGameMode::SetTileGenerate, TileDestroyTime, true);
 }
 
 void ACollapsingGameMode::SetTileGenerate() const

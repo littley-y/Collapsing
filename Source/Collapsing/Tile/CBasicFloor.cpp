@@ -40,21 +40,37 @@ void ACBasicFloor::CreateFloor()
 
 void ACBasicFloor::CreateWalls()
 {
-	Walls.SetNum(2);
-	for (int32 Ix = 0; Ix != Walls.Num(); ++Ix)
+	LeftWall = CreateDefaultSubobject<UStaticMeshComponent>("LeftWall");
+	RightWall = CreateDefaultSubobject<UStaticMeshComponent>("RightWall");
+	if (!IsValid(LeftWall) || !IsValid(RightWall))
 	{
-		SetWall(Walls[Ix], Ix);
+		return;
 	}
 
-	TArray<FName> SocketNames = Walls[0]->GetAllSocketNames();
-	for (auto& SocketName : SocketNames)
+	LeftWall->SetupAttachment(FloorMesh);
+	LeftWall->SetCollisionProfileName("BlockAll");
+	LeftWall->SetRelativeLocation(FVector(0.f, 0.f, -20.f));
+
+	RightWall->SetupAttachment(FloorMesh);
+	RightWall->SetCollisionProfileName("BlockAll");
+	RightWall->SetRelativeLocation(FVector(0.f, 400.f, -20.f));
+
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> WallMeshRef(
+		TEXT("/Script/Engine.StaticMesh'/Game/_GameAssets/Meshes/Structure/Wall_400x200.Wall_400x200'"));
+	if (IsValid(WallMeshRef.Object))
 	{
-		FString ObstacleName = FString::Printf(TEXT("Left%s"), *SocketName.ToString());
-		UStaticMeshComponent* CurrObstacle = CreateDefaultSubobject<UStaticMeshComponent>(*ObstacleName);
-		CurrObstacle->SetupAttachment(Walls[0], SocketName);
-		CurrObstacle->SetCollisionProfileName(TEXT("BlockNotCamera"));
-		Obstacles.Add(CurrObstacle);
+		LeftWall->SetStaticMesh(WallMeshRef.Object);
+		RightWall->SetStaticMesh(WallMeshRef.Object);
 	}
+
+	static ConstructorHelpers::FObjectFinder<UMaterial> WallMaterialRef(
+		TEXT("/Script/Engine.Material'/Game/_GameAssets/Materials/Props/M_Brick.M_Brick'"));
+	if (IsValid(WallMaterialRef.Object))
+	{
+		LeftWall->SetMaterial(0, WallMaterialRef.Object);
+		RightWall->SetMaterial(0, WallMaterialRef.Object);
+	}
+
 }
 
 void ACBasicFloor::BeginPlay()
@@ -78,8 +94,8 @@ void ACBasicFloor::CreateCeiling()
 
 	CeilingLightMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("CeilingLightMesh"));
 	CeilingLightMesh->SetupAttachment(CeilingMesh);
-	CeilingLightMesh->SetRelativeLocation({200.f, 200.f, -20.f });
-	CeilingLightMesh->SetRelativeScale3D({0.3f, 0.3f, 0.3f});
+	CeilingLightMesh->SetRelativeLocation({ 200.f, 200.f, -20.f });
+	CeilingLightMesh->SetRelativeScale3D({ 0.3f, 0.3f, 0.3f });
 
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> CeilingLightMeshRef(
 		TEXT("/Script/Engine.StaticMesh'/Game/_GameAssets/Meshes/Props/SM_Ceiling_Light.SM_Ceiling_Light'"));
@@ -90,7 +106,7 @@ void ACBasicFloor::CreateCeiling()
 
 	CeilingLight = CreateDefaultSubobject<UPointLightComponent>(TEXT("CeilingLight"));
 	CeilingLight->SetupAttachment(CeilingLightMesh);
-	CeilingLight->SetRelativeLocation({0.f, 0.f, -40.f });
+	CeilingLight->SetRelativeLocation({ 0.f, 0.f, -40.f });
 	CeilingLight->SetIntensity(1000.f);
 }
 
@@ -126,32 +142,5 @@ void ACBasicFloor::DeactivateFloor()
 			SetActorEnableCollision(false);
 			GetWorld()->GetTimerManager().ClearTimer(DestroyTimerHandle);
 		}), DestroyTime, false);
-}
-
-void ACBasicFloor::SetWall(TObjectPtr<UStaticMeshComponent>& Wall, const int8 Ix)
-{
-	FString MeshName(TEXT("WallMesh"));
-	MeshName += FString::FromInt(Ix);
-
-	Wall = CreateDefaultSubobject<UStaticMeshComponent>(*MeshName);
-	if (!IsValid(Wall))
-	{
-		return;
-	}
-	Wall->SetupAttachment(FloorMesh);
-	Wall->SetCollisionProfileName("BlockAll");
-	Wall->SetRelativeLocation(FVector(0.f, 0.f, -20.f));
-
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> WallMeshRef(
-		TEXT("/Script/Engine.StaticMesh'/Game/_GameAssets/Meshes/Structure/Wall_400x200.Wall_400x200'"));
-	if (IsValid(WallMeshRef.Object))
-	{
-		Wall->SetStaticMesh(WallMeshRef.Object);
-	}
-
-	if (Ix == 1)
-	{
-		Walls[Ix]->SetRelativeLocation(FVector(0.f, 400.f, -20.f));
-	}
 }
 

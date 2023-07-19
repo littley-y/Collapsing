@@ -24,11 +24,11 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Floor")
 	TObjectPtr<UStaticMeshComponent> FloorMesh;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Obstacle")
-	TArray<TObjectPtr<UStaticMeshComponent>> Obstacles;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Wall")
+	TObjectPtr<UStaticMeshComponent> LeftWall;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Wall")
-	TArray<TObjectPtr<UStaticMeshComponent>> Walls;
+	TObjectPtr<UStaticMeshComponent> RightWall;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Ceiling")
 	TObjectPtr<UStaticMeshComponent> CeilingMesh;
@@ -49,11 +49,8 @@ protected:
 protected:
 	virtual void BeginPlay() override;
 
-	void CreateCeiling();
-
 	void CreateFloor();
-
 	void CreateWalls();
-	void SetWall(TObjectPtr<UStaticMeshComponent>& Wall, const int8 Ix);
+	void CreateCeiling();
 };
 

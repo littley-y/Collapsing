@@ -6,7 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "CCharacterStatComponent.generated.h"
 
-DECLARE_MULTICAST_DELEGATE(FOnHpZeroDelegate);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnHpZeroDelegate, const int32 /* Death Type */);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnHpChangedDelegate, float /* Current Hp */);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )

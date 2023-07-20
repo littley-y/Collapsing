@@ -4,7 +4,7 @@
 
 UCCharacterStatComponent::UCCharacterStatComponent()
 {
-	MaxHp = 100.f;
+	MaxHp = 10000.f;
 	CurrentHp = MaxHp;
 	PrimaryComponentTick.bCanEverTick = true;
 }
@@ -37,7 +37,7 @@ float UCCharacterStatComponent::ApplyDamage(const float InDamage)
 	SetHp(PrevHp - ActualDamage);
 	if (CurrentHp <= KINDA_SMALL_NUMBER)
 	{
-		OnHpZero.Broadcast();
+		OnHpZero.Broadcast(0);
 	}
 
 	return ActualDamage;

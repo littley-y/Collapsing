@@ -42,7 +42,7 @@ void ACollapsingGameMode::BeginPlay()
 	const UWorld* CurrentWorld = GetWorld();
 	if (IsValid(CurrentWorld))
 	{
-		TileDestroyTime = FMath::Clamp(TileDestroyTime, 0.5f, 2.f);
+		TileDestroyTime = FMath::Clamp(TileDestroyTime, 0.5f, 10.f);
 		TileSpawnTime = FMath::Clamp(TileSpawnTime, 0.5f, TileDestroyTime);
 
 		CurrentWorld->GetTimerManager().SetTimer(SpawnTileTimerHandle, this, &ACollapsingGameMode::SetTileGenerate,

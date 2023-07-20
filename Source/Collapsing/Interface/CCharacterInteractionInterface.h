@@ -22,11 +22,11 @@ class COLLAPSING_API ICCharacterInteractionInterface
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
-	virtual void HitBySomething() = 0;
+	virtual void HitBySomething(const float LaunchRatio = 1.f) = 0;
 	virtual void EarnHpUpItem() = 0;
 
 	virtual void SetTurnStatus(bool InStatus) = 0;
 	virtual bool GetTurnStatus() const = 0;
-
-	virtual void Death() = 0;
+	
+	virtual void Death(const int32 DeathType = 0) = 0;
 };

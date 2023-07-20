@@ -13,7 +13,16 @@ UCLASS()
 class COLLAPSING_API ACBrokenFloor : public ACBasicFloor
 {
 	GENERATED_BODY()
-	
+
 public:
 	ACBrokenFloor();
+
+	UFUNCTION()
+	void OnPlayerDeathOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
+	                     int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+protected:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "TriggerBox", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<class UBoxComponent> CharacterDeathZone;
+	
 };

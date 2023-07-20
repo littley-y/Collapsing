@@ -17,6 +17,18 @@ class COLLAPSING_API ACGeometryCollectionActor : public AGeometryCollectionActor
 public:
 	ACGeometryCollectionActor();
 
+	UFUNCTION()
+	void OnPlayerDeathOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
+	                     int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
 protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Light", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<class UPointLightComponent> CeilingLight;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category= "Ceiling", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UStaticMeshComponent> CeilingLightMesh;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "TriggerBox", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<class UBoxComponent> CharacterDeathZone;
 
 };

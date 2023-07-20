@@ -14,8 +14,8 @@ class COLLAPSING_API ACBasicFloor : public AActor
 public:
 	ACBasicFloor();
 
-	void ActivateFloor();
-	void DeactivateFloor();
+	virtual void ActivateFloor();
+	virtual void DeactivateFloor();
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
@@ -53,8 +53,6 @@ protected:
 	TObjectPtr<AActor> SpawnedHpUpItem;
 
 protected:
-	virtual void BeginPlay() override;
-
 	void CreateFloor();
 	void CreateWalls();
 	void CreateCeiling();

@@ -64,7 +64,7 @@ public:
 	void ApplyDamage(const float InDamage) const;
 	virtual void EarnHpUpItem() override;
 	
-	virtual void HitBySomething() override;
+	virtual void HitBySomething(const float LaunchRatio) override;
 
 // Death System
 public:
@@ -77,7 +77,7 @@ public:
 	TObjectPtr<USoundBase> DeathSound;
 	
 	UFUNCTION(BlueprintCallable)
-	virtual void Death() override;
+	virtual void Death(const int32 DeathType = 0) override;
 
 protected:
 	UPROPERTY()

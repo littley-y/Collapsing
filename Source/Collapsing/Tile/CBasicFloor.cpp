@@ -32,7 +32,7 @@ void ACBasicFloor::CreateFloor()
 	}
 
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> FloorMeshRef(
-		TEXT("/Script/Engine.StaticMesh'/Game/_GameAssets/Meshes/Structure/Floor_400x400.Floor_400x400'"));
+		TEXT("/Script/Engine.StaticMesh'/Game/_GameAssets/Meshes/Structure/SM_Floor.SM_Floor'"));
 	if (IsValid(FloorMeshRef.Object))
 	{
 		FloorMesh->SetStaticMesh(FloorMeshRef.Object);
@@ -57,29 +57,15 @@ void ACBasicFloor::CreateWalls()
 	RightWall->SetRelativeLocation(FVector(0.f, 400.f, -20.f));
 
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> WallMeshRef(
-		TEXT("/Script/Engine.StaticMesh'/Game/_GameAssets/Meshes/Structure/Wall_400x200.Wall_400x200'"));
+		TEXT("/Script/Engine.StaticMesh'/Game/_GameAssets/Meshes/Structure/SM_Wall.SM_Wall'"));
 	if (IsValid(WallMeshRef.Object))
 	{
 		LeftWall->SetStaticMesh(WallMeshRef.Object);
 		RightWall->SetStaticMesh(WallMeshRef.Object);
 	}
 
-	static ConstructorHelpers::FObjectFinder<UMaterial> WallMaterialRef(
-		TEXT("/Script/Engine.Material'/Game/_GameAssets/Materials/Props/M_Brick.M_Brick'"));
-	if (IsValid(WallMaterialRef.Object))
-	{
-		LeftWall->SetMaterial(0, WallMaterialRef.Object);
-		RightWall->SetMaterial(0, WallMaterialRef.Object);
-	}
-
 	LeftWall->OnComponentHit.AddDynamic(this, &ACBasicFloor::OnWallHit);
 	RightWall->OnComponentHit.AddDynamic(this, &ACBasicFloor::OnWallHit);
-}
-
-void ACBasicFloor::BeginPlay()
-{
-	Super::BeginPlay();
-
 }
 
 void ACBasicFloor::CreateCeiling()
@@ -89,7 +75,7 @@ void ACBasicFloor::CreateCeiling()
 	CeilingMesh->SetRelativeLocation(FVector(0.f, 0.f, 180.f));
 
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> CeilingMeshRef(
-		TEXT("/Script/Engine.StaticMesh'/Game/_GameAssets/Meshes/Structure/Floor_400x400.Floor_400x400'"));
+		TEXT("/Script/Engine.StaticMesh'/Game/_GameAssets/Meshes/Structure/SM_Ceiling.SM_Ceiling'"));
 	if (IsValid(CeilingMeshRef.Object))
 	{
 		CeilingMesh->SetStaticMesh(CeilingMeshRef.Object);
@@ -111,9 +97,10 @@ void ACBasicFloor::CreateCeiling()
 	CeilingLight->SetupAttachment(CeilingLightMesh);
 	CeilingLight->SetRelativeLocation({ 0.f, 0.f, -50.f });
 	
-	CeilingLight->SetIntensity(5000.f);
+	CeilingLight->SetIntensity(10000.f);
 	CeilingLight->SetUseTemperature(true);
 	CeilingLight->SetTemperature(5500.f);
+	CeilingLight->SetCastShadows(false);
 }
 
 
@@ -161,7 +148,7 @@ void ACBasicFloor::OnWallHit(UPrimitiveComponent* HitComponent, AActor* OtherAct
 		{
 			if (RunCharacter->GetTurnStatus() == true)
 			{
-				RunCharacter->HitBySomething();
+				RunCharacter->HitBySomething(1.5f);
 			}
 			else
 			{

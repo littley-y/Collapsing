@@ -43,15 +43,19 @@ void ACCharacter::EarnHpUpItem()
 	}
 }
 
-void ACCharacter::HitBySomething()
+void ACCharacter::HitBySomething(const float LaunchRatio)
 {
-	FVector LaunchVector = GetActorForwardVector() * -1000;
-	LaunchVector.Z += 300.f;
-	UE_LOG(LogTemp, Warning, TEXT("Launch Vector : %s"), *LaunchVector.ToString());
+	FVector LaunchVector = GetActorForwardVector() * -1000.f * LaunchRatio;
+
+	
+	LaunchVector.Z += 250.f * LaunchRatio;
 
 	LaunchCharacter(LaunchVector, true, true);
 	ApplyDamage(10.f);
-	UnCrouch();
+	if (bIsCrouched == true)
+	{
+		UnCrouch();
+	}
 }
 
 float ACCharacter::GetCharacterHp() const
@@ -142,7 +146,7 @@ void ACCharacter::SetStatAndWidget()
 	}
 }
 
-void ACCharacter::Death()
+void ACCharacter::Death(const int32 DeathType)
 {
 	if (bIsDead == false)
 	{

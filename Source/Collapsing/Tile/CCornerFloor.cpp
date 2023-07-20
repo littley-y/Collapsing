@@ -6,16 +6,11 @@
 
 ACCornerFloor::ACCornerFloor()
 {
-	SetTurnZone();
-}
-
-void ACCornerFloor::SetTurnZone()
-{
 	TurnZone = CreateDefaultSubobject<UBoxComponent>(TEXT("TurnZone"));
 	if (IsValid(TurnZone))
 	{
 		TurnZone->SetupAttachment(FloorMesh);
-		TurnZone->SetBoxExtent(FVector(150.f, 150.f, 10.f));
+		TurnZone->SetBoxExtent(FVector(200.f, 200.f, 10.f));
 		TurnZone->SetRelativeLocation(FVector(200.f, 200.f, 0.f));
 
 		TurnZone->SetGenerateOverlapEvents(true);

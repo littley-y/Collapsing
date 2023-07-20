@@ -1,6 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "TileManager.h"
+#include "CTileManager.h"
 #include "Tile/CBasicFloor.h"
 #include "Game/CollapsingGameMode.h"
 
@@ -30,22 +30,29 @@ void FTileGeneratorTransform::UpdateVectorXY(const float InValue)
 	}
 }
 
-UTileManager::UTileManager()
+UCTileManager::UCTileManager()
 {
 	TileSize = 800.f;
 
-	LoadBPClass(BPFloorMap, '0', "/Game/Collapsing/Tile/BP_CBasicFloor");
-	LoadBPClass(BPFloorMap, 'L', "/Game/Collapsing/Tile/BP_CLeftCornerFloor");
-	LoadBPClass(BPFloorMap, 'R', "/Game/Collapsing/Tile/BP_CRightCornerFloor");
-	LoadBPClass(BPFloorMap, 'B', "/Game/Collapsing/Tile/BP_CBrokenFloor");
-	LoadBPClass(BPFloorMap, 'U', "/Game/Collapsing/Tile/BP_CUpRampFloor");
-	LoadBPClass(BPFloorMap, 'D', "/Game/Collapsing/Tile/BP_CDownRampFloor");
+	TTuple<uint32, FString> BPFloorMapPairs[] = {
+		{'0', "/Game/Collapsing/Tile/BP_CBasicFloor"}, {'L', "/Game/Collapsing/Tile/BP_CLeftCornerFloor"},
+		{'R', "/Game/Collapsing/Tile/BP_CRightCornerFloor"}, {'B', "/Game/Collapsing/Tile/BP_CBrokenFloor"},
+		{'U', "/Game/Collapsing/Tile/BP_CUpRampFloor"}, {'D', "/Game/Collapsing/Tile/BP_CDownRampFloor"}
+	};
+	for (const auto& BPFloorMapPair : BPFloorMapPairs)
+	{
+		LoadBPClass(BPFloorMap, BPFloorMapPair.Key, BPFloorMapPair.Value);
+	}
 
-	LoadBPClass(GeometryFloorMap, '0', "/Game/Collapsing/Tile/Geometry/GA_CBasicFloor");
-	LoadBPClass(GeometryFloorMap, 'L', "/Game/Collapsing/Tile/Geometry/GA_CLeftCornerFloor");
-	LoadBPClass(GeometryFloorMap, 'R', "/Game/Collapsing/Tile/Geometry/GA_CRightCornerFloor");
-	LoadBPClass(GeometryFloorMap, 'U', "/Game/Collapsing/Tile/Geometry/GA_CUpRampFloor");
-	LoadBPClass(GeometryFloorMap, 'D', "/Game/Collapsing/Tile/Geometry/GA_CDownRampFloor");
+	TTuple<uint32, FString> GeometryFloorMapPairs[] = {
+		{'0', "/Game/Collapsing/Tile/Geometry/GA_CBasicFloor"}, {'L', "/Game/Collapsing/Tile/Geometry/GA_CLeftCornerFloor"},
+		{'R', "/Game/Collapsing/Tile/Geometry/GA_CRightCornerFloor"},  /*{'B', "/Game/Collapsing/Geometry/GA_CBrokenFloor"},*/
+		{'U', "/Game/Collapsing/Tile/Geometry/GA_CUpRampFloor"}, {'D', "/Game/Collapsing/Tile/Geometry/GA_CDownRampFloor"}
+	};
+	for (const auto& GeometryFloorMapPair : GeometryFloorMapPairs)
+	{
+		LoadBPClass(GeometryFloorMap, GeometryFloorMapPair.Key, GeometryFloorMapPair.Value);
+	}
 
 	static ConstructorHelpers::FClassFinder<AActor> InitTileRef(
 		TEXT("/Script/Engine.Blueprint'/Game/Collapsing/Tile/BP_CInitTIle.BP_CInitTIle_C'"));
@@ -55,12 +62,12 @@ UTileManager::UTileManager()
 	}
 }
 
-void UTileManager::SetMapString(const FString& InMapString)
+void UCTileManager::SetMapString(const FString& InMapString)
 {
 	MapString = *InMapString;
 }
 
-void UTileManager::LoadBPClass(TMap<uint32, TSubclassOf<AActor>>& TargetMap, uint32 KeyChar, const FString& BPPath)
+void UCTileManager::LoadBPClass(TMap<uint32, TSubclassOf<AActor>>& TargetMap, uint32 KeyChar, const FString& BPPath)
 {
 	ConstructorHelpers::FClassFinder<AActor> BPFloor(*BPPath);
 	if (BPFloor.Succeeded())
@@ -71,7 +78,7 @@ void UTileManager::LoadBPClass(TMap<uint32, TSubclassOf<AActor>>& TargetMap, uin
 	}
 }
 
-void UTileManager::InitMaps(const FVector& InStartPosition, const int32 InMaxTileNum)
+void UCTileManager::InitMaps(const FVector& InStartPosition, const int32 InMaxTileNum)
 {
 	StartPosition = InStartPosition;
 	MaxTileNum = InMaxTileNum;
@@ -105,7 +112,7 @@ void UTileManager::InitMaps(const FVector& InStartPosition, const int32 InMaxTil
 	UE_LOG(LogTemp, Warning, TEXT("Init Tiles Generated : %d"), MaxTileNum / 2);
 }
 
-void UTileManager::SpawnTile()
+void UCTileManager::SpawnTile()
 {
 	const TCHAR MapChar = MapString[TargetSpawnIndex % MapString.Len()];
 	if (MapChar != '0' && MapChar != 'L' && MapChar != 'R' && MapChar != 'U' && MapChar != 'D' && MapChar != 'B')
@@ -163,7 +170,7 @@ void UTileManager::SpawnTile()
 	UE_LOG(LogTemp, Warning, TEXT("Curr Indexs : %d %d"), TargetSpawnIndex, TargetDestroyIndex)
 }
 
-void UTileManager::DestroyTile()
+void UCTileManager::DestroyTile()
 {
 	const TCHAR MapChar = MapString[TargetDestroyIndex % MapString.Len()];
 	if (MapChar != '0' && MapChar != 'L' && MapChar != 'R' && MapChar != 'U' && MapChar != 'D' && MapChar != 'B')

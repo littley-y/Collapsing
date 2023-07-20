@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "TileManager.generated.h"
+#include "CTileManager.generated.h"
 
 USTRUCT()
 struct FTileGeneratorTransform
@@ -33,12 +33,12 @@ struct FTilePool
 };
 
 UCLASS()
-class COLLAPSING_API UTileManager : public UObject
+class COLLAPSING_API UCTileManager : public UObject
 {
 	GENERATED_BODY()
 
 public:
-	UTileManager();
+	UCTileManager();
 
 	void SetMapString(const FString& InMapString);
 
@@ -66,6 +66,7 @@ protected:
 	TMap<uint32, FTilePool> FloorTilePool;
 
 private:
+	UPROPERTY()
 	FString MapString;
 
 	FTileGeneratorTransform TileGenTrans;

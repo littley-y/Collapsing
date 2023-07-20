@@ -1,12 +1,12 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "CollapsingGameMode.h"
-#include "Tile/TileManager.h"
+#include "Tile/CTileManager.h"
 
 ACollapsingGameMode::ACollapsingGameMode()
 {
 	PrimaryActorTick.bCanEverTick = true;
-	TileManager = CreateDefaultSubobject<UTileManager>(TEXT("TileManager"));
+	TileManager = CreateDefaultSubobject<UCTileManager>(TEXT("TileManager"));
 
 	static ConstructorHelpers::FClassFinder<APawn> CollapsingPawnRef(
 		TEXT("/Game/Collapsing/Character/BP_CCharacter.BP_CCharacter_C"));

@@ -21,7 +21,7 @@ public:
 
 protected:
 	UPROPERTY()
-	TObjectPtr<class UTileManager> TileManager;
+	TObjectPtr<class UCTileManager> TileManager;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = TileManagerSetting, meta = (AllowPrivateAccess = "true"))
 	float TileSpawnTime;

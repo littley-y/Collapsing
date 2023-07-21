@@ -8,6 +8,13 @@
 #include "GameFramework/PlayerController.h"
 #include "CPlayerController.generated.h"
 
+UENUM()
+enum class ECharacterControllerType : uint8
+{
+	MainMenu,
+	Play
+};
+
 UCLASS()
 class COLLAPSING_API ACPlayerController : public APlayerController
 {
@@ -17,19 +24,15 @@ public:
 	ACPlayerController(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
 	void Move(const FInputActionValue& Value);
-
 	void Turn(const FInputActionValue& Value);
-
 	void Jump(const FInputActionValue& Value);
 	void StopJump(const FInputActionValue& Value);
-
-	void ChangeSpeed(const FInputActionValue& Value);
-
 	void Slide(const FInputActionValue& Value);
+	void OpenDoor(const FInputActionValue& Value);
 
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input")
-	TObjectPtr<UInputMappingContext> InputMapping;
+	TMap<ECharacterControllerType, TObjectPtr<UInputMappingContext>> InputMappings;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input")
 	TObjectPtr<class UCInputDataAsset> InputActions;
@@ -40,13 +43,16 @@ protected:
 
 	virtual void BeginPlay() override;
 
-private:
-	bool bControllerCanTurn = false;
+	void SetCharacterControl(ECharacterControllerType InControllerType) const;
 
+private:
+	bool bControllerCanTurn;
 	FRotator DesiredRotation;
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Pawn", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class ACCharacter> RunCharacter;
 
 	void TurnController(const FRotator& ControlRot);
+
+	ECharacterControllerType CurrControllerType;
 };											  

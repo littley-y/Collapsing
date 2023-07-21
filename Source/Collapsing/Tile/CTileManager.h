@@ -57,12 +57,6 @@ protected:
 	TMap<uint32, TSubclassOf<AActor>> GeometryFloorMap;
 
 	UPROPERTY()
-	TObjectPtr<AActor> InitTilePtr;
-
-	UPROPERTY()
-	TSubclassOf<AActor> InitTileClass;
-
-	UPROPERTY()
 	TMap<uint32, FTilePool> FloorTilePool;
 
 private:

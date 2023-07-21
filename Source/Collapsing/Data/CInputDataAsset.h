@@ -17,18 +17,15 @@ public:
 	TObjectPtr<UInputAction> MoveAction;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	TObjectPtr<UInputAction> ChangeSpeedAction;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TObjectPtr<UInputAction> TurnAction;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TObjectPtr<UInputAction> JumpAction;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	TObjectPtr<UInputAction> ChangeViewAction;
+	TObjectPtr<UInputAction> SlideAction;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	TObjectPtr<UInputAction> SlideAction;
+	TObjectPtr<UInputAction> OpenDoorAction;
 
 };

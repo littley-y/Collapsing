@@ -15,7 +15,7 @@ void UCAnimeInstance::NativeInitializeAnimation()
 	Super::NativeInitializeAnimation();
 
 	Owner = Cast<ACCharacter>(GetOwningActor());
-	if (Owner)
+	if (IsValid(Owner))
 	{
 		Movement = Owner->GetCharacterMovement();
 		CharacterMaxHp = Owner->GetCharacterMaxHp();
@@ -26,7 +26,7 @@ void UCAnimeInstance::NativeUpdateAnimation(float DeltaSeconds)
 {
 	Super::NativeUpdateAnimation(DeltaSeconds);
 
-	if (Movement && Owner)
+	if (IsValid(Movement) && IsValid(Owner))
 	{
 		Velocity = Movement->Velocity;
 		GroundSpeed = Velocity.Size2D();
@@ -36,11 +36,4 @@ void UCAnimeInstance::NativeUpdateAnimation(float DeltaSeconds)
 		bIsCrouching = Movement->IsCrouching();
 		CharacterHp = Owner->GetCharacterHp();
 	}
-}
-
-void UCAnimeInstance::AnimNotify_SlideEnd()
-{
-	Owner->UnCrouch();
-	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
-	PlayerController->EnableInput(PlayerController);
 }

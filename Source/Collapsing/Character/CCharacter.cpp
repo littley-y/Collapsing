@@ -24,7 +24,7 @@ ACCharacter::ACCharacter()
 
 void ACCharacter::Tick(float DeltaSeconds)
 {
-	GetCharacterMovement()->MaxWalkSpeed = FMath::Clamp(GetCharacterHp() * 20.f, 400.f, 1000.f);
+	GetCharacterMovement()->MaxWalkSpeed = FMath::Clamp(GetCharacterHp() * 20.f, 400.f, 800.f);
 }
 
 void ACCharacter::ApplyDamage(const float InDamage) const
@@ -45,7 +45,7 @@ void ACCharacter::EarnHpUpItem()
 
 void ACCharacter::HitBySomething(const float LaunchRatio)
 {
-	FVector LaunchVector = GetActorForwardVector() * -1000.f * LaunchRatio;
+	FVector LaunchVector = GetActorForwardVector() * -1200.f * LaunchRatio;
 
 	
 	LaunchVector.Z += 250.f * LaunchRatio;
@@ -88,14 +88,14 @@ void ACCharacter::SetCameraAndArm()
 	CameraArm->bDoCollisionTest = true;
 	CameraArm->bUsePawnControlRotation = true;
 
-	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
-	if (!IsValid(Camera))
+	PlayCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
+	if (!IsValid(PlayCamera))
 	{
 		return;
 	}
-	Camera->bUsePawnControlRotation = false;
-	Camera->SetupAttachment(CameraArm, USpringArmComponent::SocketName);
-	Camera->SetRelativeRotation(FRotator(-40.f, 0.f, 0.f));
+	PlayCamera->bUsePawnControlRotation = false;
+	PlayCamera->SetupAttachment(CameraArm, USpringArmComponent::SocketName);
+	PlayCamera->SetRelativeRotation(FRotator(-40.f, 0.f, 0.f));
 }
 
 void ACCharacter::SetupCharacterWidget(UCUserWidget* InUserWidget)
@@ -120,22 +120,22 @@ void ACCharacter::SetupCharacterMovement() const
 	UCharacterMovementComponent* CMC = GetCharacterMovement();
 	if (IsValid(CMC))
 	{
-		CMC->MaxWalkSpeedCrouched = 1000.f;
+		CMC->MaxWalkSpeedCrouched = 800.f;
 		CMC->bOrientRotationToMovement = true;
 		CMC->RotationRate = FRotator(0.f, 300.f, 0.f);
 
-		CMC->MaxWalkSpeed = 1000.f;
+		CMC->MaxWalkSpeed = 800.f;
 		CMC->JumpZVelocity = 500.f;
-		CMC->AirControl = 2.f;
+		CMC->AirControl = 1.f;
 	}
 }
 
 void ACCharacter::SetStatAndWidget()
 {
 	Stat = CreateDefaultSubobject<UCCharacterStatComponent>(TEXT("Stat"));
-
 	HpBar = CreateDefaultSubobject<UCWidgetComponent>(TEXT("Widget"));
 	HpBar->SetupAttachment(GetMesh(), TEXT("head"));
+
 	static ConstructorHelpers::FClassFinder<UCUserWidget> HpBarWidgetRef(TEXT("/Game/Collapsing/UI/WBP_HpBar.WBP_HpBar_C"));
 	if (IsValid(HpBarWidgetRef.Class))
 	{

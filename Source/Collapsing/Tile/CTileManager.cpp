@@ -58,13 +58,6 @@ UCTileManager::UCTileManager()
 	{
 		LoadBPClass(GeometryFloorMap, GeometryFloorMapPair.Key, GeometryFloorMapPair.Value);
 	}
-
-	static ConstructorHelpers::FClassFinder<AActor> InitTileRef(
-		TEXT("/Script/Engine.Blueprint'/Game/Collapsing/Tile/BP_CInitTIle.BP_CInitTIle_C'"));
-	if (InitTileRef.Succeeded())
-	{
-		InitTileClass = InitTileRef.Class;
-	}
 }
 
 void UCTileManager::SetMapString(const FString& InMapString)
@@ -91,9 +84,6 @@ void UCTileManager::InitMaps(const FVector& InStartPosition, const int32 InMaxTi
 	TargetDestroyIndex = 0;
 	bIsSynced = false;
 
-	const FVector InitTileLocation = { -820.f, 0.f, -40.f };
-	InitTilePtr = UObject::GetWorld()->SpawnActor<AActor>(InitTileClass, InitTileLocation, FRotator::ZeroRotator);
-
 	uint32 TileTypes[] = { '0', 'L', 'R', 'B', 'U', 'D', 'O' };
 	for (const auto& TileType : TileTypes)
 	{
@@ -107,7 +97,6 @@ void UCTileManager::InitMaps(const FVector& InStartPosition, const int32 InMaxTi
 			CurrPoolingTiles[i]->SetActorHiddenInGame(true);
 			CurrPoolingTiles[i]->SetActorEnableCollision(false);
 		}
-		BPFloorMap.Remove(TileType);
 	}
 
 	for (int32 It = 0; It != MaxTileNum / 2; ++It)
@@ -174,11 +163,6 @@ void UCTileManager::SpawnTile()
 
 void UCTileManager::DestroyTile()
 {
-	if (TargetDestroyIndex == 0 && IsValid(InitTilePtr))
-	{
-		InitTilePtr->SetLifeSpan(0.1f);
-	}
-
 	TCHAR MapChar = MapString[TargetDestroyIndex % MapString.Len()];
 	if (MapChar != '0' && MapChar != 'L' && MapChar != 'R' && MapChar != 'U' && MapChar != 'D' && MapChar != 'B' &&
 		MapChar != 'O')

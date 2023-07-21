@@ -20,11 +20,14 @@ public:
 
 // Camera System
 private:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class USpringArmComponent> CameraArm;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<class UCameraComponent> Camera;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<class UCameraComponent> PlayCamera;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<class UCameraComponent> MenuCamera;
 
 	void SetCameraAndArm();
 

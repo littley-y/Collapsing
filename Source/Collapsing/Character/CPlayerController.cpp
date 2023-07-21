@@ -9,27 +9,19 @@
 ACPlayerController::ACPlayerController(const FObjectInitializer& ObjectInitializer)
 {
 	PrimaryActorTick.bCanEverTick = true;
-	DesiredRotation = AController::GetControlRotation();
+	bControllerCanTurn = false;
 
+	CurrControllerType = ECharacterControllerType::MainMenu;
 }
 
 void ACPlayerController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
 
-	UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(
-		GetLocalPlayer());
-	if (!IsValid(Subsystem))
-	{
-		return;
-	}
-	Subsystem->AddMappingContext(InputMapping, 0);
-
 	UEnhancedInputComponent* PlayerEnhancedInput = CastChecked<UEnhancedInputComponent>(InputComponent);
+
 	PlayerEnhancedInput->BindAction(InputActions->MoveAction, ETriggerEvent::Triggered, this,
 		&ACPlayerController::Move);
-	PlayerEnhancedInput->BindAction(InputActions->ChangeSpeedAction, ETriggerEvent::Started, this,
-		&ACPlayerController::ChangeSpeed);
 	PlayerEnhancedInput->BindAction(InputActions->TurnAction, ETriggerEvent::Started, this,
 		&ACPlayerController::Turn);
 	PlayerEnhancedInput->BindAction(InputActions->JumpAction, ETriggerEvent::Started, this,
@@ -38,6 +30,8 @@ void ACPlayerController::SetupInputComponent()
 		&ACPlayerController::StopJump);
 	PlayerEnhancedInput->BindAction(InputActions->SlideAction, ETriggerEvent::Started, this,
 		&ACPlayerController::Slide);
+	PlayerEnhancedInput->BindAction(InputActions->OpenDoorAction, ETriggerEvent::Started, this,
+		&ACPlayerController::OpenDoor);
 }
 
 void ACPlayerController::Move(const FInputActionValue& Value)
@@ -60,8 +54,11 @@ void ACPlayerController::Turn(const FInputActionValue& Value)
 		const float TurnAxisFloat = Value.Get<float>();
 		DesiredRotation = GetControlRotation();
 		DesiredRotation.Yaw += TurnAxisFloat * 90;
-		RunCharacter->SetTurnStatus(false);
 		bControllerCanTurn = true;
+		if (CurrControllerType == ECharacterControllerType::Play)
+		{
+			RunCharacter->SetTurnStatus(false);
+		}
 
 		UE_LOG(LogTemp, Warning, TEXT("Set DesiredRotation : %s"), *DesiredRotation.ToString());
 	}
@@ -83,31 +80,6 @@ void ACPlayerController::StopJump(const FInputActionValue& Value)
 	}
 }
 
-void ACPlayerController::ChangeSpeed(const FInputActionValue& Value)
-{
-	if (IsValid(RunCharacter) && RunCharacter->GetTurnStatus() == true)
-	{
-		float& CharacterSpeed = RunCharacter->GetCharacterMovement()->MaxWalkSpeed;
-		if (CharacterSpeed > 1600.f)
-		{
-			return;
-		}
-
-		const float TargetSpeed = Value.Get<float>() * 200.f;
-		CharacterSpeed += TargetSpeed;
-
-		if (CharacterSpeed > 0.f)
-		{
-			RunCharacter->SetTurnStatus(false);
-			UE_LOG(LogTemp, Warning, TEXT("현재 속도 %f"), CharacterSpeed)
-		}
-		else
-		{
-			RunCharacter->Death();
-		}
-	}
-}
-
 void ACPlayerController::Slide(const FInputActionValue& Value)
 {
 	if (IsValid(RunCharacter) && RunCharacter->GetCharacterMovement()->IsFalling() == false)
@@ -117,15 +89,27 @@ void ACPlayerController::Slide(const FInputActionValue& Value)
 	}
 }
 
+void ACPlayerController::OpenDoor(const FInputActionValue& Value)
+{
+	if (IsValid(RunCharacter))
+	{
+		// RunCharacter->OpenDoor();
+	}
+}
+
 
 void ACPlayerController::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 
-	if (IsValid(RunCharacter) && RunCharacter->bIsDead == false)
+	if (IsValid(RunCharacter))
 	{
 		const FRotator ControlRot = GetControlRotation();
-		RunCharacter->AddMovementInput(ControlRot.Vector());
+
+		if (CurrControllerType == ECharacterControllerType::Play)
+		{
+			RunCharacter->AddMovementInput(ControlRot.Vector());
+		}
 
 		if (bControllerCanTurn == true)
 		{
@@ -151,6 +135,20 @@ void ACPlayerController::BeginPlay()
 	Super::BeginPlay();
 
 	RunCharacter = Cast<ACCharacter>(GetCharacter());
+	ensure(RunCharacter);
+
 	const FInputModeGameOnly GameOnlyInputMode;
 	SetInputMode(GameOnlyInputMode);
+	SetCharacterControl(ECharacterControllerType::MainMenu);
+}
+
+void ACPlayerController::SetCharacterControl(const ECharacterControllerType InControllerType) const
+{
+	UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(
+		GetLocalPlayer());
+	if (IsValid(Subsystem))
+	{
+		Subsystem->ClearAllMappings();
+		Subsystem->AddMappingContext(InputMappings[InControllerType], 0);
+	}
 }

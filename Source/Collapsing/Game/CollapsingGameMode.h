@@ -18,6 +18,9 @@ public:
 	void SetMapBasicString();
 
 	virtual void SyncTimer() override;
+	virtual void StartStage() override;
+	virtual void StartArcade() override;
+	virtual void QuitGame() override;
 
 protected:
 	UPROPERTY()

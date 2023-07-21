@@ -43,7 +43,8 @@ protected:
 
 	virtual void BeginPlay() override;
 
-	void SetCharacterControl(ECharacterControllerType InControllerType) const;
+	void SetCharacterControl(ECharacterControllerType InControllerType);
+	void ChangeCharacterStatus(ECharacterControllerType InControllerType);
 
 private:
 	bool bControllerCanTurn;

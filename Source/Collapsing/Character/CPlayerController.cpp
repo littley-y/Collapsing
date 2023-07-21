@@ -10,7 +10,6 @@ ACPlayerController::ACPlayerController(const FObjectInitializer& ObjectInitializ
 {
 	PrimaryActorTick.bCanEverTick = true;
 	bControllerCanTurn = false;
-
 	CurrControllerType = ECharacterControllerType::MainMenu;
 }
 
@@ -37,13 +36,24 @@ void ACPlayerController::SetupInputComponent()
 void ACPlayerController::Move(const FInputActionValue& Value)
 {
 	const FVector2D MovementVector = Value.Get<FVector2D>();
-	const FRotator YawRotation(0.f, GetControlRotation().Yaw, 0.f);
+
+	const FRotator CurrRotation = GetControlRotation();
+	const FRotator YawRotation = {0.f, CurrRotation.Yaw, 0.f};
+	
 	const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 
 	if (IsValid(RunCharacter))
 	{
 		RunCharacter->AddMovementInput(RightDirection, MovementVector.X);
-		RunCharacter->AddMovementInput(GetControlRotation().Vector());
+		if (CurrControllerType == ECharacterControllerType::MainMenu)
+		{
+			const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+			RunCharacter->AddMovementInput(ForwardDirection, MovementVector.Y);
+		}
+		else 
+		{
+			RunCharacter->AddMovementInput(CurrRotation.Vector());
+		}
 	}
 }
 
@@ -52,8 +62,10 @@ void ACPlayerController::Turn(const FInputActionValue& Value)
 	if (IsValid(RunCharacter) && RunCharacter->GetTurnStatus() == true)
 	{
 		const float TurnAxisFloat = Value.Get<float>();
+
+		const float TurnAngle = 90.f * (CurrControllerType == ECharacterControllerType::MainMenu ? -1 : 1);
 		DesiredRotation = GetControlRotation();
-		DesiredRotation.Yaw += TurnAxisFloat * 90;
+		DesiredRotation.Yaw += TurnAxisFloat * TurnAngle;
 		bControllerCanTurn = true;
 		if (CurrControllerType == ECharacterControllerType::Play)
 		{
@@ -93,7 +105,7 @@ void ACPlayerController::OpenDoor(const FInputActionValue& Value)
 {
 	if (IsValid(RunCharacter))
 	{
-		// RunCharacter->OpenDoor();
+		RunCharacter->OpenDoor();
 	}
 }
 
@@ -142,13 +154,30 @@ void ACPlayerController::BeginPlay()
 	SetCharacterControl(ECharacterControllerType::MainMenu);
 }
 
-void ACPlayerController::SetCharacterControl(const ECharacterControllerType InControllerType) const
+void ACPlayerController::SetCharacterControl(const ECharacterControllerType InControllerType)
 {
+	ChangeCharacterStatus(InControllerType);
+	CurrControllerType = InControllerType;
+
 	UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(
 		GetLocalPlayer());
 	if (IsValid(Subsystem))
 	{
 		Subsystem->ClearAllMappings();
 		Subsystem->AddMappingContext(InputMappings[InControllerType], 0);
+	}
+}
+
+void ACPlayerController::ChangeCharacterStatus(ECharacterControllerType InControllerType)
+{
+	if (InControllerType == ECharacterControllerType::MainMenu)
+	{
+		RunCharacter->SetTurnStatus(true);
+		RunCharacter->GetCharacterMovement()->MaxWalkSpeed = 300.f;
+	}
+	else
+	{
+		RunCharacter->SetTurnStatus(false);
+		RunCharacter->GetCharacterMovement()->MaxWalkSpeed = 800.f;
 	}
 }

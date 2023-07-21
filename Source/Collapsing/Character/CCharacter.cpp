@@ -9,6 +9,7 @@
 #include "UI/CWidgetComponent.h"
 #include "Stat/CCharacterStatComponent.h"
 #include "UI/CHpBarWidget.h"
+#include "Game/CollapsingGameMode.h"
 
 ACCharacter::ACCharacter()
 {
@@ -17,14 +18,23 @@ ACCharacter::ACCharacter()
 	bIsDead = false;
 
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.f);
-	SetCameraAndArm();
+	SetPlayCameraAndArm();
+	SetMenuCameraAndArm();
 	SetupCharacterMovement();
 	SetStatAndWidget();
 }
 
 void ACCharacter::Tick(float DeltaSeconds)
 {
-	GetCharacterMovement()->MaxWalkSpeed = FMath::Clamp(GetCharacterHp() * 20.f, 400.f, 800.f);
+	//GetCharacterMovement()->MaxWalkSpeed = FMath::Clamp(GetCharacterHp() * 20.f, 300.f, 800.f);
+}
+
+void ACCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+
+	PlayCamera->Deactivate();
+	MenuCamera->Activate();
 }
 
 void ACCharacter::ApplyDamage(const float InDamage) const
@@ -47,7 +57,6 @@ void ACCharacter::HitBySomething(const float LaunchRatio)
 {
 	FVector LaunchVector = GetActorForwardVector() * -1200.f * LaunchRatio;
 
-	
 	LaunchVector.Z += 250.f * LaunchRatio;
 
 	LaunchCharacter(LaunchVector, true, true);
@@ -56,6 +65,18 @@ void ACCharacter::HitBySomething(const float LaunchRatio)
 	{
 		UnCrouch();
 	}
+}
+
+void ACCharacter::OpenDoor()
+{
+	ICSyncTimerInterface* GameMode = Cast<ICSyncTimerInterface>(GetWorld()->GetAuthGameMode());
+	if (GameMode)
+	{
+		GameMode->StartStage();
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("Open Door"));
+
 }
 
 float ACCharacter::GetCharacterHp() const
@@ -76,26 +97,48 @@ float ACCharacter::GetCharacterMaxHp() const
 	return -1.f;
 }
 
-void ACCharacter::SetCameraAndArm()
+void ACCharacter::SetPlayCameraAndArm()
 {
-	CameraArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraArm"));
-	if (!IsValid(CameraArm))
+	PlayCameraArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("PlayCameraArm"));
+	if (!IsValid(PlayCameraArm))
 	{
 		return;
 	}
-	CameraArm->SetupAttachment(GetMesh());
+	PlayCameraArm->SetupAttachment(GetMesh());
 
-	CameraArm->bDoCollisionTest = true;
-	CameraArm->bUsePawnControlRotation = true;
+	PlayCameraArm->bDoCollisionTest = true;
+	PlayCameraArm->bUsePawnControlRotation = true;
 
-	PlayCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
+	PlayCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("PlayCamera"));
 	if (!IsValid(PlayCamera))
 	{
 		return;
 	}
 	PlayCamera->bUsePawnControlRotation = false;
-	PlayCamera->SetupAttachment(CameraArm, USpringArmComponent::SocketName);
+	PlayCamera->SetupAttachment(PlayCameraArm, USpringArmComponent::SocketName);
 	PlayCamera->SetRelativeRotation(FRotator(-40.f, 0.f, 0.f));
+}
+
+void ACCharacter::SetMenuCameraAndArm()
+{
+	MenuCameraArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("MenuCameraArm"));
+	if (!IsValid(MenuCameraArm))
+	{
+		return;
+	}
+	MenuCameraArm->SetupAttachment(GetMesh());
+
+	MenuCameraArm->bDoCollisionTest = true;
+	MenuCameraArm->bUsePawnControlRotation = true;
+
+	MenuCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("MenuCamera"));
+	if (!IsValid(MenuCamera))
+	{
+		return;
+	}
+	MenuCamera->bUsePawnControlRotation = false;
+	MenuCamera->SetupAttachment(MenuCameraArm, USpringArmComponent::SocketName);
+	MenuCamera->SetRelativeRotation(FRotator(-40.f, 0.f, 0.f));
 }
 
 void ACCharacter::SetupCharacterWidget(UCUserWidget* InUserWidget)
@@ -110,9 +153,8 @@ void ACCharacter::SetupCharacterWidget(UCUserWidget* InUserWidget)
 	}
 }
 
-void ACCharacter::SetTurnStatus(const bool InStatus)
+void ACCharacter::ChangeStatus()
 {
-	bCanCharacterTurn = InStatus;
 }
 
 void ACCharacter::SetupCharacterMovement() const
@@ -182,5 +224,9 @@ void ACCharacter::OnDeath()
 		GetWorldTimerManager().ClearTimer(RestartTimerHandle);
 	}
 
-	UKismetSystemLibrary::ExecuteConsoleCommand(GetWorld(), TEXT("RestartLevel"));
+	ICSyncTimerInterface* GameMode = Cast<ICSyncTimerInterface>(GetWorld()->GetAuthGameMode());
+	if (GameMode)
+	{
+		GameMode->QuitGame();
+	}
 }

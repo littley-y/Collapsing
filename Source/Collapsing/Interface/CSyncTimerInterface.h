@@ -22,4 +22,7 @@ class COLLAPSING_API ICSyncTimerInterface
 
 public:
 	virtual void SyncTimer() = 0;
+	virtual void StartStage() = 0;
+	virtual void StartArcade() = 0;
+	virtual void QuitGame() = 0;
 };

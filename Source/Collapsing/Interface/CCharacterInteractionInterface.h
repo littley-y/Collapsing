@@ -24,6 +24,7 @@ class COLLAPSING_API ICCharacterInteractionInterface
 public:
 	virtual void HitBySomething(const float LaunchRatio = 1.f) = 0;
 	virtual void EarnHpUpItem() = 0;
+	virtual void OpenDoor() = 0;
 
 	virtual void SetTurnStatus(bool InStatus) = 0;
 	virtual bool GetTurnStatus() const = 0;

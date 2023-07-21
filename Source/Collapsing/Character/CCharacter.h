@@ -18,28 +18,44 @@ public:
 
 	virtual void Tick(float DeltaSeconds) override;
 
+protected:
+	virtual void BeginPlay() override;
+
 // Camera System
-private:
+public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera", meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<class USpringArmComponent> CameraArm;
+	TObjectPtr<class USpringArmComponent> PlayCameraArm;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UCameraComponent> PlayCamera;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<class USpringArmComponent> MenuCameraArm;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UCameraComponent> MenuCamera;
 
-	void SetCameraAndArm();
+private:
+	void SetPlayCameraAndArm();
+	void SetMenuCameraAndArm();
 
 // Movement System
 public:
-	virtual void SetTurnStatus(bool InStatus) override;
-	virtual bool GetTurnStatus() const override { return bCanCharacterTurn; }
+	FORCEINLINE virtual void SetTurnStatus(bool InStatus) override { bCanCharacterTurn = InStatus; };
+	FORCEINLINE virtual bool GetTurnStatus() const override { return bCanCharacterTurn; }
+
+	void ChangeStatus();
 
 protected:
 	bool bCanCharacterTurn;
 
 	void SetupCharacterMovement() const;
+
+// Interaction System
+public:
+	virtual void EarnHpUpItem() override;
+	virtual void HitBySomething(const float LaunchRatio) override;
+	virtual void OpenDoor() override;
 
 // Stat System
 public:
@@ -59,15 +75,11 @@ protected:
 	TObjectPtr<class UCWidgetComponent> HpBar;
 
 	virtual void SetupCharacterWidget(class UCUserWidget* InUserWidget) override;
-
 	void SetStatAndWidget();
 
 // Stat System
 public:
 	void ApplyDamage(const float InDamage) const;
-	virtual void EarnHpUpItem() override;
-	
-	virtual void HitBySomething(const float LaunchRatio) override;
 
 // Death System
 public:

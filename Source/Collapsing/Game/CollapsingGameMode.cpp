@@ -2,6 +2,7 @@
 
 #include "CollapsingGameMode.h"
 #include "Tile/CTileManager.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 ACollapsingGameMode::ACollapsingGameMode()
 {
@@ -33,6 +34,27 @@ void ACollapsingGameMode::BeginPlay()
 {
 	Super::BeginPlay();
 
+}
+
+void ACollapsingGameMode::SetMapBasicString()
+{
+	const FString FileString(TEXT("/Collapsing/Data/TextMaps/BasicMap.txt"));
+	FFileHelper::LoadFileToString(MapString, *(FPaths::Combine(FPaths::GameSourceDir(), FileString)));
+	check(!MapString.IsEmpty());
+
+	TileManager->SetMapString(MapString);
+	UE_LOG(LogTemp, Warning, TEXT("Map Loaded : %s"), *MapString);
+}
+
+void ACollapsingGameMode::SyncTimer()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Sync Timer"));
+	GetWorldTimerManager().ClearTimer(SpawnTileTimerHandle);
+	GetWorldTimerManager().SetTimer(SpawnTileTimerHandle, this, &ACollapsingGameMode::SetTileGenerate, TileDestroyTime, true);
+}
+
+void ACollapsingGameMode::StartStage()
+{
 	if (IsValid(TileManager))
 	{
 		SetMapBasicString();
@@ -52,21 +74,13 @@ void ACollapsingGameMode::BeginPlay()
 	}
 }
 
-void ACollapsingGameMode::SetMapBasicString()
+void ACollapsingGameMode::StartArcade()
 {
-	const FString FileString(TEXT("/Collapsing/Data/TextMaps/BasicMap.txt"));
-	FFileHelper::LoadFileToString(MapString, *(FPaths::Combine(FPaths::GameSourceDir(), FileString)));
-	check(!MapString.IsEmpty());
-
-	TileManager->SetMapString(MapString);
-	UE_LOG(LogTemp, Warning, TEXT("Map Loaded : %s"), *MapString);
 }
 
-void ACollapsingGameMode::SyncTimer()
+void ACollapsingGameMode::QuitGame()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Sync Timer"));
-	GetWorldTimerManager().ClearTimer(SpawnTileTimerHandle);
-	GetWorldTimerManager().SetTimer(SpawnTileTimerHandle, this, &ACollapsingGameMode::SetTileGenerate, TileDestroyTime, true);
+	UKismetSystemLibrary::ExecuteConsoleCommand(GetWorld(), TEXT("RestartLevel"));
 }
 
 void ACollapsingGameMode::SetTileGenerate() const

@@ -15,11 +15,25 @@ class COLLAPSING_API ACollapsingGameMode : public AGameModeBase, public ICGameMo
 public:
 	ACollapsingGameMode();
 
-	void SetMapBasicString();
+// Map Section
+public:
+	void SetStageMapString();
+	void SetArcadeMapString() const;
 
-	virtual void SyncTimer() override;
-	virtual void StartStage() override;
-	virtual void StartArcade() override;
+protected:
+	UPROPERTY()
+	TObjectPtr<class UCMapGenerator> MapGenerator;
+
+	UPROPERTY()
+	FString StageMapString;
+
+	UPROPERTY()
+	FString ArcadeMapString;
+
+public:
+	virtual void SetTimer(int32 InTimerType) override;
+
+	virtual void StartGame(const FString MapType) override;
 	virtual void ExitGame() override;
 	virtual void RestartGame() override;
 
@@ -54,9 +68,6 @@ protected:
 	FVector StartPosition;
 
 private:
-	UPROPERTY()
-	FString MapString;
-
 	UPROPERTY()
 	FTimerHandle SpawnTileTimerHandle;
 

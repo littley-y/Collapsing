@@ -8,7 +8,7 @@
 ACBrokenFloor::ACBrokenFloor()
 {
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> FloorMeshRef(
-		TEXT("/Script/Engine.StaticMesh'/Game/_GameAssets/Meshes/Structure/SM_BrokenFloor.SM_BrokenFloor'"));
+		TEXT("/Script/Engine.StaticMesh'/Game/_GameAssets/Meshes/Structures/SM_BrokenFloor.SM_BrokenFloor'"));
 	if (IsValid(FloorMeshRef.Object))
 	{
 		FloorMesh->SetStaticMesh(FloorMeshRef.Object);
@@ -18,7 +18,7 @@ ACBrokenFloor::ACBrokenFloor()
 
 	CharacterDeathZone->SetupAttachment(FloorMesh);
 	CharacterDeathZone->SetBoxExtent(FVector(400.f, 400.f, 10.f));
-	CharacterDeathZone->SetRelativeLocation(FVector(200.f, 200.f, -300.f));
+	CharacterDeathZone->SetRelativeLocation(FVector(200.f, 200.f, -40.f));
 
 	CharacterDeathZone->SetGenerateOverlapEvents(true); 
 	CharacterDeathZone->OnComponentBeginOverlap.AddDynamic(this, &ACBrokenFloor::OnPlayerDeathOverlap);
@@ -26,8 +26,7 @@ ACBrokenFloor::ACBrokenFloor()
 	DeathCam = CreateDefaultSubobject<UCameraComponent>(TEXT("DeathCam"));
 	DeathCam->SetupAttachment(CharacterDeathZone);
 	DeathCam->SetFieldOfView(120.f);
-	DeathCam->SetRelativeLocationAndRotation({100.f, 100.f, 0.f}, {-90.f, 180.f, 0.f});
-	DeathCam->Deactivate();
+	DeathCam->SetRelativeLocationAndRotation({100.f, 100.f, -300.f}, {-90.f, 180.f, 0.f});
 }
 
 void ACBrokenFloor::OnPlayerDeathOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
@@ -39,4 +38,11 @@ void ACBrokenFloor::OnPlayerDeathOverlap(UPrimitiveComponent* OverlappedComp, AA
 		DeathCam->Activate();
 		RunCharacter->Death(this);
 	}
+}
+
+void ACBrokenFloor::BeginPlay()
+{
+	Super::BeginPlay();
+
+	DeathCam->Deactivate();
 }

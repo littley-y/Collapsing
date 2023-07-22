@@ -2,16 +2,34 @@
 
 #include "CPlayerController.h"
 #include "CCharacter.h"
-#include "Camera/CameraComponent.h"
 #include "Data/CInputDataAsset.h"
 #include "GameFramework/Character.h"
-#include "GameFramework/CharacterMovementComponent.h"
+#include "Game/CollapsingGameMode.h"
 
 ACPlayerController::ACPlayerController(const FObjectInitializer& ObjectInitializer)
 {
 	PrimaryActorTick.bCanEverTick = true;
 	bControllerCanTurn = false;
 	CurrControllerType = ECharacterControllerType::MainMenu;
+}
+
+void ACPlayerController::BeginPlay()
+{
+	Super::BeginPlay();
+
+	RunCharacter = Cast<ACCharacter>(GetCharacter());
+	ensure(RunCharacter);
+
+	const FInputModeGameOnly GameOnlyInputMode;
+	SetInputMode(GameOnlyInputMode);
+	SetCharacterController(ECharacterControllerType::MainMenu);
+}
+
+void ACPlayerController::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+
+	GetWorldTimerManager().ClearAllTimersForObject(this);
 }
 
 void ACPlayerController::SetupInputComponent()
@@ -39,8 +57,8 @@ void ACPlayerController::Move(const FInputActionValue& Value)
 	const FVector2D MovementVector = Value.Get<FVector2D>();
 
 	const FRotator CurrRotation = GetControlRotation();
-	const FRotator YawRotation = {0.f, CurrRotation.Yaw, 0.f};
-	
+	const FRotator YawRotation = { 0.f, CurrRotation.Yaw, 0.f };
+
 	const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 
 	if (IsValid(RunCharacter))
@@ -51,7 +69,7 @@ void ACPlayerController::Move(const FInputActionValue& Value)
 			const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
 			RunCharacter->AddMovementInput(ForwardDirection, MovementVector.Y);
 		}
-		else 
+		else
 		{
 			RunCharacter->AddMovementInput(CurrRotation.Vector());
 		}
@@ -106,14 +124,30 @@ void ACPlayerController::OpenDoor(const FInputActionValue& Value)
 	if (IsValid(RunCharacter))
 	{
 		const EDoorType CurrDoorType = RunCharacter->GetWhichDoorCanOpen();
-		if (CurrDoorType != EDoorType::None)
+		ICGameModeInterface* GameMode = Cast<ICGameModeInterface>(GetWorld()->GetAuthGameMode());
+
+		if (GameMode != nullptr)
 		{
-			if (CurrDoorType != EDoorType::Quit)
+			switch (CurrDoorType)
 			{
+			default: break;
+
+			case EDoorType::Stage:
 				SetCharacterController(ECharacterControllerType::Play);
+				RunCharacter->OpenDoor();
+				GameMode->StartGame("Stage");
+				break;
+
+			case EDoorType::Arcade:
+				SetCharacterController(ECharacterControllerType::Play);
+				RunCharacter->OpenDoor();
+				GameMode->StartGame("Arcade");
+				break;
+
+			case EDoorType::Quit:
+				GameMode->ExitGame();
+				break;
 			}
-			SetControlRotation({0.f, 0.f, 0.f});
-			RunCharacter->OpenDoor(CurrDoorType);
 		}
 	}
 }
@@ -151,48 +185,36 @@ void ACPlayerController::TurnController(const FRotator& ControlRot)
 	}
 }
 
-void ACPlayerController::BeginPlay()
+void ACPlayerController::GameOver()
 {
-	Super::BeginPlay();
+	ICGameModeInterface* GameMode = Cast<ICGameModeInterface>(GetWorld()->GetAuthGameMode());
+	if (GameMode != nullptr)
+	{
+		DisableInput(nullptr);
+		SetActorTickEnabled(false);
 
-	RunCharacter = Cast<ACCharacter>(GetCharacter());
-	ensure(RunCharacter);
+		GameMode->SetTimer(1);
 
-	const FInputModeGameOnly GameOnlyInputMode;
-	SetInputMode(GameOnlyInputMode);
-	SetCharacterController(ECharacterControllerType::MainMenu);
+		DeathDelayTime = 2.f;
+		GetWorldTimerManager().SetTimer(DeathTimerHandler, this, &ACPlayerController::RestartLevel, DeathDelayTime,
+		                                false);
+	}
 }
 
 void ACPlayerController::SetCharacterController(const ECharacterControllerType InControllerType)
 {
-	ChangeCharacterStatus(InControllerType);
 	CurrControllerType = InControllerType;
+
+	if (CurrControllerType == ECharacterControllerType::Play)
+	{
+		SetControlRotation({ 0.f, 0.f, 0.f });
+	}
 
 	UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(
 		GetLocalPlayer());
 	if (IsValid(Subsystem))
 	{
 		Subsystem->ClearAllMappings();
-		Subsystem->AddMappingContext(InputMappings[InControllerType], 0);
-	}
-}
-
-void ACPlayerController::ChangeCharacterStatus(ECharacterControllerType InControllerType)
-{
-	if (InControllerType == ECharacterControllerType::MainMenu)
-	{
-		RunCharacter->SetCanTurn(true);
-		RunCharacter->GetCharacterMovement()->MaxWalkSpeed = 300.f;
-		RunCharacter->GetCharacterMovement()->MaxWalkSpeedCrouched = 300.f;
-		RunCharacter->PlayCamera->Deactivate();
-		RunCharacter->MenuCamera->Activate();
-	}
-	else
-	{
-		RunCharacter->SetCanTurn(false);
-		RunCharacter->GetCharacterMovement()->MaxWalkSpeed = 800.f;
-		RunCharacter->GetCharacterMovement()->MaxWalkSpeedCrouched = 800.f;
-		RunCharacter->PlayCamera->Activate();
-		RunCharacter->MenuCamera->Deactivate();
+		Subsystem->AddMappingContext(InputMappings[CurrControllerType], 0);
 	}
 }

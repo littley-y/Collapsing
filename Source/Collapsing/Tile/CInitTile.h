@@ -43,6 +43,12 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Wall")
 	TObjectPtr<UStaticMeshComponent> Wall2;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "TriggerBox")
+	TObjectPtr<class UBoxComponent> ArcadeDoorTrigger;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Door")
+	TObjectPtr<UStaticMeshComponent> ArcadeDoor;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Wall")
 	TObjectPtr<UStaticMeshComponent> Wall3;
 

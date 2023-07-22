@@ -49,7 +49,7 @@ void ACObstacleFloor::OnObstacleHit(UPrimitiveComponent* HitComponent, AActor* O
 		const float Dot = FVector::DotProduct(Hit.Normal, OtherActor->GetActorForwardVector());
 		if (!FMath::IsNearlyEqual(0.f, Dot, 0.1f))
 		{
-			RunCharacter->HitBySomething(0.9f);
+			RunCharacter->HitBySomething();
 		}
 	}
 }

@@ -6,6 +6,7 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "GameFramework/PlayerController.h"
+#include "Interface/CCharacterControllerInterface.h"
 #include "CPlayerController.generated.h"
 
 UENUM()
@@ -16,13 +17,21 @@ enum class ECharacterControllerType : uint8
 };
 
 UCLASS()
-class COLLAPSING_API ACPlayerController : public APlayerController
+class COLLAPSING_API ACPlayerController : public APlayerController, public ICCharacterControllerInterface
 {
 	GENERATED_BODY()
 
 public:
 	ACPlayerController(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+	virtual void Tick(float DeltaSeconds) override;
 
+protected:
+	virtual void BeginPlay() override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+	virtual void SetupInputComponent() override;
+
+	// Input Section
+public:
 	void Move(const FInputActionValue& Value);
 	void Turn(const FInputActionValue& Value);
 	void Jump(const FInputActionValue& Value);
@@ -37,23 +46,27 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input")
 	TObjectPtr<class UCInputDataAsset> InputActions;
 
-	virtual void SetupInputComponent() override;
-
-	virtual void Tick(float DeltaSeconds) override;
-
-	virtual void BeginPlay() override;
-
 	void SetCharacterController(ECharacterControllerType InControllerType);
-	void ChangeCharacterStatus(ECharacterControllerType InControllerType);
+	void TurnController(const FRotator& ControlRot);
 
 private:
 	bool bControllerCanTurn;
 	FRotator DesiredRotation;
+	ECharacterControllerType CurrControllerType;
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Pawn", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class ACCharacter> RunCharacter;
 
-	void TurnController(const FRotator& ControlRot);
+	// GameMode Section
+public:
+	virtual void GameOver() override;
 
-	ECharacterControllerType CurrControllerType;
-};											  
+protected:
+	FTimerHandle DeathTimerHandler;
+
+private:
+	float DeathDelayTime;
+
+
+	// UI Section
+};				  

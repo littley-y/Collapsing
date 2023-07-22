@@ -31,7 +31,7 @@ class COLLAPSING_API ICCharacterInteractionInterface
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
-	virtual void HitBySomething(const float LaunchRatio = 1.f) = 0;
+	virtual void HitBySomething() = 0;
 	virtual void EarnHpUpItem() = 0;
 
 	virtual void SetCanOpenDoor(EDoorType InDoorType, bool InStatus) = 0;

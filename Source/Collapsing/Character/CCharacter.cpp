@@ -9,44 +9,39 @@
 #include "UI/CWidgetComponent.h"
 #include "Stat/CCharacterStatComponent.h"
 #include "UI/CHpBarWidget.h"
-#include "Game/CollapsingGameMode.h"
+#include "Interface/CCharacterControllerInterface.h"
 
 ACCharacter::ACCharacter()
 {
+	SetActorTickEnabled(false);
 	bUseControllerRotationYaw = false;
-	bCanCharacterTurn = false;
-	bIsDead = false;
+	bCanCharacterTurn = true;
 
 	GetCharacterMovement()->bOrientRotationToMovement = true;
+	GetCharacterMovement()->GetNavAgentPropertiesRef().bCanCrouch = true;
+	GetCharacterMovement()->MaxWalkSpeed = 350.f;
+	GetCharacterMovement()->MaxWalkSpeedCrouched = 350.f;
 	GetCharacterMovement()->RotationRate = FRotator(0.f, 300.f, 0.f);
 
 	CanOpenDoor.Add(EDoorType::Stage, false);
+	CanOpenDoor.Add(EDoorType::Arcade, false);
 	CanOpenDoor.Add(EDoorType::Quit, false);
+	CanOpenDoor.Add(EDoorType::None, false);
 
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.f);
-	SetPlayCameraAndArm();
 	SetMenuCameraAndArm();
+	SetPlayCameraAndArm();
 	SetStatAndWidget();
-
-	GetCharacterMovement()->GetNavAgentPropertiesRef().bCanCrouch = true;
-}
-
-void ACCharacter::Tick(float DeltaSeconds)
-{
-	//GetCharacterMovement()->MaxWalkSpeed = FMath::Clamp(GetCharacterHp() * 20.f, 300.f, 800.f);
 }
 
 void ACCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	PlayCamera->Deactivate();
 	MenuCamera->Activate();
-}
-
-void ACCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
-{
-	GetWorldTimerManager().ClearAllTimersForObject(this);
+	PlayCamera->Deactivate();
+	HpBar->Deactivate();
+	HpBar->SetHiddenInGame(true);
 }
 
 void ACCharacter::ApplyDamage(const float InDamage) const
@@ -54,6 +49,14 @@ void ACCharacter::ApplyDamage(const float InDamage) const
 	if (IsValid(Stat))
 	{
 		Stat->ApplyDamage(InDamage);
+	}
+}
+
+void ACCharacter::SetCharacterSpeed(const float CurrHp) const
+{
+	if (CurrHp < 100.f)
+	{
+		GetCharacterMovement()->MaxWalkSpeed = FMath::Clamp(CurrHp * 8.f, 200.f, 800.f);
 	}
 }
 
@@ -65,17 +68,23 @@ void ACCharacter::EarnHpUpItem()
 	}
 }
 
-void ACCharacter::HitBySomething(const float LaunchRatio)
+void ACCharacter::HitBySomething()
 {
-	FVector LaunchVector = GetActorForwardVector() * -1200.f * LaunchRatio;
+	FVector LaunchVector = GetActorForwardVector() * -800.f;
 
-	LaunchVector.Z += 250.f * LaunchRatio;
+	LaunchVector.Z += 250.f;
 
 	LaunchCharacter(LaunchVector, true, true);
 	ApplyDamage(10.f);
+
 	if (bIsCrouched == true)
 	{
 		UnCrouch();
+	}
+
+	if (IsValid(HurtSound))
+	{
+		UGameplayStatics::SpawnSoundAttached(HurtSound, GetMesh());
 	}
 }
 
@@ -96,26 +105,10 @@ EDoorType ACCharacter::GetWhichDoorCanOpen()
 	return EDoorType::None;
 }
 
-void ACCharacter::OpenDoor(EDoorType InType)
+void ACCharacter::OpenDoor()
 {
-	ICGameModeInterface* GameMode = Cast<ICGameModeInterface>(GetWorld()->GetAuthGameMode());
-	if (GameMode != nullptr)
-	{
-		switch (InType)
-		{
-		default: break;
-
-		case EDoorType::Stage:
-			SetupCharacterMovement();
-			GameMode->StartStage();
-			SetActorLocationAndRotation({-700.f, 380.f, 100.f}, {0.f, 0.f, 0.f});
-			break;
-
-		case EDoorType::Quit:
-			GameMode->ExitGame();
-			break;
-		}
-	}
+	ChangeCharacterStatus();
+	SetActorLocationAndRotation({ -700.f, 380.f, 100.f }, FRotator::ZeroRotator);
 }
 
 float ACCharacter::GetCharacterHp() const
@@ -156,6 +149,7 @@ void ACCharacter::SetPlayCameraAndArm()
 	PlayCamera->bUsePawnControlRotation = false;
 	PlayCamera->SetupAttachment(PlayCameraArm, USpringArmComponent::SocketName);
 	PlayCamera->SetRelativeRotation(FRotator(-40.f, 0.f, 0.f));
+
 }
 
 void ACCharacter::SetMenuCameraAndArm()
@@ -188,23 +182,26 @@ void ACCharacter::SetupCharacterWidget(UCUserWidget* InUserWidget)
 		HpBarWidget->SetMaxHp(Stat->GetMaxHp());
 		HpBarWidget->UpdateHpBar(Stat->GetCurrentHp());
 		Stat->OnHpChanged.AddUObject(HpBarWidget, &UCHpBarWidget::UpdateHpBar);
+		Stat->OnHpChanged.AddUObject(this, &ACCharacter::SetCharacterSpeed);
 		Stat->OnHpZero.AddUObject(this, &ACCharacter::Death);
 	}
 }
 
-void ACCharacter::ChangeStatus()
+void ACCharacter::ChangeCharacterStatus()
 {
-}
+	PlayCamera->Activate();
+	MenuCamera->Deactivate();
+	HpBar->SetHiddenInGame(false);
 
-void ACCharacter::SetupCharacterMovement() const
-{
+	SetCanTurn(false);
+
 	UCharacterMovementComponent* CMC = GetCharacterMovement();
 	if (IsValid(CMC))
 	{
 		CMC->MaxWalkSpeedCrouched = 800.f;
 		CMC->MaxWalkSpeed = 800.f;
 		CMC->JumpZVelocity = 500.f;
-		CMC->AirControl = 1.f;
+		CMC->AirControl = 0.5f;
 	}
 }
 
@@ -226,41 +223,23 @@ void ACCharacter::SetStatAndWidget()
 
 void ACCharacter::Death(AActor* CausedActor)
 {
-	if (bIsDead == false)
+	ICCharacterControllerInterface* CharacterController = Cast<ICCharacterControllerInterface>(GetController());
+	if (CharacterController != nullptr)
 	{
-		const FVector Location = GetActorLocation();
-		const UWorld* CurrentWorld = GetWorld();
-		if (IsValid(CurrentWorld))
-		{
-			bIsDead = true;
-			GetController()->DisableInput(nullptr);
-			GetController()->SetActorTickEnabled(false);
-
-			if (DeathParticleSystem != nullptr)
-			{
-				UGameplayStatics::SpawnEmitterAtLocation(CurrentWorld, DeathParticleSystem, Location);
-			}
-			if (DeathSound != nullptr)
-			{
-				UGameplayStatics::PlaySoundAtLocation(CurrentWorld, DeathSound, Location);
-			}
-			HpBar->SetVisibility(false);
-
-			if (CausedActor != nullptr)
-			{
-				GetLocalViewingPlayerController()->SetViewTargetWithBlend(CausedActor, 0.5f);
-			}
-			DeathDelayTime = 1.5f;
-			GetWorldTimerManager().SetTimer(DeathTimerHandler, this, &ACCharacter::RestartGame, DeathDelayTime, false);
-		}
+		CharacterController->GameOver();
 	}
-}
 
-void ACCharacter::RestartGame()
-{
-	ICGameModeInterface* GameMode = Cast<ICGameModeInterface>(GetWorld()->GetAuthGameMode());
-	if (GameMode != nullptr)
+	if (IsValid(DeathSound))
 	{
-		GameMode->RestartGame();
+		UGameplayStatics::SpawnSoundAttached(DeathSound, GetMesh());
 	}
+
+	HpBar->Deactivate();
+	HpBar->SetHiddenInGame(true);
+
+	if (IsValid(CausedActor))
+	{
+		GetLocalViewingPlayerController()->SetViewTargetWithBlend(CausedActor, 0.5f);
+	}
+
 }

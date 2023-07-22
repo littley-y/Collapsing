@@ -23,9 +23,12 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Item)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Item")
 	TObjectPtr<UStaticMeshComponent> ItemMeshComponent;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Sound")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
 	TObjectPtr<USoundBase> PickSound;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Item")
+	TArray<TObjectPtr<UStaticMesh>> FruitsMeshes;
 };

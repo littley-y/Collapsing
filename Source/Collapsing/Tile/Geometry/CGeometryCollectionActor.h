@@ -22,6 +22,8 @@ public:
 	                     int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 protected:
+	virtual void BeginPlay() override;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Light", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UPointLightComponent> CeilingLight;
 

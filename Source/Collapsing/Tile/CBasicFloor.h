@@ -18,9 +18,13 @@ public:
 	virtual void DeactivateFloor();
 
 protected:
-	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+	void CreateFloor();
+	void CreateWalls();
+	void CreateCeiling();
 
 protected:
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	TObjectPtr<USceneComponent> SceneComponent;
 
@@ -58,9 +62,5 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Item")
 	TObjectPtr<AActor> SpawnedHpUpItem;
 
-protected:
-	void CreateFloor();
-	void CreateWalls();
-	void CreateCeiling();
 };
 

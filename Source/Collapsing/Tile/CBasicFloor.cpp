@@ -8,6 +8,7 @@
 ACBasicFloor::ACBasicFloor()
 {
 	PrimaryActorTick.bCanEverTick = false;
+	SetActorTickEnabled(false);
 
 	SceneComponent = CreateDefaultSubobject<USceneComponent>(TEXT("Scene"));
 	check(SceneComponent);
@@ -16,6 +17,11 @@ ACBasicFloor::ACBasicFloor()
 	CreateFloor();
 	CreateWalls();
 	CreateCeiling();
+}
+
+void ACBasicFloor::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	GetWorldTimerManager().ClearAllTimersForObject(this);
 }
 
 void ACBasicFloor::CreateFloor()
@@ -32,7 +38,7 @@ void ACBasicFloor::CreateFloor()
 	}
 
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> FloorMeshRef(
-		TEXT("/Script/Engine.StaticMesh'/Game/_GameAssets/Meshes/Structure/SM_Floor.SM_Floor'"));
+		TEXT("/Script/Engine.StaticMesh'/Game/_GameAssets/Meshes/Structures/SM_Floor.SM_Floor'"));
 	if (IsValid(FloorMeshRef.Object))
 	{
 		FloorMesh->SetStaticMesh(FloorMeshRef.Object);
@@ -57,7 +63,7 @@ void ACBasicFloor::CreateWalls()
 	RightWall->SetRelativeLocation(FVector(0.f, 400.f, -20.f));
 
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> WallMeshRef(
-		TEXT("/Script/Engine.StaticMesh'/Game/_GameAssets/Meshes/Structure/SM_Wall.SM_Wall'"));
+		TEXT("/Script/Engine.StaticMesh'/Game/_GameAssets/Meshes/Structures/SM_Wall.SM_Wall'"));
 	if (IsValid(WallMeshRef.Object))
 	{
 		LeftWall->SetStaticMesh(WallMeshRef.Object);
@@ -75,7 +81,7 @@ void ACBasicFloor::CreateCeiling()
 	CeilingMesh->SetRelativeLocation(FVector(0.f, 0.f, 180.f));
 
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> CeilingMeshRef(
-		TEXT("/Script/Engine.StaticMesh'/Game/_GameAssets/Meshes/Structure/SM_Ceiling.SM_Ceiling'"));
+		TEXT("/Script/Engine.StaticMesh'/Game/_GameAssets/Meshes/Structures/SM_Ceiling.SM_Ceiling'"));
 	if (IsValid(CeilingMeshRef.Object))
 	{
 		CeilingMesh->SetStaticMesh(CeilingMeshRef.Object);
@@ -100,7 +106,7 @@ void ACBasicFloor::CreateCeiling()
 	CeilingLight->SetIntensity(10000.f);
 	CeilingLight->SetUseTemperature(true);
 	CeilingLight->SetTemperature(5500.f);
-	CeilingLight->SetCastShadows(false);
+	CeilingLight->SetCastShadows(true);
 }
 
 
@@ -132,11 +138,6 @@ void ACBasicFloor::DeactivateFloor()
 	GetWorldTimerManager().SetTimer(DestroyTimerHandle, DestroyTimerDelegate, DestroyTime, false);
 }
 
-void ACBasicFloor::EndPlay(const EEndPlayReason::Type EndPlayReason)
-{
-	GetWorldTimerManager().ClearAllTimersForObject(this);
-}
-
 void ACBasicFloor::OnWallHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
 	FVector NormalImpulse, const FHitResult& Hit)
 {
@@ -146,7 +147,7 @@ void ACBasicFloor::OnWallHit(UPrimitiveComponent* HitComponent, AActor* OtherAct
 		const float Dot = FVector::DotProduct(Hit.Normal, OtherActor->GetActorForwardVector());
 		if (Dot > 0.99f && Dot < 1.01f)
 		{
-			RunCharacter->HitBySomething(1.5f);
+			RunCharacter->HitBySomething();
 		}
 	}
 }

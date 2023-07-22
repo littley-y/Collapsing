@@ -21,9 +21,9 @@ class COLLAPSING_API ICGameModeInterface
 	GENERATED_BODY()
 
 public:
-	virtual void SyncTimer() = 0;
-	virtual void StartStage() = 0;
-	virtual void StartArcade() = 0;
+	virtual void SetTimer(int32 InTimerType) = 0;
+
+	virtual void StartGame(const FString MapType) = 0;
 	virtual void ExitGame() = 0;
 	virtual void RestartGame() = 0;
 };

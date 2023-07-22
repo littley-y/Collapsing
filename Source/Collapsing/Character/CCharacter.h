@@ -9,20 +9,18 @@
 #include "CCharacter.generated.h"
 
 UCLASS()
-class COLLAPSING_API ACCharacter : public ACharacter, public ICCharacterWidgetInterface, public ICCharacterInteractionInterface
+class COLLAPSING_API ACCharacter : public ACharacter, public ICCharacterWidgetInterface,
+                                   public ICCharacterInteractionInterface
 {
 	GENERATED_BODY()
 
 public:
 	ACCharacter();
 
-	virtual void Tick(float DeltaSeconds) override;
-
 protected:
 	virtual void BeginPlay() override;
-	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
-// Camera System
+	// Camera System
 public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class USpringArmComponent> PlayCameraArm;
@@ -40,33 +38,31 @@ private:
 	void SetPlayCameraAndArm();
 	void SetMenuCameraAndArm();
 
-// Movement System
+	// Movement System
 public:
 	FORCEINLINE virtual void SetCanTurn(const bool InStatus) override { bCanCharacterTurn = InStatus; };
 	FORCEINLINE virtual bool GetCanTurn() const override { return bCanCharacterTurn; }
-
-	void ChangeStatus();
+	void SetCharacterSpeed(float CurrHp) const;
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Interaction, Meta = (AllowPrivatAcces = "true"))
 	bool bCanCharacterTurn;
 
-	void SetupCharacterMovement() const;
-
-// Interaction System
+	// Interaction System
 public:
 	virtual void EarnHpUpItem() override;
-	virtual void HitBySomething(const float LaunchRatio) override;
+	virtual void HitBySomething() override;
 	virtual void SetCanOpenDoor(EDoorType InType, const bool InStatus) override;;
 	virtual EDoorType GetWhichDoorCanOpen() override;;
 
-	void OpenDoor(EDoorType InType);
+	void ChangeCharacterStatus();
+	void OpenDoor();
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Interaction, Meta = (AllowPrivatAcces = "true"))
 	TMap<EDoorType, bool> CanOpenDoor;
 
-// Stat System
+	// Stat System
 public:
 	UFUNCTION(BlueprintCallable)
 	float GetCharacterHp() const;
@@ -78,7 +74,7 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stat, Meta = (AllowPrivatAcces = "true"))
 	TObjectPtr<class UCCharacterStatComponent> Stat;
 
-// UI System
+	// UI System
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Widget, Meta = (AllowPrivatAcces = "true"))
 	TObjectPtr<class UCWidgetComponent> HpBar;
@@ -86,26 +82,19 @@ protected:
 	virtual void SetupCharacterWidget(class UCUserWidget* InUserWidget) override;
 	void SetStatAndWidget();
 
-// Stat System
+	// Stat System
 public:
 	void ApplyDamage(const float InDamage) const;
 
-// Death System
+	// Death System
 public:
-	bool bIsDead;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Particle")
-	TObjectPtr<UParticleSystem> DeathParticleSystem;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Sound")
-	TObjectPtr<USoundBase> DeathSound;
-	
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION()
 	virtual void Death(AActor* CausedActor) override;
 
 protected:
-	FTimerHandle DeathTimerHandler;
-	float DeathDelayTime;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Sound")
+	TObjectPtr<USoundBase> DeathSound;
 
-	void RestartGame();
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Sound")
+	TObjectPtr<USoundBase> HurtSound;
 };

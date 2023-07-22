@@ -4,13 +4,13 @@
 #include "Components/BoxComponent.h"
 #include "Components/PointLightComponent.h"
 #include "Interface/CCharacterInteractionInterface.h"
-#include "Game/CollapsingGameMode.h"
 
 ACInitTile::ACInitTile()
 {
 	PrimaryActorTick.bCanEverTick = false;
 
 	SceneComponent = CreateDefaultSubobject<USceneComponent>(TEXT("Scene"));
+	RootComponent = SceneComponent;
 
 	Floor = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Floor"));
 	Floor->SetupAttachment(SceneComponent);
@@ -54,6 +54,17 @@ void ACInitTile::SetWalls()
 
 	QuitDoor = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("QuitDoor"));
 	QuitDoor->SetupAttachment(Wall3);
+
+	ArcadeDoorTrigger = CreateDefaultSubobject<UBoxComponent>(TEXT("ArcadeDoorTrigger"));
+	ArcadeDoorTrigger->SetupAttachment(Wall2);
+	ArcadeDoorTrigger->SetBoxExtent({ 80.f, 80.f, 10.f });
+
+	ArcadeDoorTrigger->SetGenerateOverlapEvents(true);
+	ArcadeDoorTrigger->OnComponentBeginOverlap.AddDynamic(this, &ACInitTile::OnPlayerDoorEntered);
+	ArcadeDoorTrigger->OnComponentEndOverlap.AddDynamic(this, &ACInitTile::OnPlayerDoorExited);
+
+	ArcadeDoor = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ArcadeDoor"));
+	ArcadeDoor->SetupAttachment(Wall2);
 }
 
 void ACInitTile::OnPlayerDoorEntered(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
@@ -70,6 +81,10 @@ void ACInitTile::OnPlayerDoorEntered(UPrimitiveComponent* OverlappedComp, AActor
 		else if (OverlappedComp == QuitDoorTrigger)
 		{
 			RunCharacter->SetCanOpenDoor(EDoorType::Quit, true);
+		}
+		else if (OverlappedComp == ArcadeDoorTrigger)
+		{
+			RunCharacter->SetCanOpenDoor(EDoorType::Arcade, true);
 		}
 		UE_LOG(LogTemp, Warning, TEXT("RunCharacter Valid"))
 	}
@@ -88,6 +103,10 @@ void ACInitTile::OnPlayerDoorExited(UPrimitiveComponent* OverlappedComp, AActor*
 		else if (OverlappedComp == QuitDoorTrigger)
 		{
 			RunCharacter->SetCanOpenDoor(EDoorType::Quit, false);
+		}
+		else if (OverlappedComp == ArcadeDoorTrigger)
+		{
+			RunCharacter->SetCanOpenDoor(EDoorType::Arcade, false);
 		}
 		UE_LOG(LogTemp, Warning, TEXT("RunCharacter Valid"))
 	}

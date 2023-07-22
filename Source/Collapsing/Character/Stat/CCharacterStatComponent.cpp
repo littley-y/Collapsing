@@ -4,7 +4,7 @@
 
 UCCharacterStatComponent::UCCharacterStatComponent()
 {
-	MaxHp = 10000.f;
+	MaxHp = 200.f;
 	CurrentHp = MaxHp;
 	PrimaryComponentTick.bCanEverTick = true;
 }

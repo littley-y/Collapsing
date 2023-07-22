@@ -24,6 +24,8 @@ public:
 	virtual void RestartGame() override;
 
 protected:
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+
 	UPROPERTY()
 	TObjectPtr<class UCTileManager> TileManager;
 

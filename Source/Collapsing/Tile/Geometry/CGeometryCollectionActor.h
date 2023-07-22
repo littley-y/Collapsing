@@ -31,4 +31,8 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "TriggerBox", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UBoxComponent> CharacterDeathZone;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DeathCam", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<class UCameraComponent> DeathCam;
+
+
 };

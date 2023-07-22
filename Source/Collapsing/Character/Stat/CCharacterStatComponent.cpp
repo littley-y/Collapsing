@@ -37,7 +37,7 @@ float UCCharacterStatComponent::ApplyDamage(const float InDamage)
 	SetHp(PrevHp - ActualDamage);
 	if (CurrentHp <= KINDA_SMALL_NUMBER)
 	{
-		OnHpZero.Broadcast(0);
+		OnHpZero.Broadcast(nullptr);
 	}
 
 	return ActualDamage;

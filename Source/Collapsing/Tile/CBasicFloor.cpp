@@ -127,14 +127,14 @@ void ACBasicFloor::DeactivateFloor()
 		SpawnedHpUpItem->Destroy();
 	}
 
-	FTimerHandle DestroyTimerHandle;
 	constexpr float DestroyTime = 0.1f;
+	DestroyTimerDelegate.BindUFunction(this, "SetActorEnableCollision", false);
+	GetWorldTimerManager().SetTimer(DestroyTimerHandle, DestroyTimerDelegate, DestroyTime, false);
+}
 
-	GetWorld()->GetTimerManager().SetTimer(DestroyTimerHandle, FTimerDelegate::CreateLambda([&]()
-		{
-			SetActorEnableCollision(false);
-			GetWorld()->GetTimerManager().ClearTimer(DestroyTimerHandle);
-		}), DestroyTime, false);
+void ACBasicFloor::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	GetWorldTimerManager().ClearAllTimersForObject(this);
 }
 
 void ACBasicFloor::OnWallHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
@@ -146,14 +146,7 @@ void ACBasicFloor::OnWallHit(UPrimitiveComponent* HitComponent, AActor* OtherAct
 		const float Dot = FVector::DotProduct(Hit.Normal, OtherActor->GetActorForwardVector());
 		if (Dot > 0.99f && Dot < 1.01f)
 		{
-			if (RunCharacter->GetCanTurn() == true)
-			{
-				RunCharacter->HitBySomething(1.5f);
-			}
-			else
-			{
-				RunCharacter->Death();
-			}
+			RunCharacter->HitBySomething(1.5f);
 		}
 	}
 }

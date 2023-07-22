@@ -16,13 +16,16 @@ ACCharacter::ACCharacter()
 	bUseControllerRotationYaw = false;
 	bCanCharacterTurn = false;
 	bIsDead = false;
+
+	GetCharacterMovement()->bOrientRotationToMovement = true;
+	GetCharacterMovement()->RotationRate = FRotator(0.f, 300.f, 0.f);
+
 	CanOpenDoor.Add(EDoorType::Stage, false);
 	CanOpenDoor.Add(EDoorType::Quit, false);
 
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.f);
 	SetPlayCameraAndArm();
 	SetMenuCameraAndArm();
-	SetupCharacterMovement();
 	SetStatAndWidget();
 
 	GetCharacterMovement()->GetNavAgentPropertiesRef().bCanCrouch = true;
@@ -39,6 +42,11 @@ void ACCharacter::BeginPlay()
 
 	PlayCamera->Deactivate();
 	MenuCamera->Activate();
+}
+
+void ACCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	GetWorldTimerManager().ClearAllTimersForObject(this);
 }
 
 void ACCharacter::ApplyDamage(const float InDamage) const
@@ -93,16 +101,14 @@ void ACCharacter::OpenDoor(EDoorType InType)
 	ICGameModeInterface* GameMode = Cast<ICGameModeInterface>(GetWorld()->GetAuthGameMode());
 	if (GameMode != nullptr)
 	{
-		FVector CurrLocation = GetActorLocation();
-
 		switch (InType)
 		{
 		default: break;
 
 		case EDoorType::Stage:
+			SetupCharacterMovement();
 			GameMode->StartStage();
-			CurrLocation.X += 200.f;
-			SetActorLocation(CurrLocation);
+			SetActorLocationAndRotation({-700.f, 380.f, 100.f}, {0.f, 0.f, 0.f});
 			break;
 
 		case EDoorType::Quit:
@@ -110,8 +116,6 @@ void ACCharacter::OpenDoor(EDoorType InType)
 			break;
 		}
 	}
-
-	UE_LOG(LogTemp, Warning, TEXT("Open Door"));
 }
 
 float ACCharacter::GetCharacterHp() const
@@ -198,9 +202,6 @@ void ACCharacter::SetupCharacterMovement() const
 	if (IsValid(CMC))
 	{
 		CMC->MaxWalkSpeedCrouched = 800.f;
-		CMC->bOrientRotationToMovement = true;
-		CMC->RotationRate = FRotator(0.f, 300.f, 0.f);
-
 		CMC->MaxWalkSpeed = 800.f;
 		CMC->JumpZVelocity = 500.f;
 		CMC->AirControl = 1.f;
@@ -223,7 +224,7 @@ void ACCharacter::SetStatAndWidget()
 	}
 }
 
-void ACCharacter::Death(const int32 DeathType)
+void ACCharacter::Death(AActor* CausedActor)
 {
 	if (bIsDead == false)
 	{
@@ -233,6 +234,7 @@ void ACCharacter::Death(const int32 DeathType)
 		{
 			bIsDead = true;
 			GetController()->DisableInput(nullptr);
+			GetController()->SetActorTickEnabled(false);
 
 			if (DeathParticleSystem != nullptr)
 			{
@@ -242,10 +244,23 @@ void ACCharacter::Death(const int32 DeathType)
 			{
 				UGameplayStatics::PlaySoundAtLocation(CurrentWorld, DeathSound, Location);
 			}
-			GetMesh()->SetVisibility(false);
 			HpBar->SetVisibility(false);
 
-			GetLocalViewingPlayerController()->RestartLevel();
+			if (CausedActor != nullptr)
+			{
+				GetLocalViewingPlayerController()->SetViewTargetWithBlend(CausedActor, 0.5f);
+			}
+			DeathDelayTime = 1.5f;
+			GetWorldTimerManager().SetTimer(DeathTimerHandler, this, &ACCharacter::RestartGame, DeathDelayTime, false);
 		}
+	}
+}
+
+void ACCharacter::RestartGame()
+{
+	ICGameModeInterface* GameMode = Cast<ICGameModeInterface>(GetWorld()->GetAuthGameMode());
+	if (GameMode != nullptr)
+	{
+		GameMode->RestartGame();
 	}
 }

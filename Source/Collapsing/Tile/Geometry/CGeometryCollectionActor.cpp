@@ -3,6 +3,7 @@
 #include "Tile/Geometry/CGeometryCollectionActor.h"
 #include "Components/BoxComponent.h"
 #include "GeometryCollection/GeometryCollectionComponent.h"
+#include "Camera/CameraComponent.h"
 #include "Interface/CCharacterInteractionInterface.h"
 
 ACGeometryCollectionActor::ACGeometryCollectionActor()
@@ -13,11 +14,17 @@ ACGeometryCollectionActor::ACGeometryCollectionActor()
 	CharacterDeathZone = CreateDefaultSubobject<UBoxComponent>(TEXT("CharacterDeathZone"));
 
 	CharacterDeathZone->SetupAttachment(GetGeometryCollectionComponent());
-	CharacterDeathZone->SetBoxExtent(FVector(400.f, 400.f, 10.f));
-	CharacterDeathZone->SetRelativeLocation(FVector(400.f, 400.f, -400.f));
+	CharacterDeathZone->SetBoxExtent(FVector(800.f, 800.f, 10.f));
+	CharacterDeathZone->SetRelativeLocation(FVector(400.f, 400.f, -300.f));
 
 	CharacterDeathZone->SetGenerateOverlapEvents(true); 
 	CharacterDeathZone->OnComponentBeginOverlap.AddDynamic(this, &ACGeometryCollectionActor::OnPlayerDeathOverlap);
+
+	DeathCam = CreateDefaultSubobject<UCameraComponent>(TEXT("DeathCam"));
+	DeathCam->SetupAttachment(CharacterDeathZone);
+	DeathCam->SetFieldOfView(120.f);
+	DeathCam->SetRelativeLocationAndRotation({100.f, 100.f, 0.f}, {-90.f, 180.f, 0.f});
+	DeathCam->Deactivate();
 }
 
 void ACGeometryCollectionActor::OnPlayerDeathOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
@@ -26,6 +33,7 @@ void ACGeometryCollectionActor::OnPlayerDeathOverlap(UPrimitiveComponent* Overla
 	ICCharacterInteractionInterface* RunCharacter = Cast<ICCharacterInteractionInterface>(OtherActor);
 	if (RunCharacter != nullptr && OtherComp)
 	{
-		RunCharacter->Death();
+		DeathCam->Activate();
+		RunCharacter->Death(this);
 	}
 }

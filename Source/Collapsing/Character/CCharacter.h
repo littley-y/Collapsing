@@ -20,6 +20,7 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 // Camera System
 public:
@@ -100,5 +101,11 @@ public:
 	TObjectPtr<USoundBase> DeathSound;
 	
 	UFUNCTION(BlueprintCallable)
-	virtual void Death(const int32 DeathType = 0) override;
+	virtual void Death(AActor* CausedActor) override;
+
+protected:
+	FTimerHandle DeathTimerHandler;
+	float DeathDelayTime;
+
+	void RestartGame();
 };

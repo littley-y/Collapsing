@@ -182,7 +182,7 @@ void UCTileManager::DestroyTile()
 	}
 	const FTransform CurrTransform = TargetTile->GetActorTransform();
 	AActor* DestroyingFloor = GetWorld()->SpawnActor<AActor>(GeometryFloorMap[MapChar], CurrTransform);
-	DestroyingFloor->SetLifeSpan(1.5f);
+	DestroyingFloor->SetLifeSpan(3.f);
 
 	TargetTile->DeactivateFloor();
 	TargetIndex = (TargetIndex + 1) % MaxTileNum;

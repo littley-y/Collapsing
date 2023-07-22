@@ -18,11 +18,17 @@ public:
 	virtual void DeactivateFloor();
 
 protected:
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+
+protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	TObjectPtr<USceneComponent> SceneComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Floor")
 	TObjectPtr<UStaticMeshComponent> FloorMesh;
+
+	FTimerHandle DestroyTimerHandle;
+	FTimerDelegate DestroyTimerDelegate;
 
 // Wall Section
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Wall")

@@ -95,7 +95,7 @@ void ACPlayerController::StopJump(const FInputActionValue& Value)
 
 void ACPlayerController::Slide(const FInputActionValue& Value)
 {
-	if (IsValid(RunCharacter) && RunCharacter->GetCharacterMovement()->IsFalling() == false)
+	if (IsValid(RunCharacter))
 	{
 		RunCharacter->Crouch();
 	}
@@ -112,6 +112,7 @@ void ACPlayerController::OpenDoor(const FInputActionValue& Value)
 			{
 				SetCharacterController(ECharacterControllerType::Play);
 			}
+			SetControlRotation({0.f, 0.f, 0.f});
 			RunCharacter->OpenDoor(CurrDoorType);
 		}
 	}

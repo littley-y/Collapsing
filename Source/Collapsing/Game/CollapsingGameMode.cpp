@@ -6,7 +6,13 @@
 
 ACollapsingGameMode::ACollapsingGameMode()
 {
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
+	TileSpawnTime = 1.6f;
+	TileDestroyTime = 0.8f;
+	DestroyDelay = 4.f;
+	MaxTileNum = 20;
+	StartPosition = { -1000.f, 0.f, 1000.f };
+
 	TileManager = CreateDefaultSubobject<UCTileManager>(TEXT("TileManager"));
 
 	static ConstructorHelpers::FClassFinder<APawn> CollapsingPawnRef(
@@ -23,17 +29,24 @@ ACollapsingGameMode::ACollapsingGameMode()
 		PlayerControllerClass = CollapsingControllerRef.Class;
 	}
 
-	TileSpawnTime = 1.6f;
-	TileDestroyTime = 0.8f;
-	DestroyDelay = 4.f;
-	MaxTileNum = 20;
-	StartPosition = { -1000.f, 0.f, 1000.f };
+	static ConstructorHelpers::FClassFinder<AActor> InitTileRef(
+		TEXT("/Script/Engine.Blueprint'/Game/Collapsing/Tile/BP_CInitTile.BP_CInitTile_C'"));
+	if (IsValid(InitTileRef.Class))
+	{
+		BP_InitTile = InitTileRef.Class;
+	}
 }
 
 void ACollapsingGameMode::BeginPlay()
 {
 	Super::BeginPlay();
 
+	if (IsValid(BP_InitTile))
+	{
+		const FVector InitTileLocation = {-800.f, -200.f, 0.f};
+		const FRotator InitTileRotation = { 0.f, 90.f, 0.f};
+		InitTile = GetWorld()->SpawnActor<AActor>(BP_InitTile, InitTileLocation, InitTileRotation);
+	}
 }
 
 void ACollapsingGameMode::SetMapBasicString()
@@ -81,6 +94,11 @@ void ACollapsingGameMode::StartArcade()
 void ACollapsingGameMode::ExitGame()
 {
 	UKismetSystemLibrary::ExecuteConsoleCommand(GetWorld(), TEXT("EXIT"));
+}
+
+void ACollapsingGameMode::RestartGame()
+{
+	UKismetSystemLibrary::ExecuteConsoleCommand(GetWorld(), TEXT("RestartGame"));
 }
 
 void ACollapsingGameMode::SetTileGenerate() const

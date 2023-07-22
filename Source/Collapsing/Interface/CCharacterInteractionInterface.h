@@ -6,6 +6,15 @@
 #include "UObject/Interface.h"
 #include "CCharacterInteractionInterface.generated.h"
 
+UENUM()
+enum class EDoorType : uint8
+{
+	Stage,
+	Arcade,
+	Quit,
+	None
+};
+
 // This class does not need to be modified.
 UINTERFACE(MinimalAPI)
 class UCCharacterInteractionInterface : public UInterface
@@ -25,8 +34,8 @@ public:
 	virtual void HitBySomething(const float LaunchRatio = 1.f) = 0;
 	virtual void EarnHpUpItem() = 0;
 
-	virtual void SetCanOpenDoor(bool InStatus) = 0;
-	virtual bool GetCanOpenDoor() = 0;
+	virtual void SetCanOpenDoor(EDoorType InDoorType, bool InStatus) = 0;
+	virtual EDoorType GetWhichDoorCanOpen() = 0;
 
 	virtual void SetCanTurn(bool InStatus) = 0;
 	virtual bool GetCanTurn() const = 0;

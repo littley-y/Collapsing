@@ -2,6 +2,7 @@
 
 #include "CPlayerController.h"
 #include "CCharacter.h"
+#include "Camera/CameraComponent.h"
 #include "Data/CInputDataAsset.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -96,16 +97,23 @@ void ACPlayerController::Slide(const FInputActionValue& Value)
 {
 	if (IsValid(RunCharacter) && RunCharacter->GetCharacterMovement()->IsFalling() == false)
 	{
-		DisableInput(this);
 		RunCharacter->Crouch();
 	}
 }
 
 void ACPlayerController::OpenDoor(const FInputActionValue& Value)
 {
-	if (IsValid(RunCharacter) && RunCharacter->GetCanOpenDoor() == true)
+	if (IsValid(RunCharacter))
 	{
-		RunCharacter->OpenDoor();
+		const EDoorType CurrDoorType = RunCharacter->GetWhichDoorCanOpen();
+		if (CurrDoorType != EDoorType::None)
+		{
+			if (CurrDoorType != EDoorType::Quit)
+			{
+				SetCharacterController(ECharacterControllerType::Play);
+			}
+			RunCharacter->OpenDoor(CurrDoorType);
+		}
 	}
 }
 
@@ -151,10 +159,10 @@ void ACPlayerController::BeginPlay()
 
 	const FInputModeGameOnly GameOnlyInputMode;
 	SetInputMode(GameOnlyInputMode);
-	SetCharacterControl(ECharacterControllerType::MainMenu);
+	SetCharacterController(ECharacterControllerType::MainMenu);
 }
 
-void ACPlayerController::SetCharacterControl(const ECharacterControllerType InControllerType)
+void ACPlayerController::SetCharacterController(const ECharacterControllerType InControllerType)
 {
 	ChangeCharacterStatus(InControllerType);
 	CurrControllerType = InControllerType;
@@ -175,10 +183,15 @@ void ACPlayerController::ChangeCharacterStatus(ECharacterControllerType InContro
 		RunCharacter->SetCanTurn(true);
 		RunCharacter->GetCharacterMovement()->MaxWalkSpeed = 300.f;
 		RunCharacter->GetCharacterMovement()->MaxWalkSpeedCrouched = 300.f;
+		RunCharacter->PlayCamera->Deactivate();
+		RunCharacter->MenuCamera->Activate();
 	}
 	else
 	{
 		RunCharacter->SetCanTurn(false);
 		RunCharacter->GetCharacterMovement()->MaxWalkSpeed = 800.f;
+		RunCharacter->GetCharacterMovement()->MaxWalkSpeedCrouched = 800.f;
+		RunCharacter->PlayCamera->Activate();
+		RunCharacter->MenuCamera->Deactivate();
 	}
 }

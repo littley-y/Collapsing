@@ -63,7 +63,14 @@ void ACInitTile::OnPlayerDoorEntered(UPrimitiveComponent* OverlappedComp, AActor
 	ICCharacterInteractionInterface* RunCharacter = Cast<ICCharacterInteractionInterface>(OtherActor);
 	if (RunCharacter != nullptr && OtherComp)
 	{
-		RunCharacter->SetCanOpenDoor(true);
+		if (OverlappedComp == StageDoorTrigger)
+		{
+			RunCharacter->SetCanOpenDoor(EDoorType::Stage, true);
+		}
+		else if (OverlappedComp == QuitDoorTrigger)
+		{
+			RunCharacter->SetCanOpenDoor(EDoorType::Quit, true);
+		}
 		UE_LOG(LogTemp, Warning, TEXT("RunCharacter Valid"))
 	}
 }
@@ -74,7 +81,14 @@ void ACInitTile::OnPlayerDoorExited(UPrimitiveComponent* OverlappedComp, AActor*
 	ICCharacterInteractionInterface* RunCharacter = Cast<ICCharacterInteractionInterface>(OtherActor);
 	if (RunCharacter != nullptr && OtherComp)
 	{
-		RunCharacter->SetCanOpenDoor(false);
+		if (OverlappedComp == StageDoorTrigger)
+		{
+			RunCharacter->SetCanOpenDoor(EDoorType::Stage, false);
+		}
+		else if (OverlappedComp == QuitDoorTrigger)
+		{
+			RunCharacter->SetCanOpenDoor(EDoorType::Quit, false);
+		}
 		UE_LOG(LogTemp, Warning, TEXT("RunCharacter Valid"))
 	}
 }

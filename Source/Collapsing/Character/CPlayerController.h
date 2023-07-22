@@ -43,7 +43,7 @@ protected:
 
 	virtual void BeginPlay() override;
 
-	void SetCharacterControl(ECharacterControllerType InControllerType);
+	void SetCharacterController(ECharacterControllerType InControllerType);
 	void ChangeCharacterStatus(ECharacterControllerType InControllerType);
 
 private:

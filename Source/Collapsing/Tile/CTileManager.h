@@ -40,11 +40,19 @@ class COLLAPSING_API UCTileManager : public UObject
 public:
 	UCTileManager();
 
+// Map Section
+public:
 	void SetMapString(const FString& InMapString);
-
-	static void LoadBPClass(TMap<uint32, TSubclassOf<AActor>>& TargetMap, uint32 KeyChar, const FString& BPPath);
-
 	void InitMaps(const FVector& InStartPosition, const int32 InMaxTileNum);
+
+private:
+	UPROPERTY()
+	FString MapString;
+	FVector StartPosition;
+
+// Tile Section
+public:
+	static void LoadBPClass(TMap<uint32, TSubclassOf<AActor>>& TargetMap, uint32 KeyChar, const FString& BPPath);
 
 	void SpawnTile();
 	void DestroyTile();
@@ -60,12 +68,8 @@ protected:
 	TMap<uint32, FTilePool> FloorTilePool;
 
 private:
-	UPROPERTY()
-	FString MapString;
-
 	FTileGeneratorTransform TileGenTrans;
 
-	FVector StartPosition;
 	int32 MaxTileNum;
 
 	uint32 TargetSpawnIndex;

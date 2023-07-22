@@ -50,19 +50,20 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Interaction, Meta = (AllowPrivatAcces = "true"))
 	bool bCanCharacterTurn;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Interaction, Meta = (AllowPrivatAcces = "true"))
-	bool bCanCharacterOpenDoor;
-
 	void SetupCharacterMovement() const;
 
 // Interaction System
 public:
 	virtual void EarnHpUpItem() override;
 	virtual void HitBySomething(const float LaunchRatio) override;
-	FORCEINLINE virtual void SetCanOpenDoor(const bool InStatus) override { bCanCharacterOpenDoor = InStatus; };
-	FORCEINLINE virtual bool GetCanOpenDoor() override { return bCanCharacterOpenDoor; };
+	virtual void SetCanOpenDoor(EDoorType InType, const bool InStatus) override;;
+	virtual EDoorType GetWhichDoorCanOpen() override;;
 
-	void OpenDoor() const;
+	void OpenDoor(EDoorType InType);
+
+protected:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Interaction, Meta = (AllowPrivatAcces = "true"))
+	TMap<EDoorType, bool> CanOpenDoor;
 
 // Stat System
 public:
@@ -100,12 +101,4 @@ public:
 	
 	UFUNCTION(BlueprintCallable)
 	virtual void Death(const int32 DeathType = 0) override;
-
-protected:
-	UPROPERTY()
-	FTimerHandle RestartTimerHandle;
-
-	UFUNCTION()
-	void OnDeath();
-
 };

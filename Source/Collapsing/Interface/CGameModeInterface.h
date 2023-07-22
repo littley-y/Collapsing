@@ -25,4 +25,5 @@ public:
 	virtual void StartStage() = 0;
 	virtual void StartArcade() = 0;
 	virtual void ExitGame() = 0;
+	virtual void RestartGame() = 0;
 };

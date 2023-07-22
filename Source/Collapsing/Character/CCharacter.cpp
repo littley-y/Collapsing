@@ -15,8 +15,9 @@ ACCharacter::ACCharacter()
 {
 	bUseControllerRotationYaw = false;
 	bCanCharacterTurn = false;
-	bCanCharacterOpenDoor = false;
 	bIsDead = false;
+	CanOpenDoor.Add(EDoorType::Stage, false);
+	CanOpenDoor.Add(EDoorType::Quit, false);
 
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.f);
 	SetPlayCameraAndArm();
@@ -70,16 +71,47 @@ void ACCharacter::HitBySomething(const float LaunchRatio)
 	}
 }
 
-void ACCharacter::OpenDoor() const
+void ACCharacter::SetCanOpenDoor(const EDoorType InType, const bool InStatus)
+{
+	CanOpenDoor[InType] = InStatus;
+}
+
+EDoorType ACCharacter::GetWhichDoorCanOpen()
+{
+	for (const auto& CheckDoor : CanOpenDoor)
+	{
+		if (CheckDoor.Value == true)
+		{
+			return CheckDoor.Key;
+		}
+	}
+	return EDoorType::None;
+}
+
+void ACCharacter::OpenDoor(EDoorType InType)
 {
 	ICGameModeInterface* GameMode = Cast<ICGameModeInterface>(GetWorld()->GetAuthGameMode());
 	if (GameMode != nullptr)
 	{
-		GameMode->StartStage();
+		FVector CurrLocation = GetActorLocation();
+
+		switch (InType)
+		{
+		default: break;
+
+		case EDoorType::Stage:
+			GameMode->StartStage();
+			CurrLocation.X += 200.f;
+			SetActorLocation(CurrLocation);
+			break;
+
+		case EDoorType::Quit:
+			GameMode->ExitGame();
+			break;
+		}
 	}
 
 	UE_LOG(LogTemp, Warning, TEXT("Open Door"));
-
 }
 
 float ACCharacter::GetCharacterHp() const
@@ -213,23 +245,7 @@ void ACCharacter::Death(const int32 DeathType)
 			GetMesh()->SetVisibility(false);
 			HpBar->SetVisibility(false);
 
-			CurrentWorld->GetTimerManager().SetTimer(RestartTimerHandle, this, &ACCharacter::OnDeath, 1.f);
+			GetLocalViewingPlayerController()->RestartLevel();
 		}
-	}
-}
-
-void ACCharacter::OnDeath()
-{
-	bIsDead = false;
-
-	if (RestartTimerHandle.IsValid())
-	{
-		GetWorldTimerManager().ClearTimer(RestartTimerHandle);
-	}
-
-	ICGameModeInterface* GameMode = Cast<ICGameModeInterface>(GetWorld()->GetAuthGameMode());
-	if (GameMode)
-	{
-		GameMode->ExitGame();
 	}
 }

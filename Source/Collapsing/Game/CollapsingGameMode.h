@@ -21,10 +21,20 @@ public:
 	virtual void StartStage() override;
 	virtual void StartArcade() override;
 	virtual void ExitGame() override;
+	virtual void RestartGame() override;
 
 protected:
 	UPROPERTY()
 	TObjectPtr<class UCTileManager> TileManager;
+
+	UPROPERTY()
+	TObjectPtr<class AActor> InitTile;
+
+	UPROPERTY()
+	TSubclassOf<class AActor> BP_InitTile;
+
+	UPROPERTY()
+	TObjectPtr<class AActor> GeometryInitTile;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = TileManagerSetting, meta = (AllowPrivateAccess = "true"))
 	float TileSpawnTime;

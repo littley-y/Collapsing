@@ -33,6 +33,9 @@ void FTileGeneratorTransform::UpdateVectorXY(const float InValue)
 UCTileManager::UCTileManager()
 {
 	TileSize = 800.f;
+	TargetSpawnIndex = 0;
+	TargetDestroyIndex = 0;
+	bIsSynced = false;
 
 	TTuple<uint32, FString> BPFloorMapPairs[] = {
 		{'0', "/Game/Collapsing/Tile/BP_CBasicFloor"}, {'L', "/Game/Collapsing/Tile/BP_CLeftCornerFloor"},
@@ -80,9 +83,6 @@ void UCTileManager::InitMaps(const FVector& InStartPosition, const int32 InMaxTi
 {
 	StartPosition = InStartPosition;
 	MaxTileNum = InMaxTileNum;
-	TargetSpawnIndex = 0;
-	TargetDestroyIndex = 0;
-	bIsSynced = false;
 
 	uint32 TileTypes[] = { '0', 'L', 'R', 'B', 'U', 'D', 'O' };
 	for (const auto& TileType : TileTypes)
@@ -103,7 +103,6 @@ void UCTileManager::InitMaps(const FVector& InStartPosition, const int32 InMaxTi
 	{
 		SpawnTile();
 	}
-	UE_LOG(LogTemp, Warning, TEXT("Init Tiles Generated : %d"), MaxTileNum / 2);
 }
 
 void UCTileManager::SpawnTile()
@@ -158,7 +157,6 @@ void UCTileManager::SpawnTile()
 			bIsSynced = true;
 		}
 	}
-	UE_LOG(LogTemp, Warning, TEXT("Curr Indexs : %d %d"), TargetSpawnIndex, TargetDestroyIndex)
 }
 
 void UCTileManager::DestroyTile()

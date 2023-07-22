@@ -146,7 +146,7 @@ void ACBasicFloor::OnWallHit(UPrimitiveComponent* HitComponent, AActor* OtherAct
 		const float Dot = FVector::DotProduct(Hit.Normal, OtherActor->GetActorForwardVector());
 		if (Dot > 0.99f && Dot < 1.01f)
 		{
-			if (RunCharacter->GetTurnStatus() == true)
+			if (RunCharacter->GetCanTurn() == true)
 			{
 				RunCharacter->HitBySomething(1.5f);
 			}

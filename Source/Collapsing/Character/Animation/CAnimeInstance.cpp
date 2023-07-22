@@ -37,3 +37,10 @@ void UCAnimeInstance::NativeUpdateAnimation(float DeltaSeconds)
 		CharacterHp = Owner->GetCharacterHp();
 	}
 }
+
+void UCAnimeInstance::AnimNotify_SlideEnd()
+{
+	Owner->UnCrouch();
+	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
+	PlayerController->EnableInput(PlayerController);
+}

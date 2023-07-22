@@ -4,11 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
-#include "Interface/CSyncTimerInterface.h"
+#include "Interface/CGameModeInterface.h"
 #include "CollapsingGameMode.generated.h"
 
 UCLASS()
-class COLLAPSING_API ACollapsingGameMode : public AGameModeBase, public ICSyncTimerInterface
+class COLLAPSING_API ACollapsingGameMode : public AGameModeBase, public ICGameModeInterface
 {
 	GENERATED_BODY()
 
@@ -20,7 +20,7 @@ public:
 	virtual void SyncTimer() override;
 	virtual void StartStage() override;
 	virtual void StartArcade() override;
-	virtual void QuitGame() override;
+	virtual void ExitGame() override;
 
 protected:
 	UPROPERTY()

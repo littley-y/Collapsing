@@ -56,4 +56,9 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Pawn", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UCharacterMovementComponent> Movement;
 
+// AnimNotify Section
+public:
+	UFUNCTION()
+	void AnimNotify_SlideEnd();
+
 };

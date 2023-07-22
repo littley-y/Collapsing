@@ -151,7 +151,7 @@ void UCTileManager::SpawnTile()
 
 	if (bIsSynced == false && TargetSpawnIndex - TargetDestroyIndex == MaxTileNum)
 	{
-		ICSyncTimerInterface* GameModeSyncTimerInterface = Cast<ICSyncTimerInterface>(GetWorld()->GetAuthGameMode());
+		ICGameModeInterface* GameModeSyncTimerInterface = Cast<ICGameModeInterface>(GetWorld()->GetAuthGameMode());
 		if (GameModeSyncTimerInterface != nullptr)
 		{
 			GameModeSyncTimerInterface->SyncTimer();

@@ -59,7 +59,7 @@ void ACPlayerController::Move(const FInputActionValue& Value)
 
 void ACPlayerController::Turn(const FInputActionValue& Value)
 {
-	if (IsValid(RunCharacter) && RunCharacter->GetTurnStatus() == true)
+	if (IsValid(RunCharacter) && RunCharacter->GetCanTurn() == true)
 	{
 		const float TurnAxisFloat = Value.Get<float>();
 
@@ -69,7 +69,7 @@ void ACPlayerController::Turn(const FInputActionValue& Value)
 		bControllerCanTurn = true;
 		if (CurrControllerType == ECharacterControllerType::Play)
 		{
-			RunCharacter->SetTurnStatus(false);
+			RunCharacter->SetCanTurn(false);
 		}
 
 		UE_LOG(LogTemp, Warning, TEXT("Set DesiredRotation : %s"), *DesiredRotation.ToString());
@@ -103,7 +103,7 @@ void ACPlayerController::Slide(const FInputActionValue& Value)
 
 void ACPlayerController::OpenDoor(const FInputActionValue& Value)
 {
-	if (IsValid(RunCharacter))
+	if (IsValid(RunCharacter) && RunCharacter->GetCanOpenDoor() == true)
 	{
 		RunCharacter->OpenDoor();
 	}
@@ -172,12 +172,13 @@ void ACPlayerController::ChangeCharacterStatus(ECharacterControllerType InContro
 {
 	if (InControllerType == ECharacterControllerType::MainMenu)
 	{
-		RunCharacter->SetTurnStatus(true);
+		RunCharacter->SetCanTurn(true);
 		RunCharacter->GetCharacterMovement()->MaxWalkSpeed = 300.f;
+		RunCharacter->GetCharacterMovement()->MaxWalkSpeedCrouched = 300.f;
 	}
 	else
 	{
-		RunCharacter->SetTurnStatus(false);
+		RunCharacter->SetCanTurn(false);
 		RunCharacter->GetCharacterMovement()->MaxWalkSpeed = 800.f;
 	}
 }

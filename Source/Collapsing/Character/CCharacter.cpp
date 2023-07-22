@@ -15,6 +15,7 @@ ACCharacter::ACCharacter()
 {
 	bUseControllerRotationYaw = false;
 	bCanCharacterTurn = false;
+	bCanCharacterOpenDoor = false;
 	bIsDead = false;
 
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.f);
@@ -22,6 +23,8 @@ ACCharacter::ACCharacter()
 	SetMenuCameraAndArm();
 	SetupCharacterMovement();
 	SetStatAndWidget();
+
+	GetCharacterMovement()->GetNavAgentPropertiesRef().bCanCrouch = true;
 }
 
 void ACCharacter::Tick(float DeltaSeconds)
@@ -67,10 +70,10 @@ void ACCharacter::HitBySomething(const float LaunchRatio)
 	}
 }
 
-void ACCharacter::OpenDoor()
+void ACCharacter::OpenDoor() const
 {
-	ICSyncTimerInterface* GameMode = Cast<ICSyncTimerInterface>(GetWorld()->GetAuthGameMode());
-	if (GameMode)
+	ICGameModeInterface* GameMode = Cast<ICGameModeInterface>(GetWorld()->GetAuthGameMode());
+	if (GameMode != nullptr)
 	{
 		GameMode->StartStage();
 	}
@@ -224,9 +227,9 @@ void ACCharacter::OnDeath()
 		GetWorldTimerManager().ClearTimer(RestartTimerHandle);
 	}
 
-	ICSyncTimerInterface* GameMode = Cast<ICSyncTimerInterface>(GetWorld()->GetAuthGameMode());
+	ICGameModeInterface* GameMode = Cast<ICGameModeInterface>(GetWorld()->GetAuthGameMode());
 	if (GameMode)
 	{
-		GameMode->QuitGame();
+		GameMode->ExitGame();
 	}
 }

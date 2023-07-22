@@ -78,9 +78,9 @@ void ACollapsingGameMode::StartArcade()
 {
 }
 
-void ACollapsingGameMode::QuitGame()
+void ACollapsingGameMode::ExitGame()
 {
-	UKismetSystemLibrary::ExecuteConsoleCommand(GetWorld(), TEXT("RestartLevel"));
+	UKismetSystemLibrary::ExecuteConsoleCommand(GetWorld(), TEXT("EXIT"));
 }
 
 void ACollapsingGameMode::SetTileGenerate() const

@@ -12,14 +12,7 @@ class COLLAPSING_API ACInitTile : public AActor
 	GENERATED_BODY()
 	
 public:	
-	// Sets default values for this actor's properties
 	ACInitTile();
-
-	void OnPlayerDoorEntered(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
-	                         int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-
-	void OnPlayerDoorExited(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
-	                         int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
@@ -28,11 +21,24 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Floor")
 	TObjectPtr<UStaticMeshComponent> Floor;
 
+// Wall Section
+public:
+	UFUNCTION()
+	void OnPlayerDoorEntered(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
+	                         int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	UFUNCTION()
+	void OnPlayerDoorExited(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
+	                        int32 OtherBodyIndex);
+
+protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Wall")
 	TObjectPtr<UStaticMeshComponent> Wall1;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "TriggerBox", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "TriggerBox")
 	TObjectPtr<class UBoxComponent> StageDoorTrigger;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Door")
+	TObjectPtr<UStaticMeshComponent> StageDoor;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Wall")
 	TObjectPtr<UStaticMeshComponent> Wall2;
@@ -40,18 +46,27 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Wall")
 	TObjectPtr<UStaticMeshComponent> Wall3;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "TriggerBox", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "TriggerBox")
 	TObjectPtr<class UBoxComponent> QuitDoorTrigger;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Door")
+	TObjectPtr<UStaticMeshComponent> QuitDoor;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Wall")
 	TObjectPtr<UStaticMeshComponent> Wall4;
 
+private:
+	void SetWalls();
+
+// Ceiling Section
+protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Ceiling")
 	TObjectPtr<UStaticMeshComponent> Ceiling;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Ceiling")
 	TObjectPtr<class UPointLightComponent> CeilingLight;
 
-
+private:
+	void SetCeiling();
 
 };

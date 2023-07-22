@@ -41,13 +41,17 @@ private:
 
 // Movement System
 public:
-	FORCEINLINE virtual void SetTurnStatus(bool InStatus) override { bCanCharacterTurn = InStatus; };
-	FORCEINLINE virtual bool GetTurnStatus() const override { return bCanCharacterTurn; }
+	FORCEINLINE virtual void SetCanTurn(const bool InStatus) override { bCanCharacterTurn = InStatus; };
+	FORCEINLINE virtual bool GetCanTurn() const override { return bCanCharacterTurn; }
 
 	void ChangeStatus();
 
 protected:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Interaction, Meta = (AllowPrivatAcces = "true"))
 	bool bCanCharacterTurn;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Interaction, Meta = (AllowPrivatAcces = "true"))
+	bool bCanCharacterOpenDoor;
 
 	void SetupCharacterMovement() const;
 
@@ -55,7 +59,10 @@ protected:
 public:
 	virtual void EarnHpUpItem() override;
 	virtual void HitBySomething(const float LaunchRatio) override;
-	virtual void OpenDoor() override;
+	FORCEINLINE virtual void SetCanOpenDoor(const bool InStatus) override { bCanCharacterOpenDoor = InStatus; };
+	FORCEINLINE virtual bool GetCanOpenDoor() override { return bCanCharacterOpenDoor; };
+
+	void OpenDoor() const;
 
 // Stat System
 public:

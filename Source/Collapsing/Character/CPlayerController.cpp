@@ -5,6 +5,7 @@
 #include "Data/CInputDataAsset.h"
 #include "GameFramework/Character.h"
 #include "Game/CollapsingGameMode.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 ACPlayerController::ACPlayerController(const FObjectInitializer& ObjectInitializer)
 {
@@ -18,7 +19,6 @@ void ACPlayerController::BeginPlay()
 	Super::BeginPlay();
 
 	RunCharacter = Cast<ACCharacter>(GetCharacter());
-	ensure(RunCharacter);
 
 	const FInputModeGameOnly GameOnlyInputMode;
 	SetInputMode(GameOnlyInputMode);
@@ -69,7 +69,7 @@ void ACPlayerController::Move(const FInputActionValue& Value)
 			const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
 			RunCharacter->AddMovementInput(ForwardDirection, MovementVector.Y);
 		}
-		else
+		else if (CurrControllerType == ECharacterControllerType::Play)
 		{
 			RunCharacter->AddMovementInput(CurrRotation.Vector());
 		}
@@ -115,7 +115,10 @@ void ACPlayerController::Slide(const FInputActionValue& Value)
 {
 	if (IsValid(RunCharacter))
 	{
-		RunCharacter->Crouch();
+		if (RunCharacter->GetCharacterMovement()->IsFalling() != true)
+		{
+			RunCharacter->Crouch();
+		}
 	}
 }
 

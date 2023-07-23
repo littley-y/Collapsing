@@ -30,7 +30,7 @@ protected:
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 	virtual void SetupInputComponent() override;
 
-	// Input Section
+// Input Section
 public:
 	void Move(const FInputActionValue& Value);
 	void Turn(const FInputActionValue& Value);
@@ -57,7 +57,7 @@ private:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Pawn", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class ACCharacter> RunCharacter;
 
-	// GameMode Section
+// GameMode Section
 public:
 	virtual void GameOver() override;
 
@@ -67,6 +67,6 @@ protected:
 private:
 	float DeathDelayTime;
 
+// UI Section
 
-	// UI Section
 };				  

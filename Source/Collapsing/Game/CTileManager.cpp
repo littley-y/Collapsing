@@ -65,7 +65,8 @@ UCTileManager::UCTileManager()
 	}
 
 	CollapseSound = CreateDefaultSubobject<USoundBase>(TEXT("CollapseSound"));
-	static ConstructorHelpers::FObjectFinder<USoundBase> SoundRef(TEXT("/Script/Engine.SoundCue'/Game/_GameAssets/Audio/Explosion_Cue.Explosion_Cue'"));
+	static ConstructorHelpers::FObjectFinder<USoundBase> SoundRef(
+		TEXT("/Script/Engine.SoundCue'/Game/_GameAssets/Audio/Explosion_Cue.Explosion_Cue'"));
 	if (IsValid(SoundRef.Object))
 	{
 		CollapseSound = SoundRef.Object;
@@ -97,7 +98,7 @@ void UCTileManager::InitMaps(const FVector& InStartPosition, const int32 InMaxTi
 	for (const auto& TileType : TileTypes)
 	{
 		FloorTilePool.Add(TileType);
-		auto& CurrPoolingTiles = FloorTilePool[TileType].PoolingTiles;
+		TArray<TObjectPtr<ACBasicFloor>>& CurrPoolingTiles = FloorTilePool[TileType].PoolingTiles;
 		CurrPoolingTiles.SetNum(MaxTileNum);
 		for (int32 i = 0; i < MaxTileNum; i++)
 		{
@@ -105,6 +106,7 @@ void UCTileManager::InitMaps(const FVector& InStartPosition, const int32 InMaxTi
 				FRotator::ZeroRotator);
 			CurrPoolingTiles[i]->SetActorHiddenInGame(true);
 			CurrPoolingTiles[i]->SetActorEnableCollision(false);
+			CurrPoolingTiles[i]->SetActorTickEnabled(false);
 		}
 	}
 
@@ -117,8 +119,8 @@ void UCTileManager::InitMaps(const FVector& InStartPosition, const int32 InMaxTi
 void UCTileManager::SpawnTile()
 {
 	const TCHAR MapChar = MapString[TargetSpawnIndex % MapString.Len()];
-	if (MapChar != '0' && MapChar != 'L' && MapChar != 'R' && MapChar != 'U' && MapChar != 'D' && MapChar != 'B' &&
-		MapChar != 'O')
+	if (MapChar != '0' && MapChar != 'L' && MapChar != 'R' && MapChar != 'U' && 
+		MapChar != 'D' && MapChar != 'B' && MapChar != 'O')
 	{
 		return;
 	}

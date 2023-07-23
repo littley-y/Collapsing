@@ -34,7 +34,7 @@ public:
 	virtual void HitBySomething() = 0;
 	virtual void EarnHpUpItem() = 0;
 
-	virtual void SetCanOpenDoor(EDoorType InDoorType, bool InStatus) = 0;
+	virtual void ChangeCanDoorOpen(EDoorType InDoorType) = 0;
 	virtual EDoorType GetWhichDoorCanOpen() = 0;
 
 	virtual void SetCanTurn(bool InStatus) = 0;

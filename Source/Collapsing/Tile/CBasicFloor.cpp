@@ -91,6 +91,7 @@ void ACBasicFloor::CreateCeiling()
 	CeilingLightMesh->SetupAttachment(CeilingMesh);
 	CeilingLightMesh->SetRelativeLocation({ 200.f, 200.f, -20.f });
 	CeilingLightMesh->SetRelativeScale3D({ 0.3f, 0.3f, 0.3f });
+	CeilingLightMesh->SetCollisionProfileName(TEXT("BlockNotCamera"));
 
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> CeilingLightMeshRef(
 		TEXT("/Script/Engine.StaticMesh'/Game/_GameAssets/Meshes/Props/SM_Ceiling_Light.SM_Ceiling_Light'"));
@@ -114,6 +115,7 @@ void ACBasicFloor::ActivateFloor()
 {
 	SetActorHiddenInGame(false);
 	SetActorEnableCollision(true);
+	SetActorTickEnabled(true);
 
 	SpawnedHpUpItem = GetWorld()->SpawnActorDeferred<AActor>(BP_HpUpItem, GetActorTransform());
 	if (IsValid(SpawnedHpUpItem))
@@ -139,7 +141,7 @@ void ACBasicFloor::DeactivateFloor()
 }
 
 void ACBasicFloor::OnWallHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
-	FVector NormalImpulse, const FHitResult& Hit)
+                             FVector NormalImpulse, const FHitResult& Hit)
 {
 	ICCharacterInteractionInterface* RunCharacter = Cast<ICCharacterInteractionInterface>(OtherActor);
 	if (RunCharacter != nullptr)

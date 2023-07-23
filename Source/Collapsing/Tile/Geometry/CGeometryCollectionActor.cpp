@@ -18,7 +18,7 @@ ACGeometryCollectionActor::ACGeometryCollectionActor()
 
 	CharacterDeathZone->SetupAttachment(GetGeometryCollectionComponent());
 	CharacterDeathZone->SetBoxExtent(FVector(400.f, 400.f, 10.f));
-	CharacterDeathZone->SetRelativeLocation(FVector(400.f, 400.f, 0.f));
+	CharacterDeathZone->SetRelativeLocation(FVector(400.f, 400.f, -55.f));
 
 	CharacterDeathZone->SetGenerateOverlapEvents(true); 
 	CharacterDeathZone->OnComponentBeginOverlap.AddDynamic(this, &ACGeometryCollectionActor::OnPlayerDeathOverlap);

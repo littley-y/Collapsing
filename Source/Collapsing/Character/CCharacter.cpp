@@ -10,6 +10,7 @@
 #include "Stat/CCharacterStatComponent.h"
 #include "UI/CHpBarWidget.h"
 #include "Interface/CCharacterControllerInterface.h"
+#include "UI/CMainMenuWidget.h"
 
 ACCharacter::ACCharacter()
 {
@@ -40,8 +41,11 @@ void ACCharacter::BeginPlay()
 
 	MenuCamera->Activate();
 	PlayCamera->Deactivate();
-	HpBar->Deactivate();
-	HpBar->SetHiddenInGame(true);
+
+	Stat->Deactivate();
+	Stat->SetComponentTickEnabled(false);
+	HpBarComponent->Deactivate();
+	HpBarComponent->SetHiddenInGame(true);
 }
 
 void ACCharacter::ApplyDamage(const float InDamage) const
@@ -88,9 +92,18 @@ void ACCharacter::HitBySomething()
 	}
 }
 
-void ACCharacter::SetCanOpenDoor(const EDoorType InType, const bool InStatus)
+void ACCharacter::ChangeCanDoorOpen(const EDoorType InType)
 {
-	CanOpenDoor[InType] = InStatus;
+	if (CanOpenDoor[InType] == true)
+	{
+		CanOpenDoor[InType] = false;
+		OnDoorChanged.Broadcast(false);
+	}
+	else
+	{
+		CanOpenDoor[InType] = true;
+		OnDoorChanged.Broadcast(true);
+	}
 }
 
 EDoorType ACCharacter::GetWhichDoorCanOpen()
@@ -174,24 +187,16 @@ void ACCharacter::SetMenuCameraAndArm()
 	MenuCamera->SetRelativeRotation(FRotator(-40.f, 0.f, 0.f));
 }
 
-void ACCharacter::SetupCharacterWidget(UCUserWidget* InUserWidget)
-{
-	UCHpBarWidget* HpBarWidget = Cast<UCHpBarWidget>(InUserWidget);
-	if (IsValid(HpBarWidget))
-	{
-		HpBarWidget->SetMaxHp(Stat->GetMaxHp());
-		HpBarWidget->UpdateHpBar(Stat->GetCurrentHp());
-		Stat->OnHpChanged.AddUObject(HpBarWidget, &UCHpBarWidget::UpdateHpBar);
-		Stat->OnHpChanged.AddUObject(this, &ACCharacter::SetCharacterSpeed);
-		Stat->OnHpZero.AddUObject(this, &ACCharacter::Death);
-	}
-}
-
 void ACCharacter::ChangeCharacterStatus()
 {
 	PlayCamera->Activate();
 	MenuCamera->Deactivate();
-	HpBar->SetHiddenInGame(false);
+
+	Stat->SetComponentTickEnabled(true);
+	Stat->Activate();
+	HpBarComponent->SetHiddenInGame(false);
+	TutorialComponent->Deactivate();
+	TutorialComponent->SetHiddenInGame(true);
 
 	SetCanTurn(false);
 
@@ -208,16 +213,50 @@ void ACCharacter::ChangeCharacterStatus()
 void ACCharacter::SetStatAndWidget()
 {
 	Stat = CreateDefaultSubobject<UCCharacterStatComponent>(TEXT("Stat"));
-	HpBar = CreateDefaultSubobject<UCWidgetComponent>(TEXT("Widget"));
-	HpBar->SetupAttachment(GetMesh(), TEXT("head"));
 
-	static ConstructorHelpers::FClassFinder<UCUserWidget> HpBarWidgetRef(TEXT("/Game/Collapsing/UI/WBP_HpBar.WBP_HpBar_C"));
+	HpBarComponent = CreateDefaultSubobject<UCWidgetComponent>(TEXT("HpBarComponent"));
+	HpBarComponent->SetupAttachment(GetMesh(), TEXT("head"));
+
+	static ConstructorHelpers::FClassFinder<UCUserWidget> HpBarWidgetRef(
+		TEXT("/Game/Collapsing/UI/WBP_HpBar.WBP_HpBar_C"));
 	if (IsValid(HpBarWidgetRef.Class))
 	{
-		HpBar->SetWidgetClass(HpBarWidgetRef.Class);
-		HpBar->SetWidgetSpace(EWidgetSpace::Screen);
-		HpBar->SetDrawSize(FVector2D(150.f, 10.f));
-		HpBar->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		HpBarComponent->SetWidgetClass(HpBarWidgetRef.Class);
+		HpBarComponent->SetWidgetSpace(EWidgetSpace::Screen);
+		HpBarComponent->SetDrawSize(FVector2D(150.f, 10.f));
+		HpBarComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	}
+
+	TutorialComponent = CreateDefaultSubobject<UCWidgetComponent>(TEXT("Tutorial"));
+	TutorialComponent->SetupAttachment(RootComponent);
+
+	static ConstructorHelpers::FClassFinder<UCUserWidget> TutorialWidgetRef(
+		TEXT("/Game/Collapsing/UI/WBP_Tutorial.WBP_Tutorial_C"));
+	if (IsValid(TutorialWidgetRef.Class))
+	{
+		TutorialComponent->SetWidgetClass(TutorialWidgetRef.Class);
+		TutorialComponent->SetWidgetSpace(EWidgetSpace::Screen);
+		TutorialComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	}
+}
+
+void ACCharacter::SetupCharacterWidget(UCUserWidget* InUserWidget)
+{
+	UCHpBarWidget* HpBarWidget = Cast<UCHpBarWidget>(InUserWidget);
+	const UCMainMenuWidget* TutorialWidget = Cast<UCMainMenuWidget>(InUserWidget);
+
+	if (IsValid(HpBarWidget))
+	{
+		HpBarWidget->SetMaxHp(Stat->GetMaxHp());
+		HpBarWidget->UpdateHpBar(Stat->GetCurrentHp());
+		Stat->OnHpChanged.AddUObject(HpBarWidget, &UCHpBarWidget::UpdateHpBar);
+		Stat->OnHpChanged.AddUObject(this, &ACCharacter::SetCharacterSpeed);
+		Stat->OnHpZero.AddUObject(this, &ACCharacter::Death);
+	}
+	else if (IsValid(TutorialWidget))
+	{
+		TutorialWidget->UpdateTextBlock(false);
+		OnDoorChanged.AddUObject(TutorialWidget, &UCMainMenuWidget::UpdateTextBlock);
 	}
 }
 
@@ -234,8 +273,8 @@ void ACCharacter::Death(AActor* CausedActor)
 		UGameplayStatics::SpawnSoundAttached(DeathSound, GetMesh());
 	}
 
-	HpBar->Deactivate();
-	HpBar->SetHiddenInGame(true);
+	HpBarComponent->Deactivate();
+	HpBarComponent->SetHiddenInGame(true);
 
 	if (IsValid(CausedActor))
 	{

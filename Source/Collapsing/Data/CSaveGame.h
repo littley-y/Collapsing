@@ -22,4 +22,7 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Game)
 	int32 Score;
+
+	UPROPERTY(VisibleAnywhere, Category = Basic)
+	FString PlayerName;
 };

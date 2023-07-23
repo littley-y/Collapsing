@@ -7,7 +7,6 @@
 UCHpBarWidget::UCHpBarWidget(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 	MaxHp = -1.f;
-
 }
 
 void UCHpBarWidget::UpdateHpBar(const float NewCurrentHp) const

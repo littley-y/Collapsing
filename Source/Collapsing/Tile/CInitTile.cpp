@@ -76,15 +76,15 @@ void ACInitTile::OnPlayerDoorEntered(UPrimitiveComponent* OverlappedComp, AActor
 	{
 		if (OverlappedComp == StageDoorTrigger)
 		{
-			RunCharacter->SetCanOpenDoor(EDoorType::Stage, true);
+			RunCharacter->ChangeCanDoorOpen(EDoorType::Stage);
 		}
 		else if (OverlappedComp == QuitDoorTrigger)
 		{
-			RunCharacter->SetCanOpenDoor(EDoorType::Quit, true);
+			RunCharacter->ChangeCanDoorOpen(EDoorType::Quit);
 		}
 		else if (OverlappedComp == ArcadeDoorTrigger)
 		{
-			RunCharacter->SetCanOpenDoor(EDoorType::Arcade, true);
+			RunCharacter->ChangeCanDoorOpen(EDoorType::Arcade);
 		}
 		UE_LOG(LogTemp, Warning, TEXT("RunCharacter Valid"))
 	}
@@ -98,15 +98,15 @@ void ACInitTile::OnPlayerDoorExited(UPrimitiveComponent* OverlappedComp, AActor*
 	{
 		if (OverlappedComp == StageDoorTrigger)
 		{
-			RunCharacter->SetCanOpenDoor(EDoorType::Stage, false);
+			RunCharacter->ChangeCanDoorOpen(EDoorType::Stage);
 		}
 		else if (OverlappedComp == QuitDoorTrigger)
 		{
-			RunCharacter->SetCanOpenDoor(EDoorType::Quit, false);
+			RunCharacter->ChangeCanDoorOpen(EDoorType::Quit);
 		}
 		else if (OverlappedComp == ArcadeDoorTrigger)
 		{
-			RunCharacter->SetCanOpenDoor(EDoorType::Arcade, false);
+			RunCharacter->ChangeCanDoorOpen(EDoorType::Arcade);
 		}
 		UE_LOG(LogTemp, Warning, TEXT("RunCharacter Valid"))
 	}

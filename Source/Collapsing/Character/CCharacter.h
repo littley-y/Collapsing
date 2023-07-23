@@ -8,6 +8,8 @@
 #include "Interface/CCharacterInteractionInterface.h"
 #include "CCharacter.generated.h"
 
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnDoorChangedDelegate, bool)
+
 UCLASS()
 class COLLAPSING_API ACCharacter : public ACharacter, public ICCharacterWidgetInterface,
                                    public ICCharacterInteractionInterface
@@ -20,7 +22,7 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-	// Camera System
+// Camera Section
 public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class USpringArmComponent> PlayCameraArm;
@@ -38,7 +40,7 @@ private:
 	void SetPlayCameraAndArm();
 	void SetMenuCameraAndArm();
 
-	// Movement System
+// Movement Section
 public:
 	FORCEINLINE virtual void SetCanTurn(const bool InStatus) override { bCanCharacterTurn = InStatus; };
 	FORCEINLINE virtual bool GetCanTurn() const override { return bCanCharacterTurn; }
@@ -48,11 +50,11 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Interaction, Meta = (AllowPrivatAcces = "true"))
 	bool bCanCharacterTurn;
 
-	// Interaction System
+// Interaction Section
 public:
 	virtual void EarnHpUpItem() override;
 	virtual void HitBySomething() override;
-	virtual void SetCanOpenDoor(EDoorType InType, const bool InStatus) override;;
+	virtual void ChangeCanDoorOpen(EDoorType InType) override;;
 	virtual EDoorType GetWhichDoorCanOpen() override;;
 
 	void ChangeCharacterStatus();
@@ -62,7 +64,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Interaction, Meta = (AllowPrivatAcces = "true"))
 	TMap<EDoorType, bool> CanOpenDoor;
 
-	// Stat System
+	FOnDoorChangedDelegate OnDoorChanged;
+
+// Stat Section
 public:
 	UFUNCTION(BlueprintCallable)
 	float GetCharacterHp() const;
@@ -74,19 +78,23 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stat, Meta = (AllowPrivatAcces = "true"))
 	TObjectPtr<class UCCharacterStatComponent> Stat;
 
-	// UI System
+// UI Section
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Widget, Meta = (AllowPrivatAcces = "true"))
-	TObjectPtr<class UCWidgetComponent> HpBar;
+	TObjectPtr<class UCWidgetComponent> HpBarComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Widget, Meta = (AllowPrivatAcces = "true"))
+	TObjectPtr<class UCWidgetComponent> TutorialComponent;
 
 	virtual void SetupCharacterWidget(class UCUserWidget* InUserWidget) override;
+
 	void SetStatAndWidget();
 
-	// Stat System
+// Stat Section
 public:
 	void ApplyDamage(const float InDamage) const;
 
-	// Death System
+// Death Section
 public:
 	UFUNCTION()
 	virtual void Death(AActor* CausedActor) override;

@@ -125,8 +125,9 @@ void ACCharacter::OpenDoor()
 	{
 		Stat->OnDistanceChanged.Clear();
 	}
-	ChangeCharacterStatus();
 	SetActorLocationAndRotation({-700.f, 380.f, 100.f}, FRotator::ZeroRotator);
+
+	ChangeCharacterStatus();
 }
 
 float ACCharacter::GetCharacterHp() const

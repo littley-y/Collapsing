@@ -130,14 +130,12 @@ void ACBasicFloor::ActivateFloor()
 void ACBasicFloor::DeactivateFloor()
 {
 	SetActorHiddenInGame(true);
+	SetActorTickEnabled(false);
+	SetActorEnableCollision(false);
 	if (IsValid(SpawnedHpUpItem))
 	{
 		SpawnedHpUpItem->Destroy();
 	}
-
-	constexpr float DestroyTime = 0.1f;
-	DestroyTimerDelegate.BindUFunction(this, "SetActorEnableCollision", false);
-	GetWorldTimerManager().SetTimer(DestroyTimerHandle, DestroyTimerDelegate, DestroyTime, false);
 }
 
 void ACBasicFloor::OnWallHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,

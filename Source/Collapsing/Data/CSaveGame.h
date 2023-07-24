@@ -16,10 +16,12 @@ class COLLAPSING_API UCSaveGame : public USaveGame
 
 public:
 	UCSaveGame();
+	void SaveDistance(int32 InDistance);
+	const TArray<int32>& GetSavedDistances() const;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Game)
-	int32 Distance;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = SaveData)
+	TArray<int32> Distances;
 
-	UPROPERTY(VisibleAnywhere, Category = Basic)
+	UPROPERTY(VisibleAnywhere, Category = SaveData)
 	FString PlayerName;
 };

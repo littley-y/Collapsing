@@ -62,6 +62,11 @@ void ACollapsingGameMode::BeginPlay()
 	}
 }
 
+void ACollapsingGameMode::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	GetWorldTimerManager().ClearAllTimersForObject(this);
+}
+
 void ACollapsingGameMode::SetStageMapString()
 {
 	const FString MapPath = FPaths::Combine(FPaths::ProjectDir(), ("TextMaps/BasicMap.txt"));
@@ -136,11 +141,6 @@ void ACollapsingGameMode::ExitGame()
 void ACollapsingGameMode::RestartGame()
 {
 	UKismetSystemLibrary::ExecuteConsoleCommand(GetWorld(), TEXT("RestartLevel"));
-}
-
-void ACollapsingGameMode::EndPlay(const EEndPlayReason::Type EndPlayReason)
-{
-	GetWorldTimerManager().ClearAllTimersForObject(this);
 }
 
 void ACollapsingGameMode::SetTileGenerate() const

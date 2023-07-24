@@ -17,6 +17,8 @@ class COLLAPSING_API UCScoreboardWidget : public UCUserWidget
 public:
 	UCScoreboardWidget();
 
+	void UpdateScoreboard(const TArray<int32>& InSavedScores);
+
 protected:
 	virtual void NativeConstruct() override;
 

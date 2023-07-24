@@ -32,7 +32,7 @@ struct FTilePool
 	FTilePool() : SpawnedIndex(0), DestroyedIndex(0) {}
 };
 
-UCLASS()
+UCLASS(Blueprintable)
 class COLLAPSING_API UCTileManager : public UObject
 {
 	GENERATED_BODY()

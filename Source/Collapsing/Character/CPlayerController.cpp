@@ -243,8 +243,16 @@ void ACPlayerController::GameOver()
 
 		GameMode->SetTimer(1);
 
-		int32 ResultDistance = CHUDWidget->GetDistance();
-		//SaveGameInstance->save
+		if (IsValid(CHUDWidget))
+		{
+			const int32 CurrDistance = CHUDWidget->GetDistance();
+			if (IsValid(SaveGameInstance) && CurrDistance > 0)
+			{
+				SaveGameInstance->SaveDistance(CurrDistance);
+				UGameplayStatics::SaveGameToSlot(SaveGameInstance, TEXT("Player0"), 0);
+			}
+
+		}
 
 
 		DeathDelayTime = 2.f;

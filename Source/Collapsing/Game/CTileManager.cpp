@@ -99,6 +99,7 @@ void UCTileManager::InitMaps(const FVector& InStartPosition, const int32 InMaxTi
 	{
 		FloorTilePool.Add(TileType);
 		TArray<TObjectPtr<ACBasicFloor>>& CurrPoolingTiles = FloorTilePool[TileType].PoolingTiles;
+
 		CurrPoolingTiles.SetNum(MaxTileNum);
 		for (int32 i = 0; i < MaxTileNum; i++)
 		{

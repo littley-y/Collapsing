@@ -2,7 +2,6 @@
 
 
 #include "UI/CMainMenuWidget.h"
-
 #include "Components/TextBlock.h"
 #include "Components/VerticalBox.h"
 #include "Interface/CCharacterWidgetInterface.h"
@@ -11,9 +10,9 @@ UCMainMenuWidget::UCMainMenuWidget()
 {
 }
 
-void UCMainMenuWidget::UpdateTextBlock(const bool InStatus) const
+void UCMainMenuWidget::UpdateTextBlock(const bool InDoorStatus) const
 {
-	if (InStatus == true)
+	if (InDoorStatus == true)
 	{
 		DoorBlock->SetText(FText::FromString("Enter?"));
 		DoorBlock->SetVisibility(ESlateVisibility::Visible);
@@ -36,6 +35,6 @@ void UCMainMenuWidget::NativeConstruct()
 	ICCharacterWidgetInterface* CharacterWidget = Cast<ICCharacterWidgetInterface>(OwningActor);
 	if (CharacterWidget != nullptr)
 	{
-		CharacterWidget->SetupCharacterWidget(this);
+		CharacterWidget->SetupCharacterTutorialWidget(this);
 	}
 }

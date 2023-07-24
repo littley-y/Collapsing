@@ -28,16 +28,16 @@ ACHpUpItem::ACHpUpItem()
 		FruitsMeshes.Add(OrangeMeshRef.Object);
 	}
 
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> PineappleMeshRef(
-		TEXT("/Script/Engine.StaticMesh'/Game/_GameAssets/Meshes/Foods/Food_Fruit_Pineapple_01.Food_Fruit_Pineapple_01'"));
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> PineappleMeshRef(TEXT(
+		"/Script/Engine.StaticMesh'/Game/_GameAssets/Meshes/Foods/Food_Fruit_Pineapple_01.Food_Fruit_Pineapple_01'"));
 
 	if (IsValid(PineappleMeshRef.Object))
 	{
 		FruitsMeshes.Add(PineappleMeshRef.Object);
 	}
 
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> WatermelonMeshRef(
-		TEXT("/Script/Engine.StaticMesh'/Game/_GameAssets/Meshes/Foods/Food_Fruit_Watermelon_01.Food_Fruit_Watermelon_01'"));
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> WatermelonMeshRef(TEXT(
+		"/Script/Engine.StaticMesh'/Game/_GameAssets/Meshes/Foods/Food_Fruit_Watermelon_01.Food_Fruit_Watermelon_01'"));
 	if (IsValid(WatermelonMeshRef.Object))
 	{
 		FruitsMeshes.Add(WatermelonMeshRef.Object);
@@ -45,7 +45,9 @@ ACHpUpItem::ACHpUpItem()
 }
 
 
-void ACHpUpItem::OnPlayerItemOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+void ACHpUpItem::OnPlayerItemOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
+                                     UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
+                                     const FHitResult& SweepResult)
 {
 	ICCharacterInteractionInterface* RunCharacter = Cast<ICCharacterInteractionInterface>(OtherActor);
 	if (RunCharacter != nullptr && OtherComp != nullptr)

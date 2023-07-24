@@ -17,7 +17,7 @@ public:
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Value")
 	float GroundSpeed;
-	
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Value")
 	float MovingThreshold;
 
@@ -56,9 +56,8 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Pawn", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UCharacterMovementComponent> Movement;
 
-// AnimNotify Section
+	// AnimNotify Section
 public:
 	UFUNCTION()
 	void AnimNotify_SlideEnd();
-
 };

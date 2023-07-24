@@ -10,7 +10,7 @@ UCLASS()
 class COLLAPSING_API ACBasicFloor : public AActor
 {
 	GENERATED_BODY()
-	
+
 public:
 	ACBasicFloor();
 
@@ -34,18 +34,21 @@ protected:
 	FTimerHandle DestroyTimerHandle;
 	FTimerDelegate DestroyTimerDelegate;
 
-// Wall Section
+	// Wall Section
+public:
+	UFUNCTION()
+	void OnWallHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
+	               FVector NormalImpulse, const FHitResult& Hit);
+
+protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Wall")
 	TObjectPtr<UStaticMeshComponent> LeftWall;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Wall")
 	TObjectPtr<UStaticMeshComponent> RightWall;
 
-	UFUNCTION()
-	void OnWallHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
-	               FVector NormalImpulse, const FHitResult& Hit);
-
-// Ceiling Section
+protected:
+	// Ceiling Section
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Ceiling")
 	TObjectPtr<UStaticMeshComponent> CeilingMesh;
 
@@ -55,12 +58,11 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Ceiling")
 	TObjectPtr<UStaticMeshComponent> CeilingLightMesh;
 
-// Item Section
+protected:
+	// Item Section
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Item")
 	TSubclassOf<class ACHpUpItem> BP_HpUpItem;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Item")
 	TObjectPtr<AActor> SpawnedHpUpItem;
-
 };
-

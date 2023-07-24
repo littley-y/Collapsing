@@ -14,11 +14,8 @@ class COLLAPSING_API UCMapGenerator : public UObject
 	GENERATED_BODY()
 
 public:
-    FString GenerateString(int32 N) const;
-
-    FString GetRandomChar() const;
-
-    FString GetRandomLR() const;
-
-    FString GetRandomDU() const;
+	FString GenerateString(int32 N) const;
+	FString GetRandomChar() const;
+	FString GetRandomLR() const;
+	FString GetRandomDU() const;
 };

@@ -10,7 +10,7 @@ UCLASS()
 class COLLAPSING_API ACHpUpItem : public AActor
 {
 	GENERATED_BODY()
-	
+
 public:
 	ACHpUpItem();
 

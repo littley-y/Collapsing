@@ -94,7 +94,7 @@ void UCTileManager::InitMaps(const FVector& InStartPosition, const int32 InMaxTi
 	StartPosition = InStartPosition;
 	MaxTileNum = InMaxTileNum;
 
-	uint32 TileTypes[] = { '0', 'L', 'R', 'B', 'U', 'D', 'O' };
+	uint32 TileTypes[] = {'0', 'L', 'R', 'B', 'U', 'D', 'O'};
 	for (const auto& TileType : TileTypes)
 	{
 		FloorTilePool.Add(TileType);
@@ -103,7 +103,7 @@ void UCTileManager::InitMaps(const FVector& InStartPosition, const int32 InMaxTi
 		for (int32 i = 0; i < MaxTileNum; i++)
 		{
 			CurrPoolingTiles[i] = GetWorld()->SpawnActor<ACBasicFloor>(BPFloorMap[TileType], StartPosition,
-				FRotator::ZeroRotator);
+			                                                           FRotator::ZeroRotator);
 			CurrPoolingTiles[i]->SetActorHiddenInGame(true);
 			CurrPoolingTiles[i]->SetActorEnableCollision(false);
 			CurrPoolingTiles[i]->SetActorTickEnabled(false);
@@ -119,7 +119,7 @@ void UCTileManager::InitMaps(const FVector& InStartPosition, const int32 InMaxTi
 void UCTileManager::SpawnTile()
 {
 	const TCHAR MapChar = MapString[TargetSpawnIndex % MapString.Len()];
-	if (MapChar != '0' && MapChar != 'L' && MapChar != 'R' && MapChar != 'U' && 
+	if (MapChar != '0' && MapChar != 'L' && MapChar != 'R' && MapChar != 'U' &&
 		MapChar != 'D' && MapChar != 'B' && MapChar != 'O')
 	{
 		return;
@@ -195,7 +195,8 @@ void UCTileManager::DestroyTile()
 	AActor* DestroyingFloor = GetWorld()->SpawnActor<AActor>(GeometryFloorMap[MapChar], CurrTransform);
 	if (IsValid(CollapseSound))
 	{
-		UGameplayStatics::PlaySoundAtLocation(GetWorld(), CollapseSound, CurrTransform.GetLocation(), CurrTransform.Rotator(), 0.5f, 0.5f);
+		UGameplayStatics::PlaySoundAtLocation(GetWorld(), CollapseSound, CurrTransform.GetLocation(),
+		                                      CurrTransform.Rotator(), 0.5f, 0.5f);
 	}
 	DestroyingFloor->SetLifeSpan(3.f);
 

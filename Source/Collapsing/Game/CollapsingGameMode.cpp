@@ -14,7 +14,8 @@ ACollapsingGameMode::ACollapsingGameMode()
 	TileDestroyTime = 0.8f;
 	DestroyDelay = 4.f;
 	MaxTileNum = 20;
-	StartPosition = { -1000.f, 0.f, 1000.f };
+	StartPosition = {-1000.f, 0.f, 1000.f};
+	bInitTileDestroyed = false;
 
 	TileManager = CreateDefaultSubobject<UCTileManager>(TEXT("TileManager"));
 	MapGenerator = CreateDefaultSubobject<UCMapGenerator>(TEXT("MapGenerator"));
@@ -40,6 +41,13 @@ ACollapsingGameMode::ACollapsingGameMode()
 	{
 		BP_InitTile = InitTileRef.Class;
 	}
+
+	static ConstructorHelpers::FClassFinder<AActor> GeometryInitTileRef(
+		TEXT("/Script/Engine.Blueprint'/Game/Collapsing/Tile/Geometry/GA_CInitTile.GA_CInitTile_C'"));
+	if (IsValid(GeometryInitTileRef.Class))
+	{
+		GeometryInitTile = GeometryInitTileRef.Class;
+	}
 }
 
 void ACollapsingGameMode::BeginPlay()
@@ -48,8 +56,8 @@ void ACollapsingGameMode::BeginPlay()
 
 	if (IsValid(BP_InitTile))
 	{
-		const FVector InitTileLocation = { -800.f, -200.f, 0.f };
-		const FRotator InitTileRotation = { 0.f, 90.f, 0.f };
+		const FVector InitTileLocation = {-800.f, -200.f, 0.f};
+		const FRotator InitTileRotation = {0.f, 90.f, 0.f};
 		InitTile = GetWorld()->SpawnActor<AActor>(BP_InitTile, InitTileLocation, InitTileRotation);
 	}
 }
@@ -58,7 +66,6 @@ void ACollapsingGameMode::SetStageMapString()
 {
 	const FString MapPath = FPaths::Combine(FPaths::ProjectDir(), ("TextMaps/BasicMap.txt"));
 	FFileHelper::LoadFileToString(StageMapString, *MapPath);
-	//FFileHelper::SaveStringToFile(MapPath, *(FPaths::Combine(FPaths::ProjectDir(), MapPath)));
 
 	if (FPaths::ValidatePath(StageMapString))
 	{
@@ -72,8 +79,6 @@ void ACollapsingGameMode::SetStageMapString()
 	}
 }
 
-
-
 void ACollapsingGameMode::SetArcadeMapString() const
 {
 	TileManager->SetMapString(ArcadeMapString);
@@ -85,7 +90,8 @@ void ACollapsingGameMode::SetTimer(int32 InTimerType)
 	if (InTimerType == 0)
 	{
 		GetWorldTimerManager().ClearTimer(SpawnTileTimerHandle);
-		GetWorldTimerManager().SetTimer(SpawnTileTimerHandle, this, &ACollapsingGameMode::SetTileGenerate, TileDestroyTime, true);
+		GetWorldTimerManager().SetTimer(SpawnTileTimerHandle, this, &ACollapsingGameMode::SetTileGenerate,
+		                                TileDestroyTime, true);
 	}
 	else if (InTimerType == 1)
 	{
@@ -120,8 +126,6 @@ void ACollapsingGameMode::StartGame(const FString MapType)
 			                                         TileDestroyTime, true, DestroyDelay);
 		}
 	}
-
-
 }
 
 void ACollapsingGameMode::ExitGame()
@@ -147,12 +151,20 @@ void ACollapsingGameMode::SetTileGenerate() const
 	}
 }
 
-void ACollapsingGameMode::SetTileDestroy() const
+void ACollapsingGameMode::SetTileDestroy()
 {
-	if (IsValid(TileManager))
+	if (bInitTileDestroyed == false)
 	{
 		InitTile->SetActorHiddenInGame(true);
-		InitTile->SetActorEnableCollision(false);
+		InitTile->SetLifeSpan(0.1f);
+		AActor* DestroyedInitTile = GetWorld()->SpawnActor<AActor>(GeometryInitTile, {-800.f, -200.f, 0.f},
+		                                                           {0.f, 90.f, 0.f});
+		DestroyedInitTile->SetLifeSpan(1.f);
+		bInitTileDestroyed = true;
+	}
+
+	if (IsValid(TileManager))
+	{
 		TileManager->DestroyTile();
 	}
 }

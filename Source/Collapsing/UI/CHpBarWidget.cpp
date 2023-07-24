@@ -28,6 +28,6 @@ void UCHpBarWidget::NativeConstruct()
 	ICCharacterWidgetInterface* CharacterWidget = Cast<ICCharacterWidgetInterface>(OwningActor);
 	if (CharacterWidget != nullptr)
 	{
-		CharacterWidget->SetupCharacterWidget(this);
+		CharacterWidget->SetupCharacterHpWidget(this);
 	}
 }

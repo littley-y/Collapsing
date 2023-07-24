@@ -21,5 +21,7 @@ class COLLAPSING_API ICCharacterWidgetInterface
 	GENERATED_BODY()
 
 public:
-	virtual void SetupCharacterWidget(class UCUserWidget* InUserWidget) = 0;
+	virtual void SetupCharacterHpWidget(class UCUserWidget* InUserWidget) = 0;
+	virtual void SetupCharacterTutorialWidget(class UCUserWidget* InUserWidget) = 0;
+	virtual void SetupCharacterScoreWidget(class UCUserWidget* InUserWidget) = 0;
 };

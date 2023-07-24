@@ -13,7 +13,7 @@ struct FTileGeneratorTransform
 	FVector Vector;
 	FRotator Rotator;
 
-	FTileGeneratorTransform() : Vector(-800.f, 0.f, 0.f), Rotator(0.f, 0.f, 0.f) {}
+	FTileGeneratorTransform() : Vector(-800.f, 0.f, 0.f), Rotator(0.f, 0.f, 0.f)	{}
 
 	void UpdateVectorXY(const float InValue);
 };
@@ -40,7 +40,7 @@ class COLLAPSING_API UCTileManager : public UObject
 public:
 	UCTileManager();
 
-// Map Section
+	// Map Section
 public:
 	void SetMapString(const FString& InMapString);
 	void InitMaps(const FVector& InStartPosition, const int32 InMaxTileNum);
@@ -50,7 +50,7 @@ private:
 	FString MapString;
 	FVector StartPosition;
 
-// Tile Section
+	// Tile Section
 public:
 	static void LoadBPClass(TMap<uint32, TSubclassOf<AActor>>& TargetMap, uint32 KeyChar, const FString& BPPath);
 

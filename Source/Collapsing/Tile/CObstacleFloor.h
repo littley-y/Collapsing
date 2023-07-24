@@ -25,13 +25,13 @@ UCLASS()
 class COLLAPSING_API ACObstacleFloor : public ACBasicFloor
 {
 	GENERATED_BODY()
-	
-public:	
+
+public:
 	ACObstacleFloor();
 
 	UFUNCTION()
 	void OnObstacleHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
-	               FVector NormalImpulse, const FHitResult& Hit);
+	                   FVector NormalImpulse, const FHitResult& Hit);
 
 	virtual void ActivateFloor() override;
 	virtual void DeactivateFloor() override;
@@ -44,10 +44,7 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Obstacle, meta = (AllowPrivateAccess = "true"))
 	TArray<FVector> WallObstacleLocations;
-	
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Obstacle, meta = (AllowPrivateAccess = "true"))
 	TArray<TObjectPtr<UStaticMesh>> ObstacleMeshes;
-
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Obstacle, meta = (AllowPrivateAccess = "true"))
-	//TObjectPtr<class UPointLightComponent> ObstacleLight;
 };

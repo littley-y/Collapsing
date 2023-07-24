@@ -5,8 +5,24 @@
 UCCharacterStatComponent::UCCharacterStatComponent()
 {
 	MaxHp = 200.f;
+	TraveledDistance = 0.f;
 	CurrentHp = MaxHp;
 	PrimaryComponentTick.bCanEverTick = true;
+}
+
+void UCCharacterStatComponent::BeginPlay()
+{
+	Super::BeginPlay();
+
+	SetHp(MaxHp);
+	PrimaryComponentTick.TickInterval = 0.2f;
+}
+
+void UCCharacterStatComponent::TickComponent(float DeltaTime, ELevelTick TickType,
+                                             FActorComponentTickFunction* ThisTickFunction)
+{
+	ApplyDamage(1.f);
+	AddTraveledDistance();
 }
 
 void UCCharacterStatComponent::SetHp(const float NewHp)
@@ -16,17 +32,14 @@ void UCCharacterStatComponent::SetHp(const float NewHp)
 	OnHpChanged.Broadcast(CurrentHp);
 }
 
-void UCCharacterStatComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+void UCCharacterStatComponent::AddTraveledDistance()
 {
-	ApplyDamage(1.f);
-}
+	const FVector CurrLocation = GetOwner()->GetActorLocation();
 
-void UCCharacterStatComponent::BeginPlay()
-{
-	Super::BeginPlay();
+	TraveledDistance += FMath::CeilToInt(FVector::Dist(LastLocation, CurrLocation));
+	LastLocation = CurrLocation;
 
-	SetHp(MaxHp);
-	PrimaryComponentTick.TickInterval = 0.2f;
+	OnDistanceChanged.Broadcast(TraveledDistance);
 }
 
 float UCCharacterStatComponent::ApplyDamage(const float InDamage)
@@ -42,4 +55,3 @@ float UCCharacterStatComponent::ApplyDamage(const float InDamage)
 
 	return ActualDamage;
 }
-

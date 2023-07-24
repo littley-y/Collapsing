@@ -10,6 +10,7 @@
 #include "Stat/CCharacterStatComponent.h"
 #include "UI/CHpBarWidget.h"
 #include "Interface/CCharacterControllerInterface.h"
+#include "UI/CHUDWidget.h"
 #include "UI/CMainMenuWidget.h"
 
 ACCharacter::ACCharacter()
@@ -120,8 +121,12 @@ EDoorType ACCharacter::GetWhichDoorCanOpen()
 
 void ACCharacter::OpenDoor()
 {
+	if (CanOpenDoor[EDoorType::Stage])
+	{
+		Stat->OnDistanceChanged.Clear();
+	}
 	ChangeCharacterStatus();
-	SetActorLocationAndRotation({ -700.f, 380.f, 100.f }, FRotator::ZeroRotator);
+	SetActorLocationAndRotation({-700.f, 380.f, 100.f}, FRotator::ZeroRotator);
 }
 
 float ACCharacter::GetCharacterHp() const
@@ -162,7 +167,6 @@ void ACCharacter::SetPlayCameraAndArm()
 	PlayCamera->bUsePawnControlRotation = false;
 	PlayCamera->SetupAttachment(PlayCameraArm, USpringArmComponent::SocketName);
 	PlayCamera->SetRelativeRotation(FRotator(-40.f, 0.f, 0.f));
-
 }
 
 void ACCharacter::SetMenuCameraAndArm()
@@ -240,10 +244,9 @@ void ACCharacter::SetStatAndWidget()
 	}
 }
 
-void ACCharacter::SetupCharacterWidget(UCUserWidget* InUserWidget)
+void ACCharacter::SetupCharacterHpWidget(UCUserWidget* InUserWidget)
 {
 	UCHpBarWidget* HpBarWidget = Cast<UCHpBarWidget>(InUserWidget);
-	const UCMainMenuWidget* TutorialWidget = Cast<UCMainMenuWidget>(InUserWidget);
 
 	if (IsValid(HpBarWidget))
 	{
@@ -253,10 +256,25 @@ void ACCharacter::SetupCharacterWidget(UCUserWidget* InUserWidget)
 		Stat->OnHpChanged.AddUObject(this, &ACCharacter::SetCharacterSpeed);
 		Stat->OnHpZero.AddUObject(this, &ACCharacter::Death);
 	}
-	else if (IsValid(TutorialWidget))
+}
+
+void ACCharacter::SetupCharacterTutorialWidget(UCUserWidget* InUserWidget)
+{
+	const UCMainMenuWidget* TutorialWidget = Cast<UCMainMenuWidget>(InUserWidget);
+	if (IsValid(TutorialWidget))
 	{
 		TutorialWidget->UpdateTextBlock(false);
 		OnDoorChanged.AddUObject(TutorialWidget, &UCMainMenuWidget::UpdateTextBlock);
+	}
+}
+
+void ACCharacter::SetupCharacterScoreWidget(UCUserWidget* InUserWidget)
+{
+	UCHUDWidget* HUDWidget = Cast<UCHUDWidget>(InUserWidget);
+	if (IsValid(HUDWidget))
+	{
+		HUDWidget->UpdateDistance(0.f);
+		Stat->OnDistanceChanged.AddUObject(HUDWidget, &UCHUDWidget::UpdateDistance);
 	}
 }
 
@@ -275,10 +293,10 @@ void ACCharacter::Death(AActor* CausedActor)
 
 	HpBarComponent->Deactivate();
 	HpBarComponent->SetHiddenInGame(true);
+	Stat->SetComponentTickEnabled(false);
 
 	if (IsValid(CausedActor))
 	{
 		GetLocalViewingPlayerController()->SetViewTargetWithBlend(CausedActor, 0.5f);
 	}
-
 }

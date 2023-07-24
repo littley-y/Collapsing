@@ -1,7 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Tile/CObstacleFloor.h"
-#include "Components/PointLightComponent.h"
 #include "Interface/CCharacterInteractionInterface.h"
 
 ACObstacleFloor::ACObstacleFloor()
@@ -13,12 +12,8 @@ ACObstacleFloor::ACObstacleFloor()
 	Obstacle->OnComponentHit.AddDynamic(this, &ACObstacleFloor::OnObstacleHit);
 	Obstacle->SetCollisionProfileName(TEXT("BlockNotCamera"));
 
-	//ObstacleLight = CreateDefaultSubobject<UPointLightComponent>(TEXT("Obstacle Light"));
-	//ObstacleLight->SetupAttachment(Obstacle, TEXT("Light"));
-	//ObstacleLight->SetIntensity(1000.f);
-
-	WallObstacleLocations.Add({ 200.f, 100.f, 150.f });
-	WallObstacleLocations.Add({ 200.f, 700.f, 150.f });
+	WallObstacleLocations.Add({200.f, 100.f, 150.f});
+	WallObstacleLocations.Add({200.f, 700.f, 150.f});
 
 	FString ObstaclePaths[] = {
 		"/Script/Engine.StaticMesh'/Game/_GameAssets/Meshes/Props/SM_Bed_Drawer.SM_Bed_Drawer'",
@@ -41,7 +36,7 @@ ACObstacleFloor::ACObstacleFloor()
 }
 
 void ACObstacleFloor::OnObstacleHit(UPrimitiveComponent* HitComponent, AActor* OtherActor,
-	UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
+                                    UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
 	ICCharacterInteractionInterface* RunCharacter = Cast<ICCharacterInteractionInterface>(OtherActor);
 	if (RunCharacter != nullptr)
@@ -75,53 +70,48 @@ void ACObstacleFloor::BeginPlay()
 	const int32 FloorObstacleType = FMath::RandRange(Bed_Drawer, LaundryShelf);
 	Obstacle->SetStaticMesh(ObstacleMeshes[FloorObstacleType]);
 
-	const FVector SofaLocation = { 600.f,  400.f, 0.f };
-	const FVector ClosetLocation = { 600.f, FMath::RandRange(1, 3) * 200.f, 0.f };
-	const FVector FloorObstacleLocation = { 600.f, FMath::FRandRange(200.f, 600.f), 0.f };
+	const FVector SofaLocation = {600.f, 400.f, 0.f};
+	const FVector ClosetLocation = {600.f, FMath::RandRange(1, 3) * 200.f, 0.f};
+	const FVector FloorObstacleLocation = {600.f, FMath::FRandRange(200.f, 600.f), 0.f};
 
 	switch (FloorObstacleType)
 	{
 	default: break;
 	case Bed_Drawer:
 		Obstacle->SetRelativeLocation(FloorObstacleLocation);
-		Obstacle->SetRelativeRotation({ 0.f, -90.f, 0.f });
-		Obstacle->SetRelativeScale3D({ 3.f, 2.f, 2.f });
+		Obstacle->SetRelativeRotation({0.f, -90.f, 0.f});
+		Obstacle->SetRelativeScale3D({3.f, 2.f, 2.f});
 		break;
 	case Bed_Table:
 		Obstacle->SetRelativeLocation(FloorObstacleLocation);
-		Obstacle->SetRelativeRotation({ 0.f, -90.f, 0.f });
-		Obstacle->SetRelativeScale3D({ 3.f, 2.f, 2.f });
+		Obstacle->SetRelativeRotation({0.f, -90.f, 0.f});
+		Obstacle->SetRelativeScale3D({3.f, 2.f, 2.f});
 		break;
 	case Footrest:
 		Obstacle->SetRelativeLocation(FloorObstacleLocation);
-		Obstacle->SetRelativeRotation({ 0.f, -90.f, 0.f });
-		Obstacle->SetRelativeScale3D({ 3.f, 2.f, 2.f });
+		Obstacle->SetRelativeRotation({0.f, -90.f, 0.f});
+		Obstacle->SetRelativeScale3D({3.f, 2.f, 2.f});
 		break;
 	case Trash_Can:
 		Obstacle->SetRelativeLocation(FloorObstacleLocation);
-		Obstacle->SetRelativeRotation({ 0.f, -90.f, 0.f });
-		Obstacle->SetRelativeScale3D({ 3.f, 2.f, 1.f });
+		Obstacle->SetRelativeRotation({0.f, -90.f, 0.f});
+		Obstacle->SetRelativeScale3D({3.f, 2.f, 1.f});
 		break;
 	case Closet:
 		Obstacle->SetRelativeLocation(ClosetLocation);
-		Obstacle->SetRelativeRotation({ 0.f, 90.f, 0.f });
-		Obstacle->SetRelativeScale3D({ 2.f, 1.f, 1.f });
+		Obstacle->SetRelativeRotation({0.f, 90.f, 0.f});
+		Obstacle->SetRelativeScale3D({2.f, 1.f, 1.f});
 		break;
 	case Sofa:
 		Obstacle->SetRelativeLocation(SofaLocation);
-		Obstacle->SetRelativeRotation({ 0.f, -90.f, 0.f });
-		Obstacle->SetRelativeScale3D({ 1.8f, 1.f, 1.1f });
+		Obstacle->SetRelativeRotation({0.f, -90.f, 0.f});
+		Obstacle->SetRelativeScale3D({1.8f, 1.f, 1.1f});
 		break;
 	case LaundryShelf:
 		const bool IsLocatedLeftWall = FMath::RandBool() ? true : false;
 		Obstacle->SetRelativeLocation(WallObstacleLocations[IsLocatedLeftWall]);
-		Obstacle->SetRelativeRotation({ 0.f, 0.f, IsLocatedLeftWall ? -60.f : 60.f });
-		Obstacle->SetRelativeScale3D({ 2.f, 2.f, 2.f });
+		Obstacle->SetRelativeRotation({0.f, 0.f, IsLocatedLeftWall ? -60.f : 60.f});
+		Obstacle->SetRelativeScale3D({2.f, 2.f, 2.f});
 		break;
 	}
 }
-
-
-
-
-

@@ -8,13 +8,21 @@
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnHpZeroDelegate, AActor* /* Death Type */);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnHpChangedDelegate, float /* Current Hp */);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnDistanceChangedDelegate, int32 /* Changed Distance */)
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class COLLAPSING_API UCCharacterStatComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
-public:	
+protected:
+	virtual void BeginPlay() override;
+
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType,
+	                           FActorComponentTickFunction* ThisTickFunction) override;
+
+	// Hp Section
+public:
 	FOnHpZeroDelegate OnHpZero;
 	FOnHpChangedDelegate OnHpChanged;
 
@@ -22,11 +30,10 @@ public:
 
 	FORCEINLINE float GetMaxHp() const { return MaxHp; }
 	FORCEINLINE float GetCurrentHp() const { return CurrentHp; }
+
 	float ApplyDamage(float InDamage);
 
 	void SetHp(float NewHp);
-	
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 protected:
 	UPROPERTY(VisibleInstanceOnly, Category = Stat)
@@ -35,8 +42,17 @@ protected:
 	UPROPERTY(Transient, VisibleInstanceOnly, Category = Stat)
 	float CurrentHp;
 
-	virtual void BeginPlay() override;
-
 private:
 	FTimerHandle HpHandler;
+
+	// Distance Section
+public:
+	void AddTraveledDistance();
+	FOnDistanceChangedDelegate OnDistanceChanged;
+
+private:
+	FVector LastLocation;
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Score", meta = (AllowPrivateAccess = "true"))
+	int32 TraveledDistance;
 };

@@ -15,7 +15,11 @@ class COLLAPSING_API ACollapsingGameMode : public AGameModeBase, public ICGameMo
 public:
 	ACollapsingGameMode();
 
-// Map Section
+protected:
+	virtual void BeginPlay() override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+
+	// Map Section
 public:
 	void SetStageMapString();
 	void SetArcadeMapString() const;
@@ -30,27 +34,22 @@ protected:
 	UPROPERTY()
 	FString ArcadeMapString;
 
+	// Tile Generate Section
 public:
 	virtual void SetTimer(int32 InTimerType) override;
 
-	virtual void StartGame(const FString MapType) override;
-	virtual void ExitGame() override;
-	virtual void RestartGame() override;
-
 protected:
-	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
-
 	UPROPERTY()
 	TObjectPtr<class UCTileManager> TileManager;
-
-	UPROPERTY()
-	TObjectPtr<class AActor> InitTile;
 
 	UPROPERTY()
 	TSubclassOf<class AActor> BP_InitTile;
 
 	UPROPERTY()
-	TObjectPtr<class AActor> GeometryInitTile;
+	TObjectPtr<class AActor> InitTile;
+
+	UPROPERTY()
+	TSubclassOf<class AActor> GeometryInitTile;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = TileManagerSetting, meta = (AllowPrivateAccess = "true"))
 	float TileSpawnTime;
@@ -77,9 +76,14 @@ private:
 	UPROPERTY()
 	FTimerHandle CollapsedTimerHandle;
 
-	virtual void BeginPlay() override;
-
 	void SetTileGenerate() const;
-	void SetTileDestroy() const;
+	void SetTileDestroy();
 
+	bool bInitTileDestroyed;
+
+	// GameMode Section
+public:
+	virtual void StartGame(const FString MapType) override;
+	virtual void ExitGame() override;
+	virtual void RestartGame() override;
 };

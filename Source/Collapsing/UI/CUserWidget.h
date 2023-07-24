@@ -13,7 +13,7 @@ UCLASS()
 class COLLAPSING_API UCUserWidget : public UUserWidget
 {
 	GENERATED_BODY()
-	
+
 public:
 	FORCEINLINE void SetOwningActor(AActor* NewOwner) { OwningActor = NewOwner; }
 

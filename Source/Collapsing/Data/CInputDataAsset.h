@@ -27,5 +27,4 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TObjectPtr<UInputAction> OpenDoorAction;
-
 };

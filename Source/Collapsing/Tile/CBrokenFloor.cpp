@@ -20,7 +20,7 @@ ACBrokenFloor::ACBrokenFloor()
 	CharacterDeathZone->SetBoxExtent(FVector(400.f, 400.f, 10.f));
 	CharacterDeathZone->SetRelativeLocation(FVector(200.f, 200.f, -40.f));
 
-	CharacterDeathZone->SetGenerateOverlapEvents(true); 
+	CharacterDeathZone->SetGenerateOverlapEvents(true);
 	CharacterDeathZone->OnComponentBeginOverlap.AddDynamic(this, &ACBrokenFloor::OnPlayerDeathOverlap);
 
 	DeathCam = CreateDefaultSubobject<UCameraComponent>(TEXT("DeathCam"));
@@ -30,7 +30,8 @@ ACBrokenFloor::ACBrokenFloor()
 }
 
 void ACBrokenFloor::OnPlayerDeathOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
-                                         UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+                                         UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
+                                         const FHitResult& SweepResult)
 {
 	ICCharacterInteractionInterface* RunCharacter = Cast<ICCharacterInteractionInterface>(OtherActor);
 	if (RunCharacter != nullptr && OtherComp)

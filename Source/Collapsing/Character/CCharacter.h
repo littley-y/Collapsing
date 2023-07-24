@@ -22,7 +22,7 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-// Camera Section
+	// Camera Section
 public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class USpringArmComponent> PlayCameraArm;
@@ -40,7 +40,7 @@ private:
 	void SetPlayCameraAndArm();
 	void SetMenuCameraAndArm();
 
-// Movement Section
+	// Movement Section
 public:
 	FORCEINLINE virtual void SetCanTurn(const bool InStatus) override { bCanCharacterTurn = InStatus; };
 	FORCEINLINE virtual bool GetCanTurn() const override { return bCanCharacterTurn; }
@@ -50,7 +50,7 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Interaction, Meta = (AllowPrivatAcces = "true"))
 	bool bCanCharacterTurn;
 
-// Interaction Section
+	// Interaction Section
 public:
 	virtual void EarnHpUpItem() override;
 	virtual void HitBySomething() override;
@@ -66,7 +66,7 @@ protected:
 
 	FOnDoorChangedDelegate OnDoorChanged;
 
-// Stat Section
+	// Stat Section
 public:
 	UFUNCTION(BlueprintCallable)
 	float GetCharacterHp() const;
@@ -74,11 +74,13 @@ public:
 	UFUNCTION(BlueprintCallable)
 	float GetCharacterMaxHp() const;
 
+	void ApplyDamage(const float InDamage) const;
+
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stat, Meta = (AllowPrivatAcces = "true"))
 	TObjectPtr<class UCCharacterStatComponent> Stat;
 
-// UI Section
+	// UI Section
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Widget, Meta = (AllowPrivatAcces = "true"))
 	TObjectPtr<class UCWidgetComponent> HpBarComponent;
@@ -86,15 +88,13 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Widget, Meta = (AllowPrivatAcces = "true"))
 	TObjectPtr<class UCWidgetComponent> TutorialComponent;
 
-	virtual void SetupCharacterWidget(class UCUserWidget* InUserWidget) override;
+	virtual void SetupCharacterHpWidget(class UCUserWidget* InUserWidget) override;
+	virtual void SetupCharacterTutorialWidget(UCUserWidget* InUserWidget) override;
+	virtual void SetupCharacterScoreWidget(UCUserWidget* InUserWidget) override;
 
 	void SetStatAndWidget();
 
-// Stat Section
-public:
-	void ApplyDamage(const float InDamage) const;
-
-// Death Section
+	// Death Section
 public:
 	UFUNCTION()
 	virtual void Death(AActor* CausedActor) override;

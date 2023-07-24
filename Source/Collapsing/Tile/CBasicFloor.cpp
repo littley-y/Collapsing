@@ -89,8 +89,8 @@ void ACBasicFloor::CreateCeiling()
 
 	CeilingLightMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("CeilingLightMesh"));
 	CeilingLightMesh->SetupAttachment(CeilingMesh);
-	CeilingLightMesh->SetRelativeLocation({ 200.f, 200.f, -20.f });
-	CeilingLightMesh->SetRelativeScale3D({ 0.3f, 0.3f, 0.3f });
+	CeilingLightMesh->SetRelativeLocation({200.f, 200.f, -20.f});
+	CeilingLightMesh->SetRelativeScale3D({0.3f, 0.3f, 0.3f});
 	CeilingLightMesh->SetCollisionProfileName(TEXT("BlockNotCamera"));
 
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> CeilingLightMeshRef(
@@ -102,8 +102,8 @@ void ACBasicFloor::CreateCeiling()
 
 	CeilingLight = CreateDefaultSubobject<UPointLightComponent>(TEXT("CeilingLight"));
 	CeilingLight->SetupAttachment(CeilingLightMesh);
-	CeilingLight->SetRelativeLocation({ 0.f, 0.f, -50.f });
-	
+	CeilingLight->SetRelativeLocation({0.f, 0.f, -50.f});
+
 	CeilingLight->SetIntensity(10000.f);
 	CeilingLight->SetUseTemperature(true);
 	CeilingLight->SetTemperature(5500.f);
@@ -122,7 +122,7 @@ void ACBasicFloor::ActivateFloor()
 	{
 		SpawnedHpUpItem->AttachToComponent(FloorMesh, FAttachmentTransformRules::KeepRelativeTransform);
 		SpawnedHpUpItem->SetActorRelativeLocation(FVector(200.f, FMath::FRandRange(100.f, 300.f),
-			FMath::FRandRange(50.f, 150.f)));
+		                                                  FMath::FRandRange(50.f, 150.f)));
 	}
 	SpawnedHpUpItem->FinishSpawning(GetActorTransform());
 }

@@ -5,6 +5,5 @@
 
 UCSaveGame::UCSaveGame()
 {
-	RetryCount = 0;
-	Score = 0;
+	PlayerName = "Default";
 }

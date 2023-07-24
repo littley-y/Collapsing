@@ -39,6 +39,6 @@ public:
 
 	virtual void SetCanTurn(bool InStatus) = 0;
 	virtual bool GetCanTurn() const = 0;
-	
+
 	virtual void Death(AActor* CausedActor) = 0;
 };

@@ -19,7 +19,7 @@ public:
 
 	UFUNCTION()
 	void OnPlayerDeathOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
-	                     int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	                          int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 protected:
 	virtual void BeginPlay() override;
@@ -29,5 +29,4 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UCameraComponent> DeathCam;
-	
 };

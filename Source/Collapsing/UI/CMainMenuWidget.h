@@ -17,7 +17,7 @@ class COLLAPSING_API UCMainMenuWidget : public UCUserWidget
 public:
 	UCMainMenuWidget();
 
-	void UpdateTextBlock(bool InStatus) const;
+	void UpdateTextBlock(bool InDoorStatus) const;
 
 protected:
 	virtual void NativeConstruct() override;

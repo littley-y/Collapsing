@@ -10,8 +10,8 @@ UCLASS()
 class COLLAPSING_API ACInitTile : public AActor
 {
 	GENERATED_BODY()
-	
-public:	
+
+public:
 	ACInitTile();
 
 protected:
@@ -21,7 +21,7 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Floor")
 	TObjectPtr<UStaticMeshComponent> Floor;
 
-// Wall Section
+	// Wall Section
 public:
 	UFUNCTION()
 	void OnPlayerDoorEntered(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
@@ -64,7 +64,7 @@ protected:
 private:
 	void SetWalls();
 
-// Ceiling Section
+	// Ceiling Section
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Ceiling")
 	TObjectPtr<UStaticMeshComponent> Ceiling;
@@ -74,5 +74,4 @@ protected:
 
 private:
 	void SetCeiling();
-
 };

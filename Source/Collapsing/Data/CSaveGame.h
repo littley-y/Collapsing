@@ -18,10 +18,7 @@ public:
 	UCSaveGame();
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Game)
-	int32 RetryCount;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Game)
-	int32 Score;
+	int32 Distance;
 
 	UPROPERTY(VisibleAnywhere, Category = Basic)
 	FString PlayerName;

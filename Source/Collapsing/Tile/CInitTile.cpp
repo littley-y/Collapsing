@@ -35,7 +35,7 @@ void ACInitTile::SetWalls()
 
 	StageDoorTrigger = CreateDefaultSubobject<UBoxComponent>(TEXT("StageDoorTrigger"));
 	StageDoorTrigger->SetupAttachment(Wall1);
-	StageDoorTrigger->SetBoxExtent({ 80.f, 80.f, 10.f });
+	StageDoorTrigger->SetBoxExtent({80.f, 80.f, 10.f});
 
 	StageDoorTrigger->SetGenerateOverlapEvents(true);
 	StageDoorTrigger->OnComponentBeginOverlap.AddDynamic(this, &ACInitTile::OnPlayerDoorEntered);
@@ -46,7 +46,7 @@ void ACInitTile::SetWalls()
 
 	QuitDoorTrigger = CreateDefaultSubobject<UBoxComponent>(TEXT("QuitDoorTrigger"));
 	QuitDoorTrigger->SetupAttachment(Wall3);
-	QuitDoorTrigger->SetBoxExtent({ 80.f, 80.f, 10.f });
+	QuitDoorTrigger->SetBoxExtent({80.f, 80.f, 10.f});
 
 	QuitDoorTrigger->SetGenerateOverlapEvents(true);
 	QuitDoorTrigger->OnComponentBeginOverlap.AddDynamic(this, &ACInitTile::OnPlayerDoorEntered);
@@ -57,7 +57,7 @@ void ACInitTile::SetWalls()
 
 	ArcadeDoorTrigger = CreateDefaultSubobject<UBoxComponent>(TEXT("ArcadeDoorTrigger"));
 	ArcadeDoorTrigger->SetupAttachment(Wall2);
-	ArcadeDoorTrigger->SetBoxExtent({ 80.f, 80.f, 10.f });
+	ArcadeDoorTrigger->SetBoxExtent({80.f, 80.f, 10.f});
 
 	ArcadeDoorTrigger->SetGenerateOverlapEvents(true);
 	ArcadeDoorTrigger->OnComponentBeginOverlap.AddDynamic(this, &ACInitTile::OnPlayerDoorEntered);
@@ -68,8 +68,8 @@ void ACInitTile::SetWalls()
 }
 
 void ACInitTile::OnPlayerDoorEntered(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
-	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
-	const FHitResult& SweepResult)
+                                     UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
+                                     const FHitResult& SweepResult)
 {
 	ICCharacterInteractionInterface* RunCharacter = Cast<ICCharacterInteractionInterface>(OtherActor);
 	if (RunCharacter != nullptr && OtherComp)
@@ -86,12 +86,11 @@ void ACInitTile::OnPlayerDoorEntered(UPrimitiveComponent* OverlappedComp, AActor
 		{
 			RunCharacter->ChangeCanDoorOpen(EDoorType::Arcade);
 		}
-		UE_LOG(LogTemp, Warning, TEXT("RunCharacter Valid"))
 	}
 }
 
 void ACInitTile::OnPlayerDoorExited(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
-	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+                                    UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
 	ICCharacterInteractionInterface* RunCharacter = Cast<ICCharacterInteractionInterface>(OtherActor);
 	if (RunCharacter != nullptr && OtherComp)
@@ -108,7 +107,6 @@ void ACInitTile::OnPlayerDoorExited(UPrimitiveComponent* OverlappedComp, AActor*
 		{
 			RunCharacter->ChangeCanDoorOpen(EDoorType::Arcade);
 		}
-		UE_LOG(LogTemp, Warning, TEXT("RunCharacter Valid"))
 	}
 }
 
@@ -120,7 +118,7 @@ void ACInitTile::SetCeiling()
 	CeilingLight = CreateDefaultSubobject<UPointLightComponent>(TEXT("CeilingLight"));
 	CeilingLight->SetupAttachment(Ceiling);
 
-	CeilingLight->SetRelativeLocation({ 200.f, 200.f, -50.f });
+	CeilingLight->SetRelativeLocation({200.f, 200.f, -50.f});
 	CeilingLight->SetIntensity(20000.f);
 	CeilingLight->AttenuationRadius = 1500.f;
 	CeilingLight->SetUseTemperature(true);

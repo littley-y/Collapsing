@@ -21,7 +21,7 @@
 [Google Drive Link](https://drive.google.com/file/d/1jWDWOnW-gnU1ZYyyf0W5tD8ZwdV8oX9z/view?usp=drive_link)
 
 ## 개발 일지
-[노션 링크 참조](bit.ly/CollapsingProject)
+[노션 링크 참조](https://www.bit.ly/CollapsingProject)
 
 ## 사용한 애셋
 [Triplex House Villa](https://www.unrealengine.com/id/login/api/login?client_id=43e2dea89b054198a703f6199bee6d5b&redirect_uri=https%3A%2F%2Fwww.unrealengine.com%2Fmarketplace%2Fen-US%2Fproduct%2Fbig-triplex-house-villa%3FsessionInvalidated%3Dtrue&prompt=pass_through)
